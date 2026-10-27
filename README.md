@@ -21,10 +21,16 @@ A role-based full-stack web application built on the **MERN stack** (MongoDB, Ex
 - **User management**: add users (any role), update details and roles, reset passwords, activate/deactivate and remove users
   - Safeguards: admins can't demote, deactivate or delete themselves, and the last active admin can't be removed
 
+### Storefront (public)
+- Homepage with a photo hero, a date-first search (keyword, category, event dates), category tiles, most-rented items and ready-made **kits by occasion**
+- Catalog with a filter sidebar (search, event dates, category counts, price bands), applied-filter chips, sorting (including **most popular** from real rental history) and pagination
+- Pick event dates once and every product card shows **how many units are free** for those dates; the dates follow you to product pages and the rental request
+- Product pages with photos, availability check, quantity, delivery details and "You may also need" suggestions
+- Guests can browse freely; adding to a request asks them to log in and then brings them back
+
 ### Normal user
-- Browse the equipment catalog (read-only) with search, category filters and sorting
-- View equipment details
-- Build a rental request, pick event dates, and see **live availability and pricing** before submitting
+- Build a rental request (cart) with photos, quantities and live availability, pick event dates, and see the **total before submitting**
+- Add a whole kit in one click, then adjust quantities
 - Track their own rentals (pending / approved / past) and cancel pending requests
 
 ### Business rules
@@ -103,9 +109,9 @@ All endpoints are under `/api` and return JSON. 🔒 = requires `Authorization: 
 | POST | `/auth/login` | Public | Log in, returns JWT + user |
 | GET | `/auth/me` | 🔒 Any | Current user |
 | PUT | `/auth/change-password` | 🔒 Any | Change own password |
-| GET | `/equipment` | 🔒 Any | List with `q`, `category`, `sort`, `page`, `limit` (`status` for admins) |
-| GET | `/equipment/meta` | 🔒 Any | Categories (with counts) and conditions |
-| GET | `/equipment/:id` | 🔒 Any | Equipment details |
+| GET | `/equipment` | Public | List with `q`, `category`, `sort` (`popular`, `name`, `price_asc`, `price_desc`, `newest`), `minRate`, `maxRate`, `page`, `limit`; `start` + `end` add per-item `available`; admins also get `status` |
+| GET | `/equipment/meta` | Public | Categories (with counts) and conditions |
+| GET | `/equipment/:id` | Public | Equipment details; `start` + `end` add `available` |
 | POST / PUT / DELETE | `/equipment[/:id]` | 🔒 Admin | Create / update / delete equipment |
 | POST | `/rentals/quote` | 🔒 Any | Price and availability for items + dates |
 | POST | `/rentals` | 🔒 User | Submit a rental request |
@@ -149,3 +155,9 @@ Create a second Vercel project from the same repository with **Root Directory = 
 | `VITE_API_URL` | `https://<api-project>.vercel.app/api` |
 
 After the frontend is deployed, make sure its URL is in the API's `CLIENT_URL` and redeploy the API.
+
+## Photo credits
+
+Equipment and banner photos come from [Wikimedia Commons](https://commons.wikimedia.org/) under CC0, public-domain, CC BY and CC BY-SA licences.
+They were cropped and resized for the site. Full attribution (title, author, licence, source link) is listed on the in-app **Photo credits** page (`/credits`) and in `client/src/data/photoCredits.json`.
+

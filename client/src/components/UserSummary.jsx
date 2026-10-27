@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { CalendarEvent } from 'react-bootstrap-icons';
 import api from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import { formatDayRange } from '../utils/format';
 
-// One quiet line on the catalog: the customer's rentals at a glance
+// Signed-in customer's rentals at a glance, shown above the catalog
 export default function UserSummary() {
+  const { user } = useAuth();
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -16,19 +19,18 @@ export default function UserSummary() {
   const approved = data.byStatus.approved || 0;
 
   return (
-    <p className="mb-4 user-summary">
-      {data.total === 0 ? (
-        <span className="text-muted">No rentals yet — add equipment to a request to get started.</span>
+    <div className="user-summary panel d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4" style={{ background: 'var(--brand-soft)', borderColor: 'var(--brand-line)' }}>
+      <div>
+        <strong>Hi {user.name.split(' ')[0]}!</strong>{' '}
+        <span className="text-muted">{pending} pending · {approved} approved · {data.total} rental{data.total === 1 ? '' : 's'} in total.</span>
+      </div>
+      {data.nextRental ? (
+        <Link to="/my-rentals" className="d-inline-flex align-items-center gap-2 small fw-semibold">
+          <CalendarEvent /> Next: {data.nextRental.eventName}, {formatDayRange(data.nextRental.startDate, data.nextRental.endDate)}
+        </Link>
       ) : (
-        <>
-          <span className="text-muted">{pending} pending · {approved} approved · {data.total} in total.</span>{' '}
-          {data.nextRental && (
-            <Link to="/my-rentals">
-              Next: <strong>{data.nextRental.eventName}</strong>, {formatDayRange(data.nextRental.startDate, data.nextRental.endDate)}
-            </Link>
-          )}
-        </>
+        <Link to="/my-rentals" className="small fw-semibold">View my rentals →</Link>
       )}
-    </p>
+    </div>
   );
 }

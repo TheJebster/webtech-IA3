@@ -59,7 +59,12 @@ export default function RentalDetailsModal({ rental, show, onClose, showCustomer
           <tbody>
             {rental.items.map((item) => (
               <tr key={item.equipment}>
-                <td>{item.name}<div className="small text-muted">{item.category}</div></td>
+                <td>
+                  <div className="d-flex align-items-center gap-2">
+                    {item.imageUrl && <span className="ops-thumb"><img src={item.imageUrl} alt="" /></span>}
+                    <div>{item.name}<div className="small text-muted">{item.category}</div></div>
+                  </div>
+                </td>
                 <td className="text-center">{item.quantity}</td>
                 <td className="text-end text-nowrap">{formatCurrency(item.dailyRate)}</td>
                 <td className="text-end text-nowrap">{formatCurrency(item.subtotal)}</td>

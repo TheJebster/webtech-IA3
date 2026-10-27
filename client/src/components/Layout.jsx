@@ -1,8 +1,63 @@
-import { Suspense } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Suspense, useEffect, useState } from 'react';
+import { Link, Outlet } from 'react-router-dom';
+import api from '../api/client';
+import { CONTACT } from '../data/storefront';
 import AppNavbar from './AppNavbar';
+import BrandMark from './BrandMark';
 import PageLoader from './PageLoader';
 import ScrollToTop from './ScrollToTop';
+
+function SiteFooter() {
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    api.get('/equipment/meta').then(({ data }) => setCategories(data.categories)).catch(() => {});
+  }, []);
+
+  return (
+    <footer className="site-footer">
+      <div className="container">
+        <div className="row g-4">
+          <div className="col-lg-4">
+            <Link to="/" className="brand mb-3" style={{ color: '#fff' }}><BrandMark /> RentKit</Link>
+            <p className="mb-0" style={{ maxWidth: 320 }}>
+              Sound, lighting, staging, furniture and tents for weddings, concerts, college fests and corporate events —
+              delivered, set up and picked up by our crew.
+            </p>
+          </div>
+          <div className="col-6 col-lg-3">
+            <h3>Shop by category</h3>
+            <ul>
+              {categories.map((c) => (
+                <li key={c.name}><Link to={`/catalog?category=${encodeURIComponent(c.name)}`}>{c.name}</Link></li>
+              ))}
+            </ul>
+          </div>
+          <div className="col-6 col-lg-2">
+            <h3>Your account</h3>
+            <ul>
+              <li><Link to="/my-rentals">My rentals</Link></li>
+              <li><Link to="/rental-request">Rental request</Link></li>
+              <li><Link to="/account/password">Change password</Link></li>
+              <li><Link to="/signup">Create an account</Link></li>
+            </ul>
+          </div>
+          <div className="col-lg-3">
+            <h3>Contact</h3>
+            <ul>
+              <li><a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`}>{CONTACT.phone}</a></li>
+              <li><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></li>
+              <li>Mon–Sat, 9 am – 8 pm</li>
+            </ul>
+          </div>
+        </div>
+        <div className="bottom">
+          <span>© {new Date().getFullYear()} RentKit — Event Equipment Rental · Built with MongoDB, Express, React and Node.js</span>
+          <Link to="/credits">Photo credits</Link>
+        </div>
+      </div>
+    </footer>
+  );
+}
 
 export default function Layout() {
   return (
@@ -15,12 +70,7 @@ export default function Layout() {
           <Outlet />
         </Suspense>
       </main>
-      <footer className="site-footer">
-        <div className="container d-flex flex-wrap justify-content-between gap-2">
-          <span>RentKit — event equipment rental</span>
-          <span>MongoDB · Express · React · Node.js</span>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

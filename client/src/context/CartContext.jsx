@@ -5,6 +5,16 @@ import { useAuth } from './AuthContext';
 const CartContext = createContext(null);
 
 const storageKey = (user) => (user ? `rentkit_cart_${user._id}` : null);
+// Event dates chosen while browsing (works for guests too), carried through to the request page
+const DATES_KEY = 'rentkit_event_dates';
+
+function readDates() {
+  try {
+    return JSON.parse(localStorage.getItem(DATES_KEY)) || { start: '', end: '' };
+  } catch {
+    return { start: '', end: '' };
+  }
+}
 
 function readCart(user) {
   const key = storageKey(user);
@@ -19,6 +29,16 @@ function readCart(user) {
 export function CartProvider({ children }) {
   const { user } = useAuth();
   const [items, setItems] = useState(() => readCart(user));
+  const [dates, setDatesState] = useState(readDates);
+
+  const setDates = useCallback((next) => {
+    setDatesState(next);
+    try {
+      localStorage.setItem(DATES_KEY, JSON.stringify(next));
+    } catch {
+      // storage unavailable: dates just won't persist
+    }
+  }, []);
 
   // Load the right cart when the logged-in user changes
   useEffect(() => {
@@ -56,11 +76,14 @@ export function CartProvider({ children }) {
   );
 
   const removeItem = useCallback((id) => persist((prev) => prev.filter((i) => i.equipment._id !== id)), [persist]);
-  const clear = useCallback(() => persist([]), [persist]);
+  const clear = useCallback(() => {
+    persist([]);
+    setDates({ start: '', end: '' });
+  }, [persist, setDates]);
 
   const value = useMemo(
-    () => ({ items, count: items.length, addItem, updateQuantity, removeItem, clear }),
-    [items, addItem, updateQuantity, removeItem, clear]
+    () => ({ items, count: items.length, addItem, updateQuantity, removeItem, clear, dates, setDates }),
+    [items, addItem, updateQuantity, removeItem, clear, dates, setDates]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

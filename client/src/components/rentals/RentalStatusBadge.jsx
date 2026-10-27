@@ -6,7 +6,7 @@ export const STATUS_META = {
   returned: { label: 'Returned' },
 };
 
-// Status tag: neutral chip with a colour-coded dot (pending violet, approved green, rejected red, returned teal)
+// Status pill: pending amber, approved green, rejected red, returned blue, cancelled grey
 export default function RentalStatusBadge({ status }) {
   const meta = STATUS_META[status] || { label: status };
   return <span className={`status status-${status}`}>{meta.label}</span>;

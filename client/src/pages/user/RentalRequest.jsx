@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
+import { Alert, Breadcrumb, Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import { Cart3, ShieldCheck, Trash3, Truck } from 'react-bootstrap-icons';
 import api, { parseError } from '../../api/client';
 import { useCart } from '../../context/CartContext';
 import { useToast } from '../../context/ToastContext';
@@ -9,6 +10,7 @@ import { formatCurrency, todayInput } from '../../utils/format';
 import { hasErrors } from '../../utils/validators';
 import PageHeader from '../../components/PageHeader';
 import EmptyState from '../../components/EmptyState';
+import EquipmentImage from '../../components/EquipmentImage';
 import usePageTitle from '../../hooks/usePageTitle';
 
 const MAX_DAYS = 30;
@@ -32,11 +34,12 @@ function validateEvent(form) {
 
 export default function RentalRequest() {
   usePageTitle('Rental request');
-  const { items, updateQuantity, removeItem, clear } = useCart();
+  const { items, updateQuantity, removeItem, clear, dates, setDates } = useCart();
   const notify = useToast();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState(EMPTY_EVENT);
+  // Start from the event dates the customer picked while browsing
+  const [form, setForm] = useState(() => ({ ...EMPTY_EVENT, startDate: dates.start || '', endDate: dates.end || '' }));
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState('');
   const [quote, setQuote] = useState(null);
@@ -78,6 +81,11 @@ export default function RentalRequest() {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
     setErrors((errs) => ({ ...errs, [e.target.name]: '' }));
   };
+
+  // Keep the shared event dates in sync so the catalog shows the same availability
+  useEffect(() => {
+    if (form.startDate && form.endDate && form.endDate >= form.startDate) setDates({ start: form.startDate, end: form.endDate });
+  }, [form.startDate, form.endDate, setDates]);
 
   // An empty box is allowed while typing; it snaps back to 1 on blur
   const setQty = (id, value) => {
@@ -121,85 +129,95 @@ export default function RentalRequest() {
     return (
       <Container>
         <PageHeader title="Rental request" />
-        <EmptyState title="Your rental request is empty" text="Browse the catalog and add the equipment you need for your event.">
-          <Link to="/catalog" className="btn btn-primary">Browse equipment</Link>
-        </EmptyState>
+        <div className="panel">
+          <EmptyState icon={Cart3} title="Your rental request is empty" text="Browse the catalog and add the equipment you need for your event.">
+            <Link to="/catalog" className="btn btn-primary">Browse equipment</Link>
+          </EmptyState>
+        </div>
       </Container>
     );
   }
 
   return (
     <Container>
+      <Breadcrumb>
+        <Breadcrumb.Item linkAs={Link} linkProps={{ to: '/' }}>Home</Breadcrumb.Item>
+        <Breadcrumb.Item linkAs={Link} linkProps={{ to: '/catalog' }}>Equipment</Breadcrumb.Item>
+        <Breadcrumb.Item active>Rental request</Breadcrumb.Item>
+      </Breadcrumb>
       <PageHeader title="Rental request" subtitle="Review your equipment, choose event dates and send the request for approval." />
       <Form noValidate onSubmit={handleSubmit}>
-        <Row className="g-3">
+        <Row className="g-4">
           <Col lg={7}>
             <div className="panel">
-            <div className="d-flex justify-content-between align-items-baseline mb-4">
-              <h2 className="mb-0">Equipment ({items.length})</h2>
-              <Link to="/catalog" className="link-arrow">Add more</Link>
-            </div>
-            {items.map(({ equipment, quantity }) => {
-              const line = lineFor(equipment._id);
-              return (
-                <div key={equipment._id} className="request-line mb-4">
-                  <div className="d-flex justify-content-between gap-3">
-                    <Link to={`/equipment/${equipment._id}`} className="fw-semibold">{equipment.name}</Link>
-                    <span className="text-nowrap">
-                      {line ? formatCurrency(line.subtotal) : `${formatCurrency(equipment.dailyRate * (quantity || 0))} / day`}
-                    </span>
+              <div className="d-flex justify-content-between align-items-baseline mb-3">
+                <h2 className="h3 mb-0">Equipment ({items.length})</h2>
+                <Link to="/catalog" className="link-arrow small">Add more</Link>
+              </div>
+              {items.map(({ equipment, quantity }) => {
+                const line = lineFor(equipment._id);
+                return (
+                  <div key={equipment._id} className="request-line">
+                    <Link to={`/equipment/${equipment._id}`} className="line-thumb"><EquipmentImage item={equipment} /></Link>
+                    <div className="flex-grow-1 min-w-0">
+                      <div className="d-flex justify-content-between gap-2">
+                        <Link to={`/equipment/${equipment._id}`} className="fw-semibold" style={{ color: 'var(--ink)' }}>{equipment.name}</Link>
+                        <span className="fw-bold text-nowrap" style={{ color: 'var(--ink)' }}>
+                          {line ? formatCurrency(line.subtotal) : `${formatCurrency(equipment.dailyRate * (quantity || 0))}/day`}
+                        </span>
+                      </div>
+                      <div className="small text-muted mb-2">{formatCurrency(equipment.dailyRate)} / day</div>
+                      <div className="d-flex flex-wrap align-items-center gap-3">
+                        <div className="qty-stepper">
+                          <button type="button" aria-label="Decrease quantity" onClick={() => setQty(equipment._id, (quantity || 1) - 1)} disabled={!quantity || quantity <= 1}>−</button>
+                          <Form.Control
+                            type="number"
+                            min="1"
+                            value={quantity}
+                            aria-label={`Quantity of ${equipment.name}`}
+                            onChange={(e) => setQty(equipment._id, e.target.value)}
+                            onBlur={() => !quantity && setQty(equipment._id, 1)}
+                          />
+                          <button type="button" aria-label="Increase quantity" onClick={() => setQty(equipment._id, (quantity || 0) + 1)}>+</button>
+                        </div>
+                        <span className="small">
+                          {line ? (
+                            line.ok ? (
+                              <span className="avail avail-ok">{line.available} available for your dates</span>
+                            ) : (
+                              <span className="avail avail-none">{line.missing ? 'No longer available' : `Only ${line.available} available`}</span>
+                            )
+                          ) : (
+                            <span className="text-muted">Pick dates to check availability</span>
+                          )}
+                        </span>
+                        <button type="button" className="text-action quiet ms-auto" aria-label={`Remove ${equipment.name}`} onClick={() => removeItem(equipment._id)}>
+                          <Trash3 /> Remove
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="small text-muted mb-3">{formatCurrency(equipment.dailyRate)} / day</div>
-                  <div className="action-row">
-                    <button type="button" className="text-action" aria-label="Decrease quantity" onClick={() => setQty(equipment._id, (quantity || 1) - 1)} disabled={!quantity || quantity <= 1}>−</button>
-                    <Form.Control
-                      className="text-center"
-                      style={{ width: 70 }}
-                      type="number"
-                      min="1"
-                      value={quantity}
-                      aria-label={`Quantity of ${equipment.name}`}
-                      onChange={(e) => setQty(equipment._id, e.target.value)}
-                      onBlur={() => !quantity && setQty(equipment._id, 1)}
-                    />
-                    <button type="button" className="text-action" aria-label="Increase quantity" onClick={() => setQty(equipment._id, (quantity || 0) + 1)}>+</button>
-                    <span className="small ms-2">
-                      {line ? (
-                        line.ok ? (
-                          <span className="text-muted">{line.available} available for your dates</span>
-                        ) : (
-                          <strong>{line.missing ? 'No longer available' : `Only ${line.available} available`}</strong>
-                        )
-                      ) : (
-                        <span className="text-muted">Pick dates to check availability</span>
-                      )}
-                    </span>
-                    <button type="button" className="text-action quiet ms-auto" aria-label={`Remove ${equipment.name}`} onClick={() => removeItem(equipment._id)}>
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
             </div>
           </Col>
 
           <Col lg={5}>
-            <div className="panel sticky-lg-top request-summary" style={{ top: 72 }}>
-              <h2 className="mb-4">Event details</h2>
+            <div className="panel sticky-lg-top request-summary" style={{ top: 84 }}>
+              <h2 className="h3 mb-3">Event details</h2>
               {serverError && <Alert variant="danger" className="small">{serverError}</Alert>}
-              <Row className="g-4">
+              <Row className="g-3">
                 <Col xs={12}>
                   <Form.Group controlId="eventName">
                     <Form.Label>Event name</Form.Label>
-                    <Form.Control name="eventName" value={form.eventName} onChange={handleChange} isInvalid={Boolean(errors.eventName)} placeholder="College cultural fest" />
+                    <Form.Control name="eventName" value={form.eventName} onChange={handleChange} isInvalid={Boolean(errors.eventName)} placeholder="e.g. College cultural fest" />
                     <Form.Control.Feedback type="invalid">{errors.eventName}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
                 <Col xs={12}>
                   <Form.Group controlId="venue">
                     <Form.Label>Venue</Form.Label>
-                    <Form.Control name="venue" value={form.venue} onChange={handleChange} isInvalid={Boolean(errors.venue)} placeholder="Main Auditorium, Coimbatore" />
+                    <Form.Control name="venue" value={form.venue} onChange={handleChange} isInvalid={Boolean(errors.venue)} placeholder="e.g. Main Auditorium, Coimbatore" />
                     <Form.Control.Feedback type="invalid">{errors.venue}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
@@ -219,30 +237,34 @@ export default function RentalRequest() {
                 </Col>
                 <Col xs={12}>
                   <Form.Group controlId="notes">
-                    <Form.Label>Notes (optional)</Form.Label>
+                    <Form.Label>Notes <span className="text-muted fw-normal">(optional)</span></Form.Label>
                     <Form.Control as="textarea" rows={2} name="notes" value={form.notes} onChange={handleChange} isInvalid={Boolean(errors.notes)} placeholder="Delivery time, setup needs…" />
                     <Form.Control.Feedback type="invalid">{errors.notes}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
               </Row>
 
-              <div className="stack mt-5 mb-4">
-                <div className="d-flex justify-content-between"><span className="text-muted">Daily total</span><span>{formatCurrency(estimatedTotal)} / day</span></div>
-                <div className="d-flex justify-content-between"><span className="text-muted">Rental days</span><span>{quote ? quote.days : '—'}</span></div>
-                <div className="d-flex justify-content-between align-items-baseline">
-                  <span className="text-muted">Estimated total</span>
-                  <span className="price-xl">{quoting ? '…' : quote ? formatCurrency(quote.totalCost) : '—'}</span>
+              <div className="mt-4">
+                <div className="summary-row"><span className="text-muted">Daily total</span><span>{formatCurrency(estimatedTotal)} / day</span></div>
+                <div className="summary-row"><span className="text-muted">Rental days</span><span>{quote ? quote.days : '—'}</span></div>
+                <div className="summary-row"><span className="text-muted">Delivery &amp; setup</span><span>Included</span></div>
+                <div className="summary-total">
+                  <span className="fw-semibold" style={{ color: 'var(--ink)' }}>Estimated total</span>
+                  <span className="price-xl" style={{ fontSize: 26 }}>{quoting ? '…' : quote ? formatCurrency(quote.totalCost) : '—'}</span>
                 </div>
               </div>
               {quote && !quote.ok && (
-                <Alert variant="warning" className="small">
+                <Alert variant="warning" className="small mt-3 mb-0">
                   Some items don’t have enough stock for these dates. Reduce the quantity or pick other dates.
                 </Alert>
               )}
-              <Button type="submit" variant="primary" disabled={submitting || quoting || (quote && !quote.ok)}>
+              <Button type="submit" size="lg" className="w-100 mt-3" disabled={submitting || quoting || (quote && !quote.ok)}>
                 {submitting ? 'Submitting…' : 'Submit rental request'}
               </Button>
-              <p className="small text-muted mt-3 mb-0">You won’t be charged now — our team will confirm your booking.</p>
+              <ul className="perks mt-3">
+                <li className="d-flex gap-2"><ShieldCheck className="mt-1" /> You won’t be charged now — our team confirms first.</li>
+                <li className="d-flex gap-2"><Truck className="mt-1" /> Delivery, setup and pickup included.</li>
+              </ul>
             </div>
           </Col>
         </Row>

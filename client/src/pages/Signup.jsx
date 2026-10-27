@@ -75,6 +75,13 @@ export default function Signup() {
   });
 
   return (
+    <div className="auth-split">
+      <div className="auth-art" style={{ backgroundImage: 'url(/images/banners/weddings.webp)' }}>
+        <div>
+          <h2 className="mb-2">Plan your event in minutes</h2>
+          <p>Browse 24+ items, check live availability and send one request.</p>
+        </div>
+      </div>
     <div className="auth-wrapper">
       <div className="auth-card auth-card-wide">
         <h1 className="mb-2">Create your account</h1>
@@ -129,6 +136,7 @@ export default function Signup() {
           Already have an account? <Link to="/login">Log in</Link>
         </p>
       </div>
+    </div>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { useToast } from '../../context/ToastContext';
 import useDebounce from '../../hooks/useDebounce';
 import { formatCurrency } from '../../utils/format';
 import ConditionBadge from '../ConditionBadge';
+import EquipmentImage from '../EquipmentImage';
 import ConfirmModal from '../ConfirmModal';
 import Paginator from '../Paginator';
 import PageLoader from '../PageLoader';
@@ -139,7 +140,12 @@ export default function EquipmentManager() {
           <tbody>
             {data.items.map((item) => (
               <tr key={item._id} className={item.isActive ? '' : 'text-muted'}>
-                <td><Link to={`/equipment/${item._id}`} className="fw-semibold">{item.name}</Link></td>
+                <td>
+                  <div className="d-flex align-items-center gap-2">
+                    <span className="ops-thumb"><EquipmentImage item={item} /></span>
+                    <Link to={`/equipment/${item._id}`} className="fw-semibold">{item.name}</Link>
+                  </div>
+                </td>
                 <td className="text-nowrap d-none d-md-table-cell">{item.category}</td>
                 <td className="text-end text-nowrap">{formatCurrency(item.dailyRate)}</td>
                 <td className="text-end d-none d-sm-table-cell">{item.quantityTotal}</td>

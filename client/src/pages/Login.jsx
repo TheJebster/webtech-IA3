@@ -51,6 +51,13 @@ export default function Login() {
   };
 
   return (
+    <div className="auth-split">
+      <div className="auth-art" style={{ backgroundImage: 'url(/images/banners/concerts.webp)' }}>
+        <div>
+          <h2 className="mb-2">Welcome back</h2>
+          <p>Pick up where you left off — your rental requests are waiting.</p>
+        </div>
+      </div>
     <div className="auth-wrapper">
       <div className="auth-card">
         <h1 className="mb-2">Log in</h1>
@@ -95,6 +102,7 @@ export default function Login() {
           New to RentKit? <Link to="/signup">Create an account</Link>
         </p>
       </div>
+    </div>
     </div>
   );
 }

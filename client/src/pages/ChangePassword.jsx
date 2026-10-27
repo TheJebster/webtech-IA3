@@ -65,6 +65,13 @@ export default function ChangePassword() {
   };
 
   return (
+    <div className="auth-split">
+      <div className="auth-art" style={{ backgroundImage: 'url(/images/banners/corporate.webp)' }}>
+        <div>
+          <h2 className="mb-2">Keep your account secure</h2>
+          <p>Use a strong password you don’t use anywhere else.</p>
+        </div>
+      </div>
     <div className="auth-wrapper">
       <div className="auth-card">
                   <h1 className="mb-2">Change password</h1>
@@ -94,6 +101,7 @@ export default function ChangePassword() {
           </div>
         </Form>
       </div>
+    </div>
     </div>
   );
 }

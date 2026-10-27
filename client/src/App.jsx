@@ -19,6 +19,7 @@ const RentalRequest = lazy(() => import('./pages/user/RentalRequest'));
 const AdminHome = lazy(() => import('./pages/admin/AdminHome'));
 const Operations = lazy(() => import('./pages/admin/Operations'));
 const Users = lazy(() => import('./pages/admin/Users'));
+const Credits = lazy(() => import('./pages/Credits'));
 
 export default function App() {
   return (
@@ -29,6 +30,10 @@ export default function App() {
             <Routes>
               <Route element={<Layout />}>
                 <Route index element={<Landing />} />
+                {/* Public storefront: anyone can browse */}
+                <Route path="catalog" element={<Catalog />} />
+                <Route path="equipment/:id" element={<EquipmentDetails />} />
+                <Route path="credits" element={<Credits />} />
 
                 {/* Guests only */}
                 <Route element={<GuestRoute />}>
@@ -39,12 +44,10 @@ export default function App() {
                 {/* Any logged-in user */}
                 <Route element={<ProtectedRoute />}>
                   <Route path="account/password" element={<ChangePassword />} />
-                  <Route path="equipment/:id" element={<EquipmentDetails />} />
                 </Route>
 
                 {/* Normal users */}
                 <Route element={<ProtectedRoute roles={['user']} />}>
-                  <Route path="catalog" element={<Catalog />} />
                   <Route path="rental-request" element={<RentalRequest />} />
                   <Route path="my-rentals" element={<MyRentals />} />
                 </Route>

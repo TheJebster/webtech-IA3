@@ -93,7 +93,7 @@ export default function MyRentals() {
                   <div className="d-flex justify-content-between align-items-start gap-2 mb-2">
                     <div className="min-w-0">
                       <div className="small text-muted"><span className="mono">{r.code}</span> · requested {formatDate(r.createdAt)}</div>
-                      <h2 className="h5 mb-0 text-truncate">{r.eventName}</h2>
+                      <h2 className="h3 mb-0 text-truncate">{r.eventName}</h2>
                     </div>
                     <RentalStatusBadge status={r.status} />
                   </div>
@@ -101,13 +101,17 @@ export default function MyRentals() {
                     <span>{formatDayRange(r.startDate, r.endDate)} · {r.days} day{r.days > 1 ? 's' : ''}</span>
                     <span>{r.venue}</span>
                   </div>
+                  <div className="rental-thumbs" aria-hidden="true">
+                    {r.items.slice(0, 4).map((i) => (i.imageUrl ? <img key={i.equipment} src={i.imageUrl} alt="" loading="lazy" /> : null))}
+                    {r.items.length > 4 && <span className="more">+{r.items.length - 4}</span>}
+                  </div>
                   <div className="small mb-3">
                     {r.items.slice(0, 3).map((i) => `${i.quantity} × ${i.name}`).join(', ')}
                     {r.items.length > 3 && ` +${r.items.length - 3} more`}
                   </div>
                   {r.adminNote && <p className="small mb-3"><strong>Note from RentKit:</strong> {r.adminNote}</p>}
                   <div className="mt-auto d-flex justify-content-between align-items-center">
-                    <span>{formatCurrency(r.totalCost)}</span>
+                    <span className="price">{formatCurrency(r.totalCost)}</span>
                     <div className="action-row">
                       <button type="button" className="text-action" onClick={() => setViewing(r)}>Details</button>
                       {r.status === 'pending' && (
