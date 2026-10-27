@@ -10,6 +10,7 @@ const rentalItemSchema = new mongoose.Schema(
     // Snapshots keep the rental readable even if the equipment is later edited or deleted
     name: { type: String, required: true },
     category: { type: String },
+    imageUrl: { type: String, default: '' },
     dailyRate: { type: Number, required: true, min: 0 },
     quantity: { type: Number, required: true, min: 1 },
     subtotal: { type: Number, required: true, min: 0 },

@@ -57,6 +57,7 @@ export async function buildQuote({ items, startDate, endDate, excludeRentalId, i
       equipment: eq._id,
       name: eq.name,
       category: eq.category,
+      imageUrl: eq.imageUrl,
       dailyRate: eq.dailyRate,
       quantity,
       subtotal,

@@ -17,8 +17,9 @@ const rules = (optional) => {
     body('imageUrl')
       .optional({ values: 'falsy' })
       .trim()
-      .isURL({ protocols: ['http', 'https'], require_protocol: true })
-      .withMessage('Image URL must start with http:// or https://'),
+      // Full http(s) URLs, or paths to images bundled with the site (e.g. /images/equipment/mixer.webp)
+      .custom((v) => /^https?:\/\/\S+$/i.test(v) || /^\/images\/[\w\-./]+\.(webp|jpe?g|png)$/i.test(v))
+      .withMessage('Image URL must start with http(s):// or be a /images/… path'),
     body('isActive').optional().isBoolean().withMessage('isActive must be true or false').toBoolean(),
   ];
 };
@@ -30,6 +31,22 @@ export const listEquipmentRules = [
   query('page').optional().isInt({ min: 1 }).withMessage('page must be a positive integer'),
   query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('limit must be 1–100'),
   query('category').optional({ values: 'falsy' }).isIn(CATEGORIES).withMessage('Unknown category'),
-  query('sort').optional().isIn(['newest', 'name', 'price_asc', 'price_desc']),
+  query('sort').optional().isIn(['newest', 'name', 'price_asc', 'price_desc', 'popular']),
   query('status').optional().isIn(['all', 'active', 'inactive']),
+  query('minRate').optional({ values: 'falsy' }).isFloat({ min: 0 }).withMessage('minRate must be a number'),
+  query('maxRate').optional({ values: 'falsy' }).isFloat({ min: 0 }).withMessage('maxRate must be a number'),
+  ...dateRangeRules(),
 ];
+
+// Optional ?start=YYYY-MM-DD&end=YYYY-MM-DD — both or neither, end on/after start
+function dateRangeRules() {
+  return [
+    query('start').optional({ values: 'falsy' }).matches(/^\d{4}-\d{2}-\d{2}$/).withMessage('start must be YYYY-MM-DD'),
+    query('end')
+      .optional({ values: 'falsy' })
+      .matches(/^\d{4}-\d{2}-\d{2}$/).withMessage('end must be YYYY-MM-DD')
+      .custom((end, { req }) => !req.query.start || end >= req.query.start).withMessage('end must be on or after start'),
+  ];
+}
+
+export const availabilityRules = dateRangeRules();

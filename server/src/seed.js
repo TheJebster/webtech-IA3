@@ -32,7 +32,15 @@ async function seedEquipment() {
   const admin = await User.findOne({ role: 'admin' });
   let created = 0;
   for (const data of EQUIPMENT) {
-    if (await Equipment.exists({ name: data.name })) continue;
+    const existing = await Equipment.findOne({ name: data.name });
+    if (existing) {
+      // Older databases were seeded without photos: fill them in without touching admin edits
+      if (!existing.imageUrl && data.imageUrl) {
+        existing.imageUrl = data.imageUrl;
+        await existing.save();
+      }
+      continue;
+    }
     await Equipment.create({ ...data, createdBy: admin?._id });
     created++;
   }
@@ -67,7 +75,7 @@ async function seedRentals() {
     const days = countDays(startDate, endDate);
     const items = r.items.map(([name, quantity]) => {
       const eq = equipment[name];
-      return { equipment: eq._id, name: eq.name, category: eq.category, dailyRate: eq.dailyRate, quantity, subtotal: eq.dailyRate * quantity * days };
+      return { equipment: eq._id, name: eq.name, category: eq.category, imageUrl: eq.imageUrl, dailyRate: eq.dailyRate, quantity, subtotal: eq.dailyRate * quantity * days };
     });
     const _id = new mongoose.Types.ObjectId();
     const code = `RK-${_id.toString().slice(-6).toUpperCase()}`;

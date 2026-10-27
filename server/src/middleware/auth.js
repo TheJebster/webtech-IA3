@@ -25,6 +25,21 @@ export async function protect(req, res, next) {
   next();
 }
 
+// For public routes that behave differently for signed-in users (e.g. admins see hidden items).
+// A missing or invalid token simply means "guest" — it never blocks the request.
+export async function optionalAuth(req, res, next) {
+  const [scheme, token] = (req.headers.authorization || '').split(' ');
+  if (scheme === 'Bearer' && token) {
+    try {
+      const user = await User.findById(verifyToken(token).id);
+      if (user?.isActive) req.user = user;
+    } catch {
+      // ignore bad tokens on public routes
+    }
+  }
+  next();
+}
+
 // Role-based access control: requireRole('admin')
 export function requireRole(...roles) {
   return (req, res, next) => {

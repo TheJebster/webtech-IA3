@@ -2,6 +2,7 @@ import Equipment, { CATEGORIES, CONDITIONS } from '../models/Equipment.js';
 import Rental, { RESERVING_STATUSES } from '../models/Rental.js';
 import ApiError from '../utils/ApiError.js';
 import { logActivity } from '../utils/logActivity.js';
+import { parseDay, reservedQuantities } from '../utils/rentalPricing.js';
 
 const SORTS = {
   newest: { createdAt: -1 },
@@ -14,15 +15,33 @@ const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // Customers only ever see active equipment; admins can filter by status.
 function visibilityFilter(user, status = 'all') {
-  if (user.role !== 'admin') return { isActive: true };
+  if (user?.role !== 'admin') return { isActive: true };
   if (status === 'active') return { isActive: true };
   if (status === 'inactive') return { isActive: false };
   return {};
 }
 
-// GET /api/equipment?q=&category=&sort=&page=&limit=&status=
+// Units of each item rented in approved/returned rentals — powers "Most popular"
+async function rentedUnits() {
+  const rows = await Rental.aggregate([
+    { $match: { status: { $in: ['approved', 'returned'] } } },
+    { $unwind: '$items' },
+    { $group: { _id: '$items.equipment', units: { $sum: '$items.quantity' } } },
+  ]);
+  return new Map(rows.map((r) => [r._id.toString(), r.units]));
+}
+
+// Adds `available` (units free for the date range) to each item when ?start&end are given
+async function withAvailability(items, start, end) {
+  const plain = items.map((i) => i.toJSON());
+  if (!start || !end || plain.length === 0) return plain;
+  const reserved = await reservedQuantities(plain.map((i) => i._id), parseDay(start), parseDay(end));
+  return plain.map((i) => ({ ...i, available: Math.max(0, i.quantityTotal - (reserved.get(String(i._id)) || 0)) }));
+}
+
+// GET /api/equipment?q=&category=&sort=&page=&limit=&status=&minRate=&maxRate=&start=&end=
 export async function listEquipment(req, res) {
-  const { q, category, sort = 'newest', status } = req.query;
+  const { q, category, sort = 'newest', status, start, end } = req.query;
   // Express 5's req.query is read-only, so validator sanitizers can't convert these in place
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 12;
@@ -33,13 +52,29 @@ export async function listEquipment(req, res) {
     const rx = new RegExp(escapeRegex(q.trim()), 'i');
     filter.$or = [{ name: rx }, { description: rx }, { category: rx }];
   }
+  if (req.query.minRate || req.query.maxRate) {
+    filter.dailyRate = {};
+    if (req.query.minRate) filter.dailyRate.$gte = Number(req.query.minRate);
+    if (req.query.maxRate) filter.dailyRate.$lte = Number(req.query.maxRate);
+  }
 
-  const [items, total] = await Promise.all([
-    Equipment.find(filter).sort(SORTS[sort]).skip((page - 1) * limit).limit(limit),
-    Equipment.countDocuments(filter),
-  ]);
+  let items;
+  const total = await Equipment.countDocuments(filter);
+  if (sort === 'popular') {
+    // Small catalogue: rank in memory by units rented, then by name
+    const [all, units] = await Promise.all([Equipment.find(filter), rentedUnits()]);
+    all.sort((a, b) => (units.get(String(b._id)) || 0) - (units.get(String(a._id)) || 0) || a.name.localeCompare(b.name));
+    items = all.slice((page - 1) * limit, page * limit);
+  } else {
+    items = await Equipment.find(filter).sort(SORTS[sort]).skip((page - 1) * limit).limit(limit);
+  }
 
-  res.json({ items, total, page, pages: Math.max(1, Math.ceil(total / limit)) });
+  res.json({
+    items: await withAvailability(items, start, end),
+    total,
+    page,
+    pages: Math.max(1, Math.ceil(total / limit)),
+  });
 }
 
 // GET /api/equipment/meta — categories (with counts) and conditions for filters/forms
@@ -55,11 +90,12 @@ export async function equipmentMeta(req, res) {
   });
 }
 
-// GET /api/equipment/:id
+// GET /api/equipment/:id?start=&end=
 export async function getEquipment(req, res) {
   const item = await Equipment.findOne({ _id: req.params.id, ...visibilityFilter(req.user) });
   if (!item) throw new ApiError(404, 'Equipment not found.');
-  res.json({ item });
+  const [withAvail] = await withAvailability([item], req.query.start, req.query.end);
+  res.json({ item: withAvail });
 }
 
 const EDITABLE = ['name', 'category', 'description', 'features', 'dailyRate', 'quantityTotal', 'condition', 'imageUrl', 'isActive'];

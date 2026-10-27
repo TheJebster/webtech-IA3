@@ -33,8 +33,8 @@ export async function createRental(req, res) {
     startDate: q.startDate,
     endDate: q.endDate,
     days: q.days,
-    items: q.lines.map(({ equipment, name, category, dailyRate, quantity, subtotal }) => ({
-      equipment, name, category, dailyRate, quantity, subtotal,
+    items: q.lines.map(({ equipment, name, category, imageUrl, dailyRate, quantity, subtotal }) => ({
+      equipment, name, category, imageUrl, dailyRate, quantity, subtotal,
     })),
     totalCost: q.totalCost,
   });
