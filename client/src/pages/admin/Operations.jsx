@@ -15,7 +15,7 @@ export default function Operations() {
     <Container>
       <PageHeader title="Operations" subtitle="View, add, update and delete equipment and manage rental requests." />
       <Tab.Container activeKey={tab} onSelect={(key) => setParams({ tab: key }, { replace: true })}>
-        <Nav variant="pills" className="mb-5">
+        <Nav variant="pills" className="mb-4">
           <Nav.Item>
             <Nav.Link eventKey="equipment">Equipment</Nav.Link>
           </Nav.Item>

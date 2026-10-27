@@ -1,13 +1,13 @@
-// Status as type alone: open states in ink, closed states recede to ash
 export const STATUS_META = {
-  pending: { label: 'Pending', open: true },
-  approved: { label: 'Approved', open: true },
-  rejected: { label: 'Rejected', open: false },
-  cancelled: { label: 'Cancelled', open: false },
-  returned: { label: 'Returned', open: false },
+  pending: { label: 'Pending' },
+  approved: { label: 'Approved' },
+  rejected: { label: 'Rejected' },
+  cancelled: { label: 'Cancelled' },
+  returned: { label: 'Returned' },
 };
 
+// Status tag: neutral chip with a colour-coded dot (pending violet, approved green, rejected red, returned teal)
 export default function RentalStatusBadge({ status }) {
-  const meta = STATUS_META[status] || { label: status, open: false };
-  return <span className={`status ${meta.open ? 'status-active' : 'status-closed'}`}>{meta.label}</span>;
+  const meta = STATUS_META[status] || { label: status };
+  return <span className={`status status-${status}`}>{meta.label}</span>;
 }

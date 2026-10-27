@@ -66,7 +66,7 @@ export default function Catalog() {
       <PageHeader title="Equipment" subtitle="Sound, lighting, staging, furniture and more for your event." />
       <UserSummary />
 
-      <Row className="g-4 mb-4">
+      <Row className="g-2 mb-3">
         <Col md={8}>
           <Form.Control
             value={search}
@@ -85,7 +85,7 @@ export default function Catalog() {
         </Col>
       </Row>
 
-      <div className="filter-row category-pills mb-5" role="group" aria-label="Category">
+      <div className="filter-row category-pills mb-4" role="group" aria-label="Category">
         <button type="button" className={`text-action ${!category ? 'active' : ''}`} onClick={() => update({ category: '' })}>All</button>
         {categories.map((c) => (
           <button
@@ -115,7 +115,7 @@ export default function Catalog() {
           <button type="button" className="text-action" onClick={clearAll}>Show all equipment</button>
         </EmptyState>
       ) : (
-        <div className="catalog-grid mb-5">
+        <div className="catalog-grid mb-4">
           {data.items.map((item) => (
             <Link key={item._id} to={`/equipment/${item._id}`} className="catalog-item equipment-card">
               <EquipmentImage item={item} height={180} />

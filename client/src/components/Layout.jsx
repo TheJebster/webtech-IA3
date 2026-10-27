@@ -16,7 +16,10 @@ export default function Layout() {
         </Suspense>
       </main>
       <footer className="site-footer">
-        <div className="container">RentKit — event equipment rental. MongoDB, Express, React, Node.js.</div>
+        <div className="container d-flex flex-wrap justify-content-between gap-2">
+          <span>RentKit — event equipment rental</span>
+          <span>MongoDB · Express · React · Node.js</span>
+        </div>
       </footer>
     </div>
   );

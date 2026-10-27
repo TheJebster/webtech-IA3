@@ -69,7 +69,7 @@ export default function MyRentals() {
         <Link to="/catalog" className="btn btn-primary">New request</Link>
       </PageHeader>
 
-      <Nav variant="pills" activeKey={tab} onSelect={setTab} className="mb-5 flex-nowrap overflow-auto pb-1">
+      <Nav variant="pills" activeKey={tab} onSelect={setTab} className="mb-4 flex-nowrap overflow-auto pb-1">
         {TABS.map((t) => (
           <Nav.Item key={t.key}>
             <Nav.Link eventKey={t.key} className="text-nowrap">
@@ -86,13 +86,13 @@ export default function MyRentals() {
           <Link to="/catalog" className="btn btn-primary">Browse equipment</Link>
         </EmptyState>
       ) : (
-        <Row xs={1} md={2} className="g-5">
+        <Row xs={1} md={2} className="g-3">
           {visible.map((r) => (
             <Col key={r._id}>
               <div className="h-100 d-flex flex-column rental-card">
                   <div className="d-flex justify-content-between align-items-start gap-2 mb-2">
                     <div className="min-w-0">
-                      <div className="small text-muted">{r.code} · requested {formatDate(r.createdAt)}</div>
+                      <div className="small text-muted"><span className="mono">{r.code}</span> · requested {formatDate(r.createdAt)}</div>
                       <h2 className="h5 mb-0 text-truncate">{r.eventName}</h2>
                     </div>
                     <RentalStatusBadge status={r.status} />

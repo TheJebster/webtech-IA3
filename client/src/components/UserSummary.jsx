@@ -16,7 +16,7 @@ export default function UserSummary() {
   const approved = data.byStatus.approved || 0;
 
   return (
-    <p className="mb-5 user-summary">
+    <p className="mb-4 user-summary">
       {data.total === 0 ? (
         <span className="text-muted">No rentals yet — add equipment to a request to get started.</span>
       ) : (

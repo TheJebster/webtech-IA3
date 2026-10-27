@@ -1,7 +1,10 @@
+import { useState } from 'react';
+import { Container, Nav, Navbar } from 'react-bootstrap';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useCart } from '../context/CartContext';
+import BrandMark from './BrandMark';
 
 const ADMIN_LINKS = [
   { to: '/admin', label: 'Dashboard', end: true },
@@ -15,16 +18,19 @@ const USER_LINKS = [
   { to: '/my-rentals', label: 'My rentals' },
 ];
 
-// Name and year on the left; a stacked, right-aligned list of text links on the right
+// Fixed top bar: logo left, text links, account actions right
 export default function AppNavbar() {
   const { user, isAdmin, logout } = useAuth();
   const { count } = useCart();
   const notify = useToast();
   const navigate = useNavigate();
+  const [expanded, setExpanded] = useState(false);
+  const close = () => setExpanded(false);
 
   const handleLogout = () => {
+    close();
     logout();
-    notify('You have been logged out.', 'secondary');
+    notify('You have been logged out.');
     navigate('/login');
   };
 
@@ -32,38 +38,41 @@ export default function AppNavbar() {
 
   return (
     <header className="site-header">
-      <div className="container">
-        <Link to="/" className="site-name" aria-label="RentKit home">
-          RentKit
-          <br />
-          {new Date().getFullYear()}
-        </Link>
-        <nav aria-label="Main">
-          <ul className="site-nav">
-            {links.map((link) => (
-              <li key={link.to}>
-                <NavLink to={link.to} end={link.end}>
+      <Navbar expand="md" expanded={expanded} onToggle={setExpanded} variant="dark">
+        <Container>
+          <Link to="/" className="brand me-4" onClick={close}>
+            <BrandMark />
+            RentKit
+          </Link>
+          <Navbar.Toggle aria-controls="main-nav" />
+          <Navbar.Collapse id="main-nav" className="site-nav">
+            <Nav className="me-auto">
+              {links.map((link) => (
+                <Nav.Link key={link.to} as={NavLink} to={link.to} end={link.end} onClick={close}>
                   {link.label}
-                  {link.to === '/rental-request' && count > 0 && ` (${count})`}
-                </NavLink>
-              </li>
-            ))}
-            {user ? (
-              <>
-                <li className="nav-gap" aria-hidden="true" />
-                <li className="nav-meta">{user.name} · {user.role}</li>
-                <li><NavLink to="/account/password" className="nav-meta">Change password</NavLink></li>
-                <li><button type="button" className="nav-meta" onClick={handleLogout}>Log out</button></li>
-              </>
-            ) : (
-              <>
-                <li><NavLink to="/login">Log in</NavLink></li>
-                <li><NavLink to="/signup">Sign up</NavLink></li>
-              </>
-            )}
-          </ul>
-        </nav>
-      </div>
+                  {link.to === '/rental-request' && count > 0 && <span className="count-pill" aria-label={`${count} items`}>{count}</span>}
+                </Nav.Link>
+              ))}
+            </Nav>
+            <Nav className="align-items-md-center gap-md-1 py-2 py-md-0">
+              {user ? (
+                <>
+                  <span className="nav-user px-md-2 py-1">{user.name} · {user.role}</span>
+                  <Nav.Link as={NavLink} to="/account/password" onClick={close}>Password</Nav.Link>
+                  <button type="button" className="btn btn-outline-secondary btn-sm ms-md-2 align-self-start align-self-md-center" onClick={handleLogout}>
+                    Log out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Nav.Link as={NavLink} to="/login" onClick={close}>Log in</Nav.Link>
+                  <Link to="/signup" className="btn btn-light btn-sm ms-md-2 align-self-start align-self-md-center" onClick={close}>Sign up</Link>
+                </>
+              )}
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
     </header>
   );
 }

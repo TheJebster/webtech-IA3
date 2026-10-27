@@ -3,32 +3,34 @@ import { Link } from 'react-router-dom';
 import usePageTitle from '../hooks/usePageTitle';
 import { homePathFor, useAuth } from '../context/AuthContext';
 
-const STEPS = [
-  { title: 'Browse the catalog', text: 'Search sound, lighting, staging, furniture and more, with daily rates.' },
-  { title: 'Request your dates', text: 'Choose dates and quantities. Availability and cost are calculated instantly.' },
-  { title: 'Get it approved', text: 'Our team reviews the request. Follow its status from your rentals page.' },
+const ADMIN_CAPS = [
+  'Dashboard with inventory, users, revenue and recent activity',
+  'One operations page to view, add, update, hide and delete equipment',
+  'Approve, reject, return or cancel rental requests',
+  'Add users, edit details and roles, deactivate or remove them',
 ];
 
-const ROLES = [
-  {
-    title: 'Administrators',
-    caps: [
-      'A dashboard of inventory, users, rentals and recent activity',
-      'One operations page to view, add, update and delete equipment',
-      'Approve, reject and close rental requests',
-      'Add users, edit details and roles, deactivate or remove them',
-    ],
-  },
-  {
-    title: 'Customers',
-    caps: [
-      'Browse and search the full equipment catalog',
-      'Read the details, rate and features of every item',
-      'Request rentals for an event and follow their status',
-      'Change their password at any time',
-    ],
-  },
+const CUSTOMER_STEPS = [
+  'Browse and search the catalog of sound, lighting, staging and furniture',
+  'Add equipment to a request and pick your event dates',
+  'See live availability and the total cost before you submit',
+  'Follow the request from pending to approved on My rentals',
 ];
+
+const STACK = [
+  ['MongoDB', 'database'],
+  ['Express', 'REST API'],
+  ['React', 'interface'],
+  ['Node.js', 'runtime'],
+];
+
+function Screenshot({ src, alt }) {
+  return (
+    <div className="shot-frame">
+      <img src={src} alt={alt} loading="lazy" />
+    </div>
+  );
+}
 
 export default function Landing() {
   usePageTitle(null);
@@ -36,51 +38,42 @@ export default function Landing() {
 
   return (
     <>
-      <section>
+      <section className="hero">
         <Container>
-          <div className="intro">
-            <h1 className="display-xl mb-0">Event equipment, rented simply.</h1>
-            <p>
-              Sound, lighting, staging and furniture for weddings, concerts, college fests and corporate events —
-              requested online and approved by our team.
-            </p>
-            <div className="action-row mt-4">
+          <div className="hero-row">
+            <div>
+              <h1 className="display-hero">Event equipment rental, built for precision.</h1>
+              <p className="lead-muted mt-4 mb-0" style={{ maxWidth: 560 }}>
+                RentKit lets you rent sound, lighting, staging and furniture for weddings, concerts, college fests and
+                corporate events — and gives our team one place to manage it all.
+              </p>
+            </div>
+            <div className="action-row">
               {user ? (
                 <Link to={homePathFor(user)} className="btn btn-primary">
-                  {user.role === 'admin' ? 'Open the dashboard' : 'Browse equipment'}
+                  {user.role === 'admin' ? 'Open dashboard' : 'Browse equipment'}
                 </Link>
               ) : (
                 <>
                   <Link to="/signup" className="btn btn-primary">Create an account</Link>
-                  <Link to="/login" className="btn btn-outline-secondary">Log in</Link>
+                  <Link to="/login" className="link-arrow">Log in</Link>
                 </>
               )}
             </div>
           </div>
-
-          {/* Project row: the product itself, shown in device frames */}
-          <div className="project-row section" aria-hidden="true">
-            <div className="device-laptop">
-              <div className="screen"><img src="/showcase/desktop.png" alt="" loading="lazy" /></div>
-              <div className="base" />
-            </div>
-            <div className="device-phone">
-              <img src="/showcase/mobile.png" alt="" loading="lazy" />
-            </div>
-          </div>
         </Container>
+        <div className="hero-floor">
+          <Container>
+            <Screenshot src="/showcase/catalog.png" alt="The RentKit equipment catalog" />
+          </Container>
+        </div>
       </section>
 
-      <section className="section">
+      <section>
         <Container>
-          <h2 className="mb-5">How it works</h2>
-          <div className="step-list">
-            {STEPS.map(({ title, text }, i) => (
-              <div key={title}>
-                <span className="step-no">{i + 1}</span>
-                <h3>{title}</h3>
-                <p>{text}</p>
-              </div>
+          <div className="stack-strip" aria-label="Built with">
+            {STACK.map(([name, role]) => (
+              <span key={name}><strong>{name}</strong> {role}</span>
             ))}
           </div>
         </Container>
@@ -88,16 +81,34 @@ export default function Landing() {
 
       <section className="section">
         <Container>
-          <h2 className="mb-5">Two roles</h2>
-          <Row xs={1} md={2} className="g-5">
-            {ROLES.map(({ title, caps }) => (
-              <Col key={title}>
-                <h3 className="mb-3">{title}</h3>
-                <ul className="plain-list text-muted">
-                  {caps.map((c) => <li key={c}>{c}</li>)}
-                </ul>
-              </Col>
-            ))}
+          <Row className="g-5 align-items-center">
+            <Col lg={5}>
+              <h2 className="section-heading mb-4">For customers</h2>
+              <p className="lead-muted mb-4">From an idea to an equipped event in a few minutes.</p>
+              <ul className="feature-list">
+                {CUSTOMER_STEPS.map((s) => <li key={s}>{s}</li>)}
+              </ul>
+            </Col>
+            <Col lg={7}>
+              <Screenshot src="/showcase/request.png" alt="A rental request with live availability and pricing" />
+            </Col>
+          </Row>
+        </Container>
+      </section>
+
+      <section className="section">
+        <Container>
+          <Row className="g-5 align-items-center flex-lg-row-reverse">
+            <Col lg={5}>
+              <h2 className="section-heading mb-4">For administrators</h2>
+              <p className="lead-muted mb-4">Role-based access gives the team the tools — and only the team.</p>
+              <ul className="feature-list">
+                {ADMIN_CAPS.map((s) => <li key={s}>{s}</li>)}
+              </ul>
+            </Col>
+            <Col lg={7}>
+              <Screenshot src="/showcase/dashboard.png" alt="The RentKit admin dashboard" />
+            </Col>
           </Row>
         </Container>
       </section>

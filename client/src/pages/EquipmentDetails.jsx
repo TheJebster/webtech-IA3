@@ -32,7 +32,7 @@ export default function EquipmentDetails() {
   }, [id]);
 
   const back = (
-    <button type="button" className="text-action quiet mb-5" onClick={() => navigate(-1)}>← Back</button>
+    <button type="button" className="text-action quiet mb-4" onClick={() => navigate(-1)}>← Back</button>
   );
 
   if (error) {
@@ -69,7 +69,7 @@ export default function EquipmentDetails() {
           <div className="text-muted mb-2">
             {item.category} · Condition: {item.condition}{!item.isActive && ' · Hidden from customers'}
           </div>
-          <h1 className="mb-3">{item.name}</h1>
+          <h1 className="section-heading mb-3">{item.name}</h1>
           <div className="mb-4">
             <span className="price-xl">{formatCurrency(item.dailyRate)}</span> <span className="text-muted">/ day</span>
           </div>
@@ -77,8 +77,8 @@ export default function EquipmentDetails() {
 
           {item.features?.length > 0 && (
             <div className="mb-5">
-              <h2 className="mb-3">Key features</h2>
-              <ul className="plain-list">
+              <div className="panel-title">Key features</div>
+              <ul className="feature-list">
                 {item.features.map((f) => <li key={f}>{f}</li>)}
               </ul>
             </div>
@@ -87,8 +87,8 @@ export default function EquipmentDetails() {
           <p className="mb-5"><span className="text-muted">Units in our inventory</span> <strong>{item.quantityTotal}</strong></p>
 
           {!isAdmin && (
-            <div>
-              <h2 className="mb-3">Rent this for your event</h2>
+            <div className="panel">
+              <div className="panel-title">Rent this for your event</div>
               <div className="action-row">
                 <button type="button" className="text-action" aria-label="Decrease quantity" onClick={() => setQty((q) => clamp((Number(q) || 1) - 1))} disabled={Number(qty) <= 1}>−</button>
                 <Form.Control
@@ -103,7 +103,7 @@ export default function EquipmentDetails() {
                   onBlur={() => setQty((q) => q || 1)}
                 />
                 <button type="button" className="text-action" aria-label="Increase quantity" onClick={() => setQty((q) => clamp((Number(q) || 0) + 1))} disabled={Number(qty) >= item.quantityTotal}>+</button>
-                <button type="button" className="btn btn-primary ms-3" onClick={handleAdd} disabled={item.quantityTotal < 1}>Add to rental request</button>
+                <button type="button" className="btn btn-primary ms-md-2" onClick={handleAdd} disabled={item.quantityTotal < 1}>Add to rental request</button>
               </div>
               {inCart && (
                 <p className="mt-4 mb-0">

@@ -90,7 +90,7 @@ export default function EquipmentManager() {
       <div className="action-row mb-4">
         <button type="button" className="btn btn-primary" onClick={() => setEditing({})}>Add equipment</button>
       </div>
-      <Row className="g-4 mb-4">
+      <Row className="g-2 mb-3">
         <Col lg={6}>
           <Form.Control name="q" value={filters.q} onChange={setFilter} placeholder="Search name or description…" aria-label="Search equipment" />
         </Col>

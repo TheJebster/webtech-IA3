@@ -112,7 +112,7 @@ export default function RentalsManager() {
           </Nav.Item>
         ))}
       </Nav>
-      <Row className="g-4 mb-4">
+      <Row className="g-2 mb-3">
         <Col md={6}>
           <Form.Control
             value={search}
@@ -144,7 +144,7 @@ export default function RentalsManager() {
               <tr key={r._id}>
                 <td>
                   <div className="fw-semibold">{r.eventName}</div>
-                  <div className="small text-muted">{r.code} · {r.items.length} item{r.items.length > 1 ? 's' : ''}</div>
+                  <div className="small text-muted"><span className="mono">{r.code}</span> · {r.items.length} item{r.items.length > 1 ? 's' : ''}</div>
                 </td>
                 <td className="d-none d-md-table-cell">
                   <div>{r.customerName}</div>

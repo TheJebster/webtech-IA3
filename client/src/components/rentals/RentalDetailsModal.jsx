@@ -8,8 +8,8 @@ export default function RentalDetailsModal({ rental, show, onClose, showCustomer
   return (
     <Modal show={show} onHide={onClose} size="lg" centered>
       <Modal.Header closeButton>
-        <Modal.Title className="h5 d-flex align-items-center gap-2 flex-wrap">
-          {rental.eventName} <span className="text-muted small fw-normal">{rental.code}</span>
+        <Modal.Title className="d-flex align-items-center gap-2 flex-wrap">
+          {rental.eventName} <span className="mono small fw-normal">{rental.code}</span>
           <RentalStatusBadge status={rental.status} />
         </Modal.Title>
       </Modal.Header>

@@ -44,7 +44,7 @@ export default function AdminHome() {
         <Link to="/admin/operations?tab=equipment" className="btn btn-outline-secondary">Manage equipment</Link>
       </PageHeader>
 
-      <Row xs={2} lg={4} className="g-5">
+      <Row xs={2} lg={4} className="g-3">
         <Col><StatCard label="Equipment items" value={data.equipment.total} hint={`${data.equipment.units} units · ${data.equipment.hidden} hidden`} /></Col>
         <Col><StatCard label="Registered users" value={data.users.total} hint={`${data.users.customers} customers · ${data.users.admins} admin${data.users.admins === 1 ? '' : 's'}`} /></Col>
         <Col><StatCard label="Pending requests" value={pending} hint={`${data.rentals.total} rentals in total`} /></Col>
@@ -52,26 +52,27 @@ export default function AdminHome() {
       </Row>
 
       <div className="block-gap">
-        <h2 className="mb-4">What you can do</h2>
-        <Row xs={1} sm={2} lg={4} className="g-4">
+        <div className="panel-title">What you can do</div>
+        <Row xs={1} sm={2} lg={4} className="g-3">
           {CAPABILITIES.map(({ to, title, text }) => (
             <Col key={title}>
               <Link to={to} className="catalog-item">
                 <span className="catalog-name">{title}</span>
-                <span className="text-muted">{text}</span>
+                <span className="catalog-desc mb-0">{text}</span>
               </Link>
             </Col>
           ))}
         </Row>
       </div>
 
-      <Row className="g-5 block-gap">
+      <Row className="g-3 block-gap">
         <Col lg={7}>
-          <h2 className="mb-4">Upcoming rentals</h2>
+          <div className="panel">
+          <div className="panel-title">Upcoming rentals</div>
           {data.upcoming.length === 0 ? (
             <p className="text-muted">Nothing scheduled.</p>
           ) : (
-            <ul className="plain-list" style={{ gap: 25 }}>
+            <ul className="plain-list" style={{ gap: 16 }}>
               {data.upcoming.map((r) => (
                 <li key={r._id} className="d-flex justify-content-between gap-4">
                   <div className="min-w-0">
@@ -80,17 +81,19 @@ export default function AdminHome() {
                   </div>
                   <div className="text-end text-nowrap">
                     <RentalStatusBadge status={r.status} />
-                    <div className="small">{formatCurrency(r.totalCost)}</div>
+                    <div className="small mt-1">{formatCurrency(r.totalCost)}</div>
                   </div>
                 </li>
               ))}
             </ul>
           )}
-          <Link to="/admin/operations?tab=rentals" className="btn btn-outline-secondary mt-4">All rentals</Link>
+          <Link to="/admin/operations?tab=rentals" className="link-arrow d-inline-block mt-4">All rentals</Link>
+          </div>
 
-          <Row xs={1} md={2} className="g-5 block-gap">
+          <Row xs={1} md={2} className="g-3 mt-0">
             <Col>
-              <h2 className="mb-4">Top equipment</h2>
+              <div className="panel h-100">
+              <div className="panel-title">Top equipment by revenue</div>
               {data.topEquipment.length === 0 ? (
                 <p className="text-muted">No completed rentals yet.</p>
               ) : (
@@ -100,23 +103,27 @@ export default function AdminHome() {
                   rows={data.topEquipment.map((t) => ({ key: String(t.equipment), label: t.name, value: t.revenue, hint: `${t.units} units rented` }))}
                 />
               )}
+              </div>
             </Col>
             <Col>
-              <h2 className="mb-4">Rentals by status</h2>
+              <div className="panel h-100">
+              <div className="panel-title">Rentals by status</div>
               <RankList
                 label="Rentals by status"
                 rows={Object.keys(STATUS_META).map((s) => ({ key: s, label: STATUS_META[s].label, value: data.rentals.byStatus[s] || 0 }))}
               />
+              </div>
             </Col>
           </Row>
         </Col>
 
         <Col lg={5}>
-          <h2 className="mb-4">Recent activity</h2>
+          <div className="panel">
+          <div className="panel-title">Recent activity</div>
           {data.recentActivity.length === 0 ? (
             <p className="text-muted">No activity yet.</p>
           ) : (
-            <ul className="plain-list" style={{ gap: 18 }}>
+            <ul className="plain-list small" style={{ gap: 14 }}>
               {data.recentActivity.map((a) => (
                 <li key={a._id}>
                   <strong>{a.actorName}</strong> {a.message}
@@ -126,12 +133,16 @@ export default function AdminHome() {
             </ul>
           )}
 
-          <h2 className="mb-4 block-gap">Inventory by category</h2>
+          </div>
+
+          <div className="panel mt-3">
+          <div className="panel-title">Inventory by category</div>
           <RankList
             label="Units owned by category"
             format={(v) => `${v} units`}
             rows={data.byCategory.map((c) => ({ key: c.category, label: c.category, hint: `${c.items} items`, value: c.units }))}
           />
+          </div>
         </Col>
       </Row>
     </Container>

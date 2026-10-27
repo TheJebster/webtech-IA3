@@ -1,10 +1,12 @@
-// Page title in the ultralight display cut, with optional text actions beneath
+// Page title (and muted subtitle) on the left, actions on the right
 export default function PageHeader({ title, subtitle, children }) {
   return (
-    <div className="mb-5">
-      <h1 className="mb-2">{title}</h1>
-      {subtitle && <p className="text-muted mb-0">{subtitle}</p>}
-      {children && <div className="action-row mt-4">{children}</div>}
+    <div className="page-header">
+      <div>
+        <h1 className="mb-0">{title}</h1>
+        {subtitle && <p>{subtitle}</p>}
+      </div>
+      {children && <div className="action-row">{children}</div>}
     </div>
   );
 }

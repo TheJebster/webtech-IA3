@@ -90,7 +90,7 @@ export default function Users() {
       </PageHeader>
 
       {s && (
-        <Row xs={2} lg={4} className="g-5 mb-5">
+        <Row xs={2} lg={4} className="g-3 mb-4">
           <Col><StatCard label="Accounts" value={s.total} /></Col>
           <Col><StatCard label="Admins" value={s.admins} /></Col>
           <Col><StatCard label="Active" value={s.active} /></Col>
@@ -98,7 +98,7 @@ export default function Users() {
         </Row>
       )}
 
-      <Row className="g-4 mb-4">
+      <Row className="g-2 mb-3">
         <Col md={6}>
           <Form.Control name="q" value={filters.q} onChange={setFilter} placeholder="Search name, email or phone…" aria-label="Search users" />
         </Col>
@@ -141,12 +141,12 @@ export default function Users() {
               return (
                 <tr key={u._id} className={u.isActive ? '' : 'text-muted'}>
                   <td>
-                    <div className="fw-semibold text-nowrap">{u.name}{isSelf && <span className="text-muted fw-normal"> (you)</span>}</div>
+                    <div className="fw-semibold text-nowrap">{u.name}{isSelf && <span className="badge ms-2">You</span>}</div>
                     <div className="small text-muted">{u.email}</div>
                     {!u.isActive && <div className="small d-sm-none">Deactivated</div>}
                   </td>
                   <td className="text-nowrap d-none d-lg-table-cell">{u.phone || <span className="text-muted">—</span>}</td>
-                  <td><span className={`status ${u.role === 'admin' ? 'status-active' : 'status-closed'}`}>{u.role}</span></td>
+                  <td><span className={`status ${u.role === 'admin' ? 'status-admin' : 'status-closed'}`}>{u.role}</span></td>
                   <td className="d-none d-sm-table-cell">
                     <span className={`status ${u.isActive ? 'status-active' : 'status-closed'}`}>{u.isActive ? 'Active' : 'Deactivated'}</span>
                   </td>

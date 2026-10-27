@@ -132,16 +132,17 @@ export default function RentalRequest() {
     <Container>
       <PageHeader title="Rental request" subtitle="Review your equipment, choose event dates and send the request for approval." />
       <Form noValidate onSubmit={handleSubmit}>
-        <Row className="g-5">
+        <Row className="g-3">
           <Col lg={7}>
+            <div className="panel">
             <div className="d-flex justify-content-between align-items-baseline mb-4">
               <h2 className="mb-0">Equipment ({items.length})</h2>
-              <Link to="/catalog" className="text-muted">Add more</Link>
+              <Link to="/catalog" className="link-arrow">Add more</Link>
             </div>
             {items.map(({ equipment, quantity }) => {
               const line = lineFor(equipment._id);
               return (
-                <div key={equipment._id} className="request-line mb-5">
+                <div key={equipment._id} className="request-line mb-4">
                   <div className="d-flex justify-content-between gap-3">
                     <Link to={`/equipment/${equipment._id}`} className="fw-semibold">{equipment.name}</Link>
                     <span className="text-nowrap">
@@ -180,10 +181,11 @@ export default function RentalRequest() {
                 </div>
               );
             })}
+            </div>
           </Col>
 
           <Col lg={5}>
-            <div className="sticky-lg-top request-summary" style={{ top: 24 }}>
+            <div className="panel sticky-lg-top request-summary" style={{ top: 72 }}>
               <h2 className="mb-4">Event details</h2>
               {serverError && <Alert variant="danger" className="small">{serverError}</Alert>}
               <Row className="g-4">
