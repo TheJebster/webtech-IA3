@@ -88,7 +88,7 @@ export default function EquipmentManager() {
   };
 
   return (
-    <Card className="border-0 shadow-sm">
+    <Card className="">
       <Card.Body className="p-3 p-md-4">
         <Row className="g-2 align-items-center mb-3">
           <Col lg={4}>

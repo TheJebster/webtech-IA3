@@ -14,7 +14,7 @@ export default function Operations() {
 
   return (
     <Container className="py-4">
-      <PageHeader title="Operations" subtitle="View, add, update and delete equipment and manage rental requests." />
+      <PageHeader title="Operations" sticker="🛠️" subtitle="View, add, update and delete equipment and manage rental requests." />
       <Tab.Container activeKey={tab} onSelect={(key) => setParams({ tab: key }, { replace: true })}>
         <Nav variant="pills" className="mb-3 gap-2">
           <Nav.Item>

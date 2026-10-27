@@ -16,10 +16,10 @@ import RentalStatusBadge, { STATUS_META } from '../../components/rentals/RentalS
 import usePageTitle from '../../hooks/usePageTitle';
 
 const CAPABILITIES = [
-  { to: '/admin/operations?tab=equipment', icon: Tools, title: 'Equipment operations', text: 'View, add, update, hide and delete catalog items.' },
-  { to: '/admin/operations?tab=rentals', icon: ClipboardCheck, title: 'Rental requests', text: 'Approve, reject, close or delete customer bookings.' },
-  { to: '/admin/users', icon: PeopleFill, title: 'User management', text: 'Add users, edit details and roles, deactivate or remove.' },
-  { to: '/account/password', icon: ShieldLock, title: 'Account security', text: 'Change your admin password at any time.' },
+  { to: '/admin/operations?tab=equipment', accent: '', icon: Tools, title: 'Equipment operations', text: 'View, add, update, hide and delete catalog items.' },
+  { to: '/admin/operations?tab=rentals', accent: 'blue', icon: ClipboardCheck, title: 'Rental requests', text: 'Approve, reject, close or delete customer bookings.' },
+  { to: '/admin/users', accent: 'peach', icon: PeopleFill, title: 'User management', text: 'Add users, edit details and roles, deactivate or remove.' },
+  { to: '/account/password', accent: 'black', icon: ShieldLock, title: 'Account security', text: 'Change your admin password at any time.' },
 ];
 
 const ACTIVITY_ICON = { user: PeopleFill, equipment: BoxSeam, rental: ClipboardCheck };
@@ -41,33 +41,38 @@ export default function AdminHome() {
 
   return (
     <Container className="py-4">
-      <div className="dash-hero rounded-4 p-4 p-md-5 mb-4 text-white">
-        <div className="small text-uppercase opacity-75 fw-semibold mb-1">Admin dashboard</div>
-        <h1 className="h2 fw-bold mb-2">Welcome back, {user.name.split(' ')[0]}</h1>
-        <p className="mb-3 opacity-75">
+      <div className="dash-hero p-4 p-md-5 mb-4">
+        <span className="hero-eyebrow mb-3"><span className="dot" />Admin dashboard</span>
+        <h1 className="heading-lg mb-3">
+          Welcome back, {user.name.split(' ')[0]} <span className="sticker" aria-hidden="true">👋</span>
+        </h1>
+        <p className="mb-4 text-muted" style={{ fontSize: 18 }}>
           {data.rentals.pending > 0
             ? `${data.rentals.pending} rental request${data.rentals.pending > 1 ? 's are' : ' is'} waiting for your review.`
             : 'All rental requests are up to date.'}
         </p>
-        <Link to="/admin/operations?tab=rentals" className="btn btn-light fw-semibold">
-          Review requests <ArrowRight className="ms-1" />
-        </Link>
+        <div className="d-flex flex-wrap gap-3">
+          <Link to="/admin/operations?tab=rentals" className="btn btn-primary btn-lg">
+            Review requests <ArrowRight className="ms-1" />
+          </Link>
+          <Link to="/admin/operations?tab=equipment" className="btn btn-dark btn-lg">Manage equipment</Link>
+        </div>
       </div>
 
       <Row xs={1} sm={2} xl={4} className="g-3 mb-4">
         <Col><StatCard icon={BoxSeam} label="Equipment items" value={data.equipment.total} hint={`${data.equipment.units} units · ${data.equipment.hidden} hidden`} /></Col>
-        <Col><StatCard icon={PeopleFill} label="Registered users" value={data.users.total} hint={`${data.users.customers} customers · ${data.users.admins} admin${data.users.admins === 1 ? '' : 's'}`} accent="info" /></Col>
-        <Col><StatCard icon={HourglassSplit} label="Pending requests" value={data.rentals.pending} hint={`${data.rentals.total} rentals in total`} accent="warning" /></Col>
-        <Col><StatCard icon={CashStack} label="Rental revenue" value={formatCurrency(data.revenue.total)} hint={`from ${data.revenue.rentals} approved / returned`} accent="success" /></Col>
+        <Col><StatCard icon={PeopleFill} label="Registered users" value={data.users.total} hint={`${data.users.customers} customers · ${data.users.admins} admin${data.users.admins === 1 ? '' : 's'}`} accent="blue" /></Col>
+        <Col><StatCard icon={HourglassSplit} label="Pending requests" value={data.rentals.pending} hint={`${data.rentals.total} rentals in total`} accent="peach" /></Col>
+        <Col><StatCard icon={CashStack} label="Rental revenue" value={formatCurrency(data.revenue.total)} hint={`from ${data.revenue.rentals} approved / returned`} accent="black" /></Col>
       </Row>
 
-      <h2 className="h5 fw-bold mb-3">What you can do</h2>
+      <h2 className="h3 mb-3">What you can do</h2>
       <Row xs={1} sm={2} lg={4} className="g-3 mb-4">
-        {CAPABILITIES.map(({ to, icon: Icon, title, text }) => (
+        {CAPABILITIES.map(({ to, accent, icon: Icon, title, text }) => (
           <Col key={title}>
-            <Card as={Link} to={to} className="h-100 border-0 shadow-sm text-decoration-none text-body capability-card">
-              <Card.Body>
-                <div className="icon-circle mb-2"><Icon size={20} /></div>
+            <Card as={Link} to={to} className="h-100 text-decoration-none text-body capability-card">
+              <Card.Body className="p-4">
+                <div className={`icon-circle ${accent} mb-3`}><Icon size={20} /></div>
                 <div className="fw-semibold mb-1">{title}</div>
                 <div className="small text-muted">{text}</div>
               </Card.Body>
@@ -78,7 +83,7 @@ export default function AdminHome() {
 
       <Row className="g-4">
         <Col lg={7}>
-          <Card className="border-0 shadow-sm mb-4">
+          <Card className="mb-4">
             <Card.Header className="bg-white py-3 d-flex justify-content-between align-items-center">
               <span className="fw-semibold d-flex align-items-center gap-2"><CalendarEvent />Upcoming rentals</span>
               <Link to="/admin/operations?tab=rentals" className="small">View all</Link>
@@ -105,7 +110,7 @@ export default function AdminHome() {
 
           <Row className="g-4">
             <Col md={6}>
-              <Card className="border-0 shadow-sm h-100">
+              <Card className="h-100">
                 <Card.Header className="bg-white py-3 fw-semibold d-flex align-items-center gap-2"><GraphUp />Top equipment by revenue</Card.Header>
                 <Card.Body>
                   {data.topEquipment.length === 0 ? (
@@ -121,7 +126,7 @@ export default function AdminHome() {
               </Card>
             </Col>
             <Col md={6}>
-              <Card className="border-0 shadow-sm h-100">
+              <Card className="h-100">
                 <Card.Header className="bg-white py-3 fw-semibold d-flex align-items-center gap-2"><ClipboardCheck />Rentals by status</Card.Header>
                 <ListGroup variant="flush">
                   {statusRows.map((s) => (
@@ -139,7 +144,7 @@ export default function AdminHome() {
         </Col>
 
         <Col lg={5}>
-          <Card className="border-0 shadow-sm mb-4">
+          <Card className="mb-4">
             <Card.Header className="bg-white py-3 fw-semibold d-flex align-items-center gap-2"><ClockHistory />Recent activity</Card.Header>
             {data.recentActivity.length === 0 ? (
               <EmptyState title="No activity yet" />
@@ -149,7 +154,7 @@ export default function AdminHome() {
                   const Icon = ACTIVITY_ICON[a.entity] || ClockHistory;
                   return (
                     <ListGroup.Item key={a._id} className="d-flex gap-3 py-3">
-                      <div className="activity-icon flex-shrink-0"><Icon size={14} /></div>
+                      <div className={`activity-icon ${a.entity || ''} flex-shrink-0`}><Icon size={14} /></div>
                       <div className="min-w-0">
                         <div className="small"><strong>{a.actorName}</strong> {a.message}</div>
                         <div className="small text-muted">{timeAgo(a.createdAt)}</div>
@@ -161,7 +166,7 @@ export default function AdminHome() {
             )}
           </Card>
 
-          <Card className="border-0 shadow-sm">
+          <Card className="">
             <Card.Header className="bg-white py-3 fw-semibold d-flex align-items-center gap-2"><BoxSeam />Inventory by category</Card.Header>
             <Card.Body>
               <BarList

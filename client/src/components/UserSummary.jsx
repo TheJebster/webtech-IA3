@@ -20,7 +20,7 @@ export default function UserSummary() {
   const approved = data.byStatus.approved || 0;
 
   return (
-    <Card className="border-0 shadow-sm mb-4 user-summary">
+    <Card className="mb-4 user-summary">
       <Card.Body className="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-center">
         <div>
           <div className="fw-bold">Hi {user.name.split(' ')[0]} 👋</div>

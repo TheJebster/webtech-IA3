@@ -52,9 +52,9 @@ export default function Login() {
 
   return (
     <div className="auth-wrapper">
-      <Card className="auth-card border-0 shadow">
+      <Card className="auth-card">
         <Card.Body className="p-4 p-sm-5">
-          <h1 className="h3 fw-bold mb-1">Log in</h1>
+          <h1 className="h2 mb-1">Log in <span className="sticker" aria-hidden="true">👋</span></h1>
           <p className="text-muted mb-4">Welcome back to RentKit.</p>
 
           {serverError && <Alert variant="danger">{serverError}</Alert>}

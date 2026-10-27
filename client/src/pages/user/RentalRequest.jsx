@@ -122,8 +122,8 @@ export default function RentalRequest() {
   if (!items.length) {
     return (
       <Container className="py-4">
-        <PageHeader title="Rental request" />
-        <Card className="border-0 shadow-sm">
+        <PageHeader title="Rental request" sticker="🛒" />
+        <Card className="">
           <EmptyState icon={CartX} title="Your rental request is empty" text="Browse the catalog and add the equipment you need for your event.">
             <Link to="/catalog" className="btn btn-primary">Browse equipment</Link>
           </EmptyState>
@@ -134,11 +134,11 @@ export default function RentalRequest() {
 
   return (
     <Container className="py-4">
-      <PageHeader title="Rental request" subtitle="Review your equipment, choose event dates and send the request for approval." />
+      <PageHeader title="Rental request" sticker="🛒" subtitle="Review your equipment, choose event dates and send the request for approval." />
       <Form noValidate onSubmit={handleSubmit}>
         <Row className="g-4">
           <Col lg={7}>
-            <Card className="border-0 shadow-sm">
+            <Card className="">
               <Card.Header className="bg-white d-flex justify-content-between align-items-center py-3">
                 <span className="fw-semibold">Equipment ({items.length})</span>
                 <Link to="/catalog" className="small">+ Add more</Link>
@@ -198,9 +198,9 @@ export default function RentalRequest() {
           </Col>
 
           <Col lg={5}>
-            <Card className="border-0 shadow-sm sticky-lg-top" style={{ top: 80 }}>
+            <Card className="sticky-lg-top" style={{ top: 80 }}>
               <Card.Body className="p-4">
-                <h2 className="h5 fw-bold mb-3 d-flex align-items-center gap-2"><CalendarEvent />Event details</h2>
+                <h2 className="h4 mb-3 d-flex align-items-center gap-2"><CalendarEvent />Event details</h2>
                 {serverError && <Alert variant="danger" className="small">{serverError}</Alert>}
                 <Row className="g-3">
                   <Col xs={12}>

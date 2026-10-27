@@ -99,7 +99,7 @@ export default function RentalsManager() {
     });
 
   return (
-    <Card className="border-0 shadow-sm">
+    <Card className="">
       <Card.Body className="p-3 p-md-4">
         <Nav variant="pills" activeKey={status} onSelect={(k) => { setStatus(k); setPage(1); }} className="gap-1 mb-3 flex-nowrap overflow-auto pb-1 small">
           {STATUS_TABS.map((s) => (

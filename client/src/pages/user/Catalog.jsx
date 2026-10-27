@@ -65,10 +65,10 @@ export default function Catalog() {
 
   return (
     <Container className="py-4">
-      <PageHeader title="Browse equipment" subtitle="Find everything you need for your event — sound, lighting, staging, furniture and more." />
+      <PageHeader title="Browse equipment" sticker="🔊" subtitle="Find everything you need for your event — sound, lighting, staging, furniture and more." />
       <UserSummary />
 
-      <Card className="border-0 shadow-sm mb-3">
+      <Card className="mb-3">
         <Card.Body className="p-3">
           <Row className="g-2">
             <Col md={8}>
@@ -137,7 +137,7 @@ export default function Catalog() {
         <Row xs={1} sm={2} lg={3} xl={4} className="g-3 mb-4">
           {data.items.map((item) => (
             <Col key={item._id}>
-              <Card className="h-100 border-0 shadow-sm equipment-card">
+              <Card className="h-100 equipment-card">
                 <EquipmentImage item={item} height={160} rounded={false} className="card-img-top" />
                 <Card.Body className="d-flex flex-column">
                   <div className="mb-1"><Badge bg="light" text="dark" className="border fw-medium">{item.category}</Badge></div>

@@ -64,7 +64,7 @@ export default function EquipmentDetails() {
       {back}
       <Row className="g-4">
         <Col lg={6}>
-          <EquipmentImage item={item} height={340} iconSize={110} className="shadow-sm" />
+          <EquipmentImage item={item} height={340} iconSize={110} />
         </Col>
         <Col lg={6}>
           <div className="d-flex flex-wrap gap-2 mb-2">
@@ -72,15 +72,15 @@ export default function EquipmentDetails() {
             <ConditionBadge condition={item.condition} prefix="Condition: " />
             {!item.isActive && <Badge bg="secondary">Hidden from customers</Badge>}
           </div>
-          <h1 className="h2 fw-bold">{item.name}</h1>
+          <h1 className="heading-lg mb-3" style={{ fontSize: 'clamp(1.8rem, 4vw, 44px)' }}>{item.name}</h1>
           <div className="mb-3">
-            <span className="display-6 fw-bold text-primary">{formatCurrency(item.dailyRate)}</span>
+            <span className="display-6 fw-bold">{formatCurrency(item.dailyRate)}</span>
             <span className="text-muted"> / day</span>
           </div>
           {item.description && <p className="text-muted">{item.description}</p>}
 
           {item.features?.length > 0 && (
-            <Card className="border-0 shadow-sm mb-3">
+            <Card className="mb-3">
               <Card.Body>
                 <h2 className="h6 fw-bold mb-2">Key features</h2>
                 <ul className="list-unstyled mb-0">
@@ -92,7 +92,7 @@ export default function EquipmentDetails() {
             </Card>
           )}
 
-          <Card className="border-0 shadow-sm mb-3">
+          <Card className="mb-3">
             <Card.Body className="d-flex justify-content-between">
               <span className="text-muted">Units in our inventory</span>
               <strong>{item.quantityTotal}</strong>
@@ -100,7 +100,7 @@ export default function EquipmentDetails() {
           </Card>
 
           {!isAdmin && (
-            <Card className="border-0 shadow-sm mb-3">
+            <Card className="mb-3">
               <Card.Body>
                 <h2 className="h6 fw-bold mb-3">Rent this for your event</h2>
                 <div className="d-flex flex-wrap gap-2 align-items-center">

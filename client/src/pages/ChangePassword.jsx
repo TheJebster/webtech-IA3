@@ -67,10 +67,10 @@ export default function ChangePassword() {
 
   return (
     <div className="auth-wrapper">
-      <Card className="auth-card border-0 shadow">
+      <Card className="auth-card">
         <Card.Body className="p-4 p-sm-5">
-          <div className="icon-circle mb-3"><ShieldLock size={22} /></div>
-          <h1 className="h3 fw-bold mb-1">Change password</h1>
+          <div className="icon-circle black mb-3"><ShieldLock size={22} /></div>
+          <h1 className="h2 mb-1">Change password <span className="sticker" aria-hidden="true">🔐</span></h1>
           <p className="text-muted mb-4">Keep your account secure with a strong password.</p>
 
           {serverError && <Alert variant="danger">{serverError}</Alert>}

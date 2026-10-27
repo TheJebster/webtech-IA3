@@ -76,9 +76,9 @@ export default function Signup() {
 
   return (
     <div className="auth-wrapper">
-      <Card className="auth-card auth-card-wide border-0 shadow">
+      <Card className="auth-card auth-card-wide">
         <Card.Body className="p-4 p-sm-5">
-          <h1 className="h3 fw-bold mb-1">Create your account</h1>
+          <h1 className="h2 mb-1">Create your account <span className="sticker" aria-hidden="true">✨</span></h1>
           <p className="text-muted mb-4">Rent equipment for your next event in minutes.</p>
 
           {serverError && <Alert variant="danger">{serverError}</Alert>}

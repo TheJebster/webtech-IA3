@@ -89,20 +89,20 @@ export default function Users() {
 
   return (
     <Container className="py-4">
-      <PageHeader title="User management" subtitle="Add, update, deactivate and remove user accounts.">
+      <PageHeader title="User management" sticker="👥" subtitle="Add, update, deactivate and remove user accounts.">
         <Button onClick={() => setEditing({})}><PersonPlus className="me-1" />Add user</Button>
       </PageHeader>
 
       {s && (
         <Row xs={2} lg={4} className="g-3 mb-4">
           <Col><StatCard icon={PeopleFill} label="Accounts" value={s.total} /></Col>
-          <Col><StatCard icon={PersonBadge} label="Admins" value={s.admins} accent="info" /></Col>
-          <Col><StatCard icon={PersonCheck} label="Active" value={s.active} accent="success" /></Col>
-          <Col><StatCard icon={PersonSlash} label="Deactivated" value={s.inactive} accent="secondary" /></Col>
+          <Col><StatCard icon={PersonBadge} label="Admins" value={s.admins} accent="blue" /></Col>
+          <Col><StatCard icon={PersonCheck} label="Active" value={s.active} accent="black" /></Col>
+          <Col><StatCard icon={PersonSlash} label="Deactivated" value={s.inactive} accent="gray" /></Col>
         </Row>
       )}
 
-      <Card className="border-0 shadow-sm">
+      <Card className="">
         <Card.Body className="p-3 p-md-4">
           <Row className="g-2 mb-3">
             <Col md={6}>

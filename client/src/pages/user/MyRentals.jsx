@@ -66,7 +66,7 @@ export default function MyRentals() {
 
   return (
     <Container className="py-4">
-      <PageHeader title="My rentals" subtitle="Track the status of your rental requests.">
+      <PageHeader title="My rentals" sticker="📋" subtitle="Track the status of your rental requests.">
         <Link to="/catalog" className="btn btn-primary">New request</Link>
       </PageHeader>
 
@@ -83,7 +83,7 @@ export default function MyRentals() {
       {loading ? (
         <PageLoader />
       ) : visible.length === 0 ? (
-        <Card className="border-0 shadow-sm">
+        <Card className="">
           <EmptyState icon={ClipboardCheck} title="No rentals here yet" text="When you request equipment for an event, it shows up here.">
             <Link to="/catalog" className="btn btn-outline-primary">Browse equipment</Link>
           </EmptyState>
@@ -92,12 +92,12 @@ export default function MyRentals() {
         <Row xs={1} md={2} className="g-3">
           {visible.map((r) => (
             <Col key={r._id}>
-              <Card className="h-100 border-0 shadow-sm rental-card">
+              <Card className="h-100 rental-card">
                 <Card.Body className="d-flex flex-column">
                   <div className="d-flex justify-content-between align-items-start gap-2 mb-2">
                     <div className="min-w-0">
                       <div className="small text-muted">{r.code} · requested {formatDate(r.createdAt)}</div>
-                      <h2 className="h5 fw-bold mb-0 text-truncate">{r.eventName}</h2>
+                      <h2 className="h5 mb-0 text-truncate">{r.eventName}</h2>
                     </div>
                     <RentalStatusBadge status={r.status} />
                   </div>
