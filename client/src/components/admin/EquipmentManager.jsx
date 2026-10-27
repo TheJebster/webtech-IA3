@@ -142,7 +142,7 @@ export default function EquipmentManager() {
               <tr key={item._id} className={item.isActive ? '' : 'text-muted'}>
                 <td>
                   <div className="d-flex align-items-center gap-2">
-                    <span className="ops-thumb"><EquipmentImage item={item} /></span>
+                    <span className="ops-thumb"><EquipmentImage item={item} size="thumb" /></span>
                     <Link to={`/equipment/${item._id}`} className="fw-semibold">{item.name}</Link>
                   </div>
                 </td>

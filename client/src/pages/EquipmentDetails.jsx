@@ -75,7 +75,7 @@ export default function EquipmentDetails() {
 
       <Row className="g-4 g-lg-5">
         <Col lg={7}>
-          <div className="product-media"><EquipmentImage item={item} /></div>
+          <div className="product-media"><EquipmentImage item={item} size="hero" /></div>
 
           <div className="mt-4">
             <h2 className="h3">About this item</h2>

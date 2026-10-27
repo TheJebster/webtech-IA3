@@ -1,24 +1,9 @@
 import { useState } from 'react';
-import { Image as ImageIcon } from 'react-bootstrap-icons';
+import ItemVisual from './store/ItemVisual';
 
-// Equipment photo with a neutral placeholder when there is no image (or it fails to load)
-export default function EquipmentImage({ item, className = '', style }) {
+// Uses the item's own photo when an admin has added one; otherwise the designed icon tile
+export default function EquipmentImage({ item, size = 'card', className = '' }) {
   const [failed, setFailed] = useState(false);
-  if (!item.imageUrl || failed) {
-    return (
-      <div className={`d-flex align-items-center justify-content-center text-muted w-100 h-100 ${className}`} style={style} role="img" aria-label={item.name}>
-        <ImageIcon size={28} />
-      </div>
-    );
-  }
-  return (
-    <img
-      src={item.imageUrl}
-      alt={item.name}
-      onError={() => setFailed(true)}
-      className={className}
-      style={style}
-      loading="lazy"
-    />
-  );
+  if (!item.imageUrl || failed) return <ItemVisual item={item} size={size} className={className} />;
+  return <img src={item.imageUrl} alt={item.name} onError={() => setFailed(true)} className={className} loading="lazy" />;
 }

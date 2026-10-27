@@ -19,7 +19,6 @@ const RentalRequest = lazy(() => import('./pages/user/RentalRequest'));
 const AdminHome = lazy(() => import('./pages/admin/AdminHome'));
 const Operations = lazy(() => import('./pages/admin/Operations'));
 const Users = lazy(() => import('./pages/admin/Users'));
-const Credits = lazy(() => import('./pages/Credits'));
 
 export default function App() {
   return (
@@ -33,7 +32,6 @@ export default function App() {
                 {/* Public storefront: anyone can browse */}
                 <Route path="catalog" element={<Catalog />} />
                 <Route path="equipment/:id" element={<EquipmentDetails />} />
-                <Route path="credits" element={<Credits />} />
 
                 {/* Guests only */}
                 <Route element={<GuestRoute />}>

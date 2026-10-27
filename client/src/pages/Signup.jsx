@@ -8,6 +8,7 @@ import PasswordInput from '../components/PasswordInput';
 import PasswordStrength from '../components/PasswordStrength';
 import { hasErrors, validateEmail, validateName, validatePassword, validatePhone } from '../utils/validators';
 import usePageTitle from '../hooks/usePageTitle';
+import { CalendarCheck, ShieldCheck, Truck } from 'react-bootstrap-icons';
 
 const EMPTY = { name: '', email: '', phone: '', password: '', confirmPassword: '' };
 
@@ -76,10 +77,15 @@ export default function Signup() {
 
   return (
     <div className="auth-split">
-      <div className="auth-art" style={{ backgroundImage: 'url(/images/banners/weddings.webp)' }}>
+      <div className="auth-art auth-art-gradient">
         <div>
           <h2 className="mb-2">Plan your event in minutes</h2>
           <p>Browse 24+ items, check live availability and send one request.</p>
+          <ul className="auth-points">
+            <li><span className="icon"><Truck /></span> Delivery, setup and pickup included</li>
+            <li><span className="icon"><CalendarCheck /></span> Live availability for your dates</li>
+            <li><span className="icon"><ShieldCheck /></span> No payment until we confirm</li>
+          </ul>
         </div>
       </div>
     <div className="auth-wrapper">

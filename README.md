@@ -155,9 +155,3 @@ Create a second Vercel project from the same repository with **Root Directory = 
 | `VITE_API_URL` | `https://<api-project>.vercel.app/api` |
 
 After the frontend is deployed, make sure its URL is in the API's `CLIENT_URL` and redeploy the API.
-
-## Photo credits
-
-Equipment and banner photos come from [Wikimedia Commons](https://commons.wikimedia.org/) under CC0, public-domain, CC BY and CC BY-SA licences.
-They were cropped and resized for the site. Full attribution (title, author, licence, source link) is listed on the in-app **Photo credits** page (`/credits`) and in `client/src/data/photoCredits.json`.
-

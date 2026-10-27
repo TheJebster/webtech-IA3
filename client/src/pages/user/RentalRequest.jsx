@@ -158,7 +158,7 @@ export default function RentalRequest() {
                 const line = lineFor(equipment._id);
                 return (
                   <div key={equipment._id} className="request-line">
-                    <Link to={`/equipment/${equipment._id}`} className="line-thumb"><EquipmentImage item={equipment} /></Link>
+                    <Link to={`/equipment/${equipment._id}`} className="line-thumb" aria-label={equipment.name}><EquipmentImage item={equipment} size="thumb" /></Link>
                     <div className="flex-grow-1 min-w-0">
                       <div className="d-flex justify-content-between gap-2">
                         <Link to={`/equipment/${equipment._id}`} className="fw-semibold" style={{ color: 'var(--ink)' }}>{equipment.name}</Link>

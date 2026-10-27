@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { CalendarCheck, ClipboardCheck, ShieldCheck, Truck, Search } from 'react-bootstrap-icons';
+import { CalendarCheck, CheckCircleFill, ClipboardCheck, ShieldCheck, Stars, Truck, Search } from 'react-bootstrap-icons';
 import usePageTitle from '../hooks/usePageTitle';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import useAddToRequest from '../hooks/useAddToRequest';
-import { CATEGORY_IMAGES, PACKAGES } from '../data/storefront';
+import { categoryStyle, PACKAGES } from '../data/storefront';
 import { formatCurrency, todayInput } from '../utils/format';
 import ProductCard from '../components/store/ProductCard';
+import ItemVisual from '../components/store/ItemVisual';
 
 const TRUST = [
   { icon: Truck, title: 'Delivery & setup', text: 'Our crew delivers, installs and picks up.' },
@@ -23,6 +24,23 @@ const STEPS = [
   { title: 'Build your request', text: 'Add equipment or a ready-made kit. The total updates as you go.' },
   { title: 'We confirm & deliver', text: 'Our team approves the request, then delivers and sets up on the day.' },
 ];
+
+function CategoryTile({ category }) {
+  const { icon: Icon, from, to, accent } = categoryStyle(category.name);
+  return (
+    <Link
+      to={`/catalog?category=${encodeURIComponent(category.name)}`}
+      className="category-tile category-tile-icon"
+      style={{ '--tile-from': from, '--tile-to': to, '--tile-accent': accent }}
+    >
+      <span className="item-visual-badge"><Icon size={28} /></span>
+      <span>
+        <strong>{category.name}</strong>
+        <span>{category.count} item{category.count === 1 ? '' : 's'}</span>
+      </span>
+    </Link>
+  );
+}
 
 export default function Landing() {
   usePageTitle(null);
@@ -66,48 +84,86 @@ export default function Landing() {
 
   return (
     <>
-      <section className="hero-banner hero" style={{ backgroundImage: 'url(/images/banners/hero.webp)' }}>
+      <section className="hero hero-gradient">
         <Container>
-          <span className="eyebrow" style={{ color: '#fdba74' }}>Event equipment rental</span>
-          <h1 className="mb-3">Everything your event needs, delivered and set up.</h1>
-          <p className="lead mb-4">
-            Rent sound, lighting, staging, furniture and tents for weddings, concerts, college fests and corporate events.
-          </p>
+          <Row className="g-5 align-items-center">
+            <Col lg={7}>
+              <span className="hero-pill"><Stars /> Now booking for the wedding &amp; fest season</span>
+              <h1 className="hero-title">
+                Everything your event needs, <span className="text-gradient">delivered and set up.</span>
+              </h1>
+              <p className="hero-lead">
+                Rent sound, lighting, staging, furniture and tents for weddings, concerts, college fests and corporate events —
+                with live availability for your exact dates.
+              </p>
 
-          <Form className="hero-search" onSubmit={handleSearch} aria-label="Find equipment">
-            <Row className="g-2 align-items-end">
-              <Col md={4}>
-                <Form.Group controlId="hero-q">
-                  <Form.Label>What do you need?</Form.Label>
-                  <Form.Control value={search.q} onChange={(e) => setSearch({ ...search, q: e.target.value })} placeholder="Speakers, chairs, tents…" />
-                </Form.Group>
-              </Col>
-              <Col md={3}>
-                <Form.Group controlId="hero-category">
-                  <Form.Label>Category</Form.Label>
-                  <Form.Select value={search.category} onChange={(e) => setSearch({ ...search, category: e.target.value })}>
-                    <option value="">All categories</option>
-                    {categories.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-              <Col xs={6} md={2}>
-                <Form.Group controlId="hero-start">
-                  <Form.Label>Event from</Form.Label>
-                  <Form.Control type="date" min={todayInput()} value={search.start} onChange={(e) => setSearch({ ...search, start: e.target.value, end: search.end && search.end < e.target.value ? e.target.value : search.end })} />
-                </Form.Group>
-              </Col>
-              <Col xs={6} md={2}>
-                <Form.Group controlId="hero-end">
-                  <Form.Label>To</Form.Label>
-                  <Form.Control type="date" min={search.start || todayInput()} value={search.end} onChange={(e) => setSearch({ ...search, end: e.target.value })} />
-                </Form.Group>
-              </Col>
-              <Col md={1} className="d-grid">
-                <Button type="submit" aria-label="Search equipment"><Search /></Button>
-              </Col>
-            </Row>
-          </Form>
+              <Form className="hero-search" onSubmit={handleSearch} aria-label="Find equipment">
+                <Row className="g-2 align-items-end">
+                  <Col sm={12}>
+                    <Form.Group controlId="hero-q">
+                      <Form.Label>What do you need?</Form.Label>
+                      <Form.Control value={search.q} onChange={(e) => setSearch({ ...search, q: e.target.value })} placeholder="Speakers, chairs, tents…" />
+                    </Form.Group>
+                  </Col>
+                  <Col sm={4}>
+                    <Form.Group controlId="hero-category">
+                      <Form.Label>Category</Form.Label>
+                      <Form.Select value={search.category} onChange={(e) => setSearch({ ...search, category: e.target.value })}>
+                        <option value="">All categories</option>
+                        {categories.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                  <Col xs={6} sm={3}>
+                    <Form.Group controlId="hero-start">
+                      <Form.Label>Event from</Form.Label>
+                      <Form.Control type="date" min={todayInput()} value={search.start} onChange={(e) => setSearch({ ...search, start: e.target.value, end: search.end && search.end < e.target.value ? e.target.value : search.end })} />
+                    </Form.Group>
+                  </Col>
+                  <Col xs={6} sm={3}>
+                    <Form.Group controlId="hero-end">
+                      <Form.Label>To</Form.Label>
+                      <Form.Control type="date" min={search.start || todayInput()} value={search.end} onChange={(e) => setSearch({ ...search, end: e.target.value })} />
+                    </Form.Group>
+                  </Col>
+                  <Col sm={2} className="d-grid">
+                    <Button type="submit" aria-label="Search equipment"><Search className="me-1" /> Search</Button>
+                  </Col>
+                </Row>
+              </Form>
+              <div className="hero-stats">
+                <span><strong>{allItems.length || 24}+</strong> items</span>
+                <span><strong>8</strong> categories</span>
+                <span><strong>4</strong> ready-made kits</span>
+              </div>
+            </Col>
+
+            {/* Decorative preview of the product experience */}
+            <Col lg={5} className="d-none d-lg-block" aria-hidden="true">
+              <div className="hero-mock">
+                {popular.slice(0, 2).map((item, i) => (
+                  <div key={item._id} className={`mock-card mock-card-${i}`}>
+                    <div className="mock-visual"><ItemVisual item={item} /></div>
+                    <div className="p-3">
+                      <div className="small text-muted">{item.category}</div>
+                      <div className="fw-bold" style={{ color: 'var(--ink)' }}>{item.name}</div>
+                      <div className="d-flex justify-content-between align-items-center mt-2">
+                        <span className="price" style={{ fontSize: 16 }}>{formatCurrency(item.dailyRate)} <small>/ day</small></span>
+                        <span className="avail avail-ok">Available</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div className="mock-toast">
+                  <CheckCircleFill className="text-success" />
+                  <div>
+                    <div className="fw-semibold" style={{ color: 'var(--ink)' }}>Request approved</div>
+                    <div className="small text-muted">Delivery at 8 AM on your event day</div>
+                  </div>
+                </div>
+              </div>
+            </Col>
+          </Row>
         </Container>
       </section>
 
@@ -137,10 +193,7 @@ export default function Landing() {
           </div>
           <div className="category-grid">
             {categories.map((c) => (
-              <Link key={c.name} to={`/catalog?category=${encodeURIComponent(c.name)}`} className="category-tile">
-                <img src={CATEGORY_IMAGES[c.name]} alt="" loading="lazy" />
-                <span className="label"><strong>{c.name}</strong><span>{c.count} item{c.count === 1 ? '' : 's'}</span></span>
-              </Link>
+              <CategoryTile key={c.name} category={c} />
             ))}
           </div>
         </Container>
@@ -174,7 +227,9 @@ export default function Landing() {
             {kits.map((kit) => (
               <Col key={kit.id}>
                 <article className="package-card">
-                  <div className="cover"><img src={kit.image} alt="" loading="lazy" /></div>
+                  <div className="cover kit-cover" aria-hidden="true">
+                    {kit.icons.map((Icon, i) => <span key={i} className="kit-icon"><Icon size={22} /></span>)}
+                  </div>
                   <div className="body">
                     <h3 className="mb-1">{kit.name}</h3>
                     <p className="text-muted small mb-0">{kit.blurb}</p>
@@ -222,7 +277,7 @@ export default function Landing() {
       {!user && (
         <section className="section">
           <Container>
-            <div className="cta-band" style={{ backgroundImage: 'url(/images/banners/weddings.webp)' }}>
+            <div className="cta-band cta-gradient">
               <h2 className="mb-2">Planning an event?</h2>
               <p className="mb-4">Create a free account to save a rental request and track it from approval to pickup.</p>
               <div className="action-row">

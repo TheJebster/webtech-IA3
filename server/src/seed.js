@@ -32,15 +32,7 @@ async function seedEquipment() {
   const admin = await User.findOne({ role: 'admin' });
   let created = 0;
   for (const data of EQUIPMENT) {
-    const existing = await Equipment.findOne({ name: data.name });
-    if (existing) {
-      // Older databases were seeded without photos: fill them in without touching admin edits
-      if (!existing.imageUrl && data.imageUrl) {
-        existing.imageUrl = data.imageUrl;
-        await existing.save();
-      }
-      continue;
-    }
+    if (await Equipment.exists({ name: data.name })) continue;
     await Equipment.create({ ...data, createdBy: admin?._id });
     created++;
   }

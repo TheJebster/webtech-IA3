@@ -52,7 +52,7 @@ function SiteFooter() {
         </div>
         <div className="bottom">
           <span>© {new Date().getFullYear()} RentKit — Event Equipment Rental · Built with MongoDB, Express, React and Node.js</span>
-          <Link to="/credits">Photo credits</Link>
+          <span>Made for the Web Technology IA3 capstone</span>
         </div>
       </div>
     </footer>
