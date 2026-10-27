@@ -6,6 +6,7 @@ import { env } from './config/env.js';
 import { connectDB } from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import equipmentRoutes from './routes/equipmentRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -39,6 +40,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/equipment', equipmentRoutes);
+app.use('/api/users', userRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

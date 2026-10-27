@@ -134,11 +134,11 @@ export default function EquipmentManager() {
             <thead className="table-light">
               <tr>
                 <th>Equipment</th>
-                <th>Category</th>
+                <th className="d-none d-md-table-cell">Category</th>
                 <th className="text-end">Rate / day</th>
-                <th className="text-center">Qty</th>
-                <th>Condition</th>
-                <th>Status</th>
+                <th className="text-center d-none d-sm-table-cell">Qty</th>
+                <th className="d-none d-lg-table-cell">Condition</th>
+                <th className="d-none d-sm-table-cell">Status</th>
                 <th className="text-end">Actions</th>
               </tr>
             </thead>
@@ -147,17 +147,17 @@ export default function EquipmentManager() {
                 <tr key={item._id} className={item.isActive ? '' : 'opacity-75'}>
                   <td>
                     <div className="d-flex align-items-center gap-2">
-                      <div style={{ width: 48 }} className="flex-shrink-0">
+                      <div style={{ width: 48 }} className="flex-shrink-0 ops-thumb">
                         <EquipmentImage item={item} height={40} iconSize={18} />
                       </div>
                       <Link to={`/equipment/${item._id}`} className="fw-semibold text-body text-decoration-none">{item.name}</Link>
                     </div>
                   </td>
-                  <td className="text-nowrap">{item.category}</td>
+                  <td className="text-nowrap d-none d-md-table-cell">{item.category}</td>
                   <td className="text-end text-nowrap">{formatCurrency(item.dailyRate)}</td>
-                  <td className="text-center">{item.quantityTotal}</td>
-                  <td><ConditionBadge condition={item.condition} /></td>
-                  <td>
+                  <td className="text-center d-none d-sm-table-cell">{item.quantityTotal}</td>
+                  <td className="d-none d-lg-table-cell"><ConditionBadge condition={item.condition} /></td>
+                  <td className="d-none d-sm-table-cell">
                     {item.isActive
                       ? <Badge bg="success-subtle" text="success">Active</Badge>
                       : <Badge bg="secondary-subtle" text="secondary">Hidden</Badge>}

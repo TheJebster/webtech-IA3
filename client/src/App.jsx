@@ -12,6 +12,7 @@ import NotFound from './pages/NotFound';
 import EquipmentDetails from './pages/EquipmentDetails';
 import Catalog from './pages/user/Catalog';
 import Operations from './pages/admin/Operations';
+import Users from './pages/admin/Users';
 
 export default function App() {
   return (
@@ -44,7 +45,7 @@ export default function App() {
               <Route path="admin" element={<ProtectedRoute roles={['admin']} />}>
                 <Route index element={<ComingSoon title="Admin Dashboard" />} />
                 <Route path="operations" element={<Operations />} />
-                <Route path="users" element={<ComingSoon title="User Management" />} />
+                <Route path="users" element={<Users />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />

@@ -152,3 +152,56 @@ body {
   border-color: #a5b4fc;
   box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.2);
 }
+
+/* Stat cards + avatars */
+.stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.min-w-0 {
+  min-width: 0;
+}
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.avatar-admin {
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+.text-primary {
+  color: var(--brand) !important;
+}
+.bg-primary-subtle {
+  background-color: var(--brand-soft) !important;
+}
+.badge.bg-primary,
+.text-bg-primary {
+  background-color: var(--brand) !important;
+}
+
+@media (max-width: 575.98px) {
+  .ops-table > :not(caption) > * > * {
+    padding: 0.5rem 0.3rem;
+  }
+  .ops-table .btn-group-sm > .btn {
+    padding: 0.25rem 0.4rem;
+  }
+  .ops-thumb {
+    display: none;
+  }
+}
