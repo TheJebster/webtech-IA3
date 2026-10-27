@@ -1,8 +1,116 @@
 :root {
   --brand: #4f46e5;
   --brand-dark: #3730a3;
+  --brand-soft: #eef2ff;
+  --bs-primary: #4f46e5;
+  --bs-primary-rgb: 79, 70, 229;
+  --bs-link-color: #4f46e5;
+  --bs-link-color-rgb: 79, 70, 229;
+  --bs-link-hover-color: #3730a3;
+  --bs-link-hover-color-rgb: 55, 48, 163;
+  --bs-body-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
 body {
   background-color: #f6f7fb;
+}
+
+/* Brand overrides for Bootstrap components */
+.btn-primary {
+  --bs-btn-bg: var(--brand);
+  --bs-btn-border-color: var(--brand);
+  --bs-btn-hover-bg: var(--brand-dark);
+  --bs-btn-hover-border-color: var(--brand-dark);
+  --bs-btn-active-bg: var(--brand-dark);
+  --bs-btn-active-border-color: var(--brand-dark);
+  --bs-btn-disabled-bg: var(--brand);
+  --bs-btn-disabled-border-color: var(--brand);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--brand);
+  --bs-btn-border-color: var(--brand);
+  --bs-btn-hover-bg: var(--brand);
+  --bs-btn-hover-border-color: var(--brand);
+  --bs-btn-active-bg: var(--brand-dark);
+  --bs-btn-active-border-color: var(--brand-dark);
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: #a5b4fc;
+  box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.2);
+}
+.nav-tabs .nav-link.active,
+.nav-pills .nav-link.active {
+  font-weight: 600;
+}
+.nav-pills {
+  --bs-nav-pills-link-active-bg: var(--brand);
+}
+.pagination {
+  --bs-pagination-active-bg: var(--brand);
+  --bs-pagination-active-border-color: var(--brand);
+  --bs-pagination-color: var(--brand);
+}
+.progress {
+  --bs-progress-bar-bg: var(--brand);
+}
+
+/* Navbar */
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--brand);
+  color: #fff;
+}
+.navbar .nav-link.active {
+  color: var(--brand) !important;
+  font-weight: 600;
+}
+
+/* Landing hero */
+.hero {
+  background: linear-gradient(135deg, #312e81 0%, #4f46e5 55%, #7c3aed 100%);
+}
+.hero-badge {
+  background: rgba(255, 255, 255, 0.15);
+  font-weight: 500;
+}
+.hero-tile {
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(4px);
+}
+.icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+/* Auth pages */
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  border-radius: 16px;
+}
+.auth-card-wide {
+  max-width: 560px;
+}
+
+.card {
+  border-radius: 14px;
 }
