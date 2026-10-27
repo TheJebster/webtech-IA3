@@ -16,7 +16,7 @@ export default function Layout() {
           <Outlet />
         </Suspense>
       </main>
-      <footer className="border-top bg-white py-3 mt-4">
+      <footer className="site-footer py-4 mt-5">
         <Container className="d-flex flex-column flex-sm-row justify-content-between small text-muted gap-1">
           <span>© {new Date().getFullYear()} RentKit — Event Equipment Rental</span>
           <span>Built with MongoDB · Express · React · Node.js</span>

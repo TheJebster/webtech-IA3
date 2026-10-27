@@ -35,8 +35,9 @@ export default function AppNavbar() {
   const links = user ? (isAdmin ? ADMIN_LINKS : USER_LINKS) : [];
 
   return (
-    <Navbar expand="md" bg="white" className="border-bottom shadow-sm sticky-top" expanded={expanded} onToggle={setExpanded}>
-      <Container>
+    <div className="nav-shell">
+    <Navbar expand="md" className="nav-card" expanded={expanded} onToggle={setExpanded}>
+      <Container fluid className="px-0">
         <Navbar.Brand as={Link} to="/" onClick={close} className="fw-bold d-flex align-items-center gap-2">
           <span className="brand-mark"><BoxSeam /></span>
           RentKit
@@ -65,7 +66,7 @@ export default function AppNavbar() {
                   <span className="d-inline-flex align-items-center gap-2">
                     <PersonCircle size={20} />
                     <span>{user.name}</span>
-                    <span className={`badge rounded-pill ${isAdmin ? 'text-bg-primary' : 'text-bg-light border'}`}>
+                    <span className={`badge ${isAdmin ? 'text-bg-primary' : 'bg-light'}`}>
                       {user.role}
                     </span>
                   </span>
@@ -82,16 +83,15 @@ export default function AppNavbar() {
                 </NavDropdown.Item>
               </NavDropdown>
             ) : (
-              <>
-                <Nav.Link as={NavLink} to="/login" onClick={close}>Log in</Nav.Link>
-                <Link to="/signup" onClick={close} className="btn btn-primary btn-sm ms-md-2 mt-2 mt-md-0">
-                  Sign up
-                </Link>
-              </>
+              <div className="d-flex gap-2 py-2 py-md-0">
+                <Link to="/login" onClick={close} className="btn btn-outline-dark">Log in</Link>
+                <Link to="/signup" onClick={close} className="btn btn-dark">Sign up</Link>
+              </div>
             )}
           </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
+    </div>
   );
 }

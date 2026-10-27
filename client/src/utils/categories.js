@@ -2,18 +2,25 @@ import {
   Boombox, Lightbulb, Easel, Lamp, Umbrella, Camera2, Lightning, Flower1, BoxSeam,
 } from 'react-bootstrap-icons';
 
-// Visual identity for each equipment category (icon + gradient used as image fallback)
+// Each category's flat tile: icon + a fill from the palette (yellow, blue, red, peach, black, mist)
+const YELLOW = { bg: '#e6e51e', fg: '#000000' };
+const BLUE = { bg: '#466cf3', fg: '#ffffff' };
+const RED = { bg: '#f34646', fg: '#ffffff' };
+const PEACH = { bg: '#ff8562', fg: '#000000' };
+const BLACK = { bg: '#000000', fg: '#e6e51e' };
+const MIST = { bg: '#e6e6e6', fg: '#000000' };
+
 export const CATEGORY_META = {
-  Audio: { icon: Boombox, from: '#6366f1', to: '#8b5cf6' },
-  Lighting: { icon: Lightbulb, from: '#f59e0b', to: '#ef4444' },
-  Staging: { icon: Easel, from: '#0ea5e9', to: '#6366f1' },
-  Furniture: { icon: Lamp, from: '#14b8a6', to: '#0ea5e9' },
-  'Tents & Canopies': { icon: Umbrella, from: '#22c55e', to: '#14b8a6' },
-  'Video & Projection': { icon: Camera2, from: '#ec4899', to: '#8b5cf6' },
-  Power: { icon: Lightning, from: '#eab308', to: '#f97316' },
-  Decor: { icon: Flower1, from: '#f43f5e', to: '#ec4899' },
+  Audio: { icon: Boombox, ...BLUE },
+  Lighting: { icon: Lightbulb, ...YELLOW },
+  Staging: { icon: Easel, ...BLACK },
+  Furniture: { icon: Lamp, ...PEACH },
+  'Tents & Canopies': { icon: Umbrella, ...MIST },
+  'Video & Projection': { icon: Camera2, ...RED },
+  Power: { icon: Lightning, ...YELLOW },
+  Decor: { icon: Flower1, ...PEACH },
 };
 
-export const categoryMeta = (name) => CATEGORY_META[name] || { icon: BoxSeam, from: '#64748b', to: '#334155' };
+export const categoryMeta = (name) => CATEGORY_META[name] || { icon: BoxSeam, ...MIST };
 
 export const CONDITION_VARIANT = { New: 'success', Excellent: 'primary', Good: 'secondary', Fair: 'warning' };
