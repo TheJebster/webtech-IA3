@@ -1,7 +1,4 @@
-import { useState } from 'react';
-import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { BoxSeam, Cart3, PersonCircle } from 'react-bootstrap-icons';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useCart } from '../context/CartContext';
@@ -13,20 +10,19 @@ const ADMIN_LINKS = [
 ];
 
 const USER_LINKS = [
-  { to: '/catalog', label: 'Browse Equipment' },
-  { to: '/my-rentals', label: 'My Rentals' },
+  { to: '/catalog', label: 'Equipment' },
+  { to: '/rental-request', label: 'Request' },
+  { to: '/my-rentals', label: 'My rentals' },
 ];
 
+// Name and year on the left; a stacked, right-aligned list of text links on the right
 export default function AppNavbar() {
   const { user, isAdmin, logout } = useAuth();
   const { count } = useCart();
   const notify = useToast();
   const navigate = useNavigate();
-  const [expanded, setExpanded] = useState(false);
-  const close = () => setExpanded(false);
 
   const handleLogout = () => {
-    close();
     logout();
     notify('You have been logged out.', 'secondary');
     navigate('/login');
@@ -35,63 +31,39 @@ export default function AppNavbar() {
   const links = user ? (isAdmin ? ADMIN_LINKS : USER_LINKS) : [];
 
   return (
-    <div className="nav-shell">
-    <Navbar expand="md" className="nav-card" expanded={expanded} onToggle={setExpanded}>
-      <Container fluid className="px-0">
-        <Navbar.Brand as={Link} to="/" onClick={close} className="fw-bold d-flex align-items-center gap-2">
-          <span className="brand-mark"><BoxSeam /></span>
+    <header className="site-header">
+      <div className="container">
+        <Link to="/" className="site-name" aria-label="RentKit home">
           RentKit
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="main-nav" />
-        <Navbar.Collapse id="main-nav">
-          <Nav className="me-auto">
+          <br />
+          {new Date().getFullYear()}
+        </Link>
+        <nav aria-label="Main">
+          <ul className="site-nav">
             {links.map((link) => (
-              <Nav.Link key={link.to} as={NavLink} to={link.to} end={link.end} onClick={close}>
-                {link.label}
-              </Nav.Link>
+              <li key={link.to}>
+                <NavLink to={link.to} end={link.end}>
+                  {link.label}
+                  {link.to === '/rental-request' && count > 0 && ` (${count})`}
+                </NavLink>
+              </li>
             ))}
-          </Nav>
-          <Nav className="align-items-md-center">
-            {user && !isAdmin && (
-              <Nav.Link as={NavLink} to="/rental-request" onClick={close} className="d-flex align-items-center gap-1 me-md-2" aria-label={`Rental request, ${count} items`}>
-                <Cart3 size={18} />
-                <span className="d-md-none d-lg-inline">Request</span>
-                {count > 0 && <span className="badge rounded-pill text-bg-primary">{count}</span>}
-              </Nav.Link>
-            )}
             {user ? (
-              <NavDropdown
-                align="end"
-                title={
-                  <span className="d-inline-flex align-items-center gap-2">
-                    <PersonCircle size={20} />
-                    <span>{user.name}</span>
-                    <span className={`badge ${isAdmin ? 'text-bg-primary' : 'bg-light'}`}>
-                      {user.role}
-                    </span>
-                  </span>
-                }
-                id="account-menu"
-              >
-                <NavDropdown.ItemText className="small text-muted">{user.email}</NavDropdown.ItemText>
-                <NavDropdown.Divider />
-                <NavDropdown.Item as={Link} to="/account/password" onClick={close}>
-                  Change password
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={handleLogout} className="text-danger">
-                  Log out
-                </NavDropdown.Item>
-              </NavDropdown>
+              <>
+                <li className="nav-gap" aria-hidden="true" />
+                <li className="nav-meta">{user.name} · {user.role}</li>
+                <li><NavLink to="/account/password" className="nav-meta">Change password</NavLink></li>
+                <li><button type="button" className="nav-meta" onClick={handleLogout}>Log out</button></li>
+              </>
             ) : (
-              <div className="d-flex gap-2 py-2 py-md-0">
-                <Link to="/login" onClick={close} className="btn btn-outline-dark">Log in</Link>
-                <Link to="/signup" onClick={close} className="btn btn-dark">Sign up</Link>
-              </div>
+              <>
+                <li><NavLink to="/login">Log in</NavLink></li>
+                <li><NavLink to="/signup">Sign up</NavLink></li>
+              </>
             )}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-    </div>
+          </ul>
+        </nav>
+      </div>
+    </header>
   );
 }

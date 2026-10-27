@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Button, Card, Form, Spinner } from 'react-bootstrap';
+import { Alert, Button, Form } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { homePathFor, useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -52,51 +52,49 @@ export default function Login() {
 
   return (
     <div className="auth-wrapper">
-      <Card className="auth-card">
-        <Card.Body className="p-4 p-sm-5">
-          <h1 className="h2 mb-1">Log in <span className="sticker" aria-hidden="true">👋</span></h1>
-          <p className="text-muted mb-4">Welcome back to RentKit.</p>
+      <div className="auth-card">
+        <h1 className="mb-2">Log in</h1>
+        <p className="text-muted mb-4">Welcome back to RentKit.</p>
 
-          {serverError && <Alert variant="danger">{serverError}</Alert>}
+        {serverError && <Alert variant="danger">{serverError}</Alert>}
 
-          <Form noValidate onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="email">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={handleChange}
-                isInvalid={Boolean(errors.email)}
-                autoFocus
-              />
-              <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
-            </Form.Group>
+        <Form noValidate onSubmit={handleSubmit}>
+          <Form.Group className="mb-4" controlId="email">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              type="email"
+              name="email"
+              autoComplete="email"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={handleChange}
+              isInvalid={Boolean(errors.email)}
+              autoFocus
+            />
+            <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
+          </Form.Group>
 
-            <Form.Group className="mb-4" controlId="password">
-              <Form.Label>Password</Form.Label>
-              <PasswordInput
-                name="password"
-                autoComplete="current-password"
-                placeholder="Your password"
-                value={form.password}
-                onChange={handleChange}
-                error={errors.password}
-              />
-            </Form.Group>
+          <Form.Group className="mb-4" controlId="password">
+            <Form.Label>Password</Form.Label>
+            <PasswordInput
+              name="password"
+              autoComplete="current-password"
+              placeholder="Your password"
+              value={form.password}
+              onChange={handleChange}
+              error={errors.password}
+            />
+          </Form.Group>
 
-            <Button type="submit" className="w-100" size="lg" disabled={submitting}>
-              {submitting ? <><Spinner size="sm" className="me-2" />Logging in…</> : 'Log in'}
-            </Button>
-          </Form>
+          <Button type="submit" variant="primary" className="mt-2" disabled={submitting}>
+            {submitting ? 'Logging in…' : 'Log in'}
+          </Button>
+        </Form>
 
-          <p className="text-center text-muted mt-4 mb-0">
-            New to RentKit? <Link to="/signup">Create an account</Link>
-          </p>
-        </Card.Body>
-      </Card>
+        <p className="text-muted mt-5 mb-0">
+          New to RentKit? <Link to="/signup">Create an account</Link>
+        </p>
+      </div>
     </div>
   );
 }

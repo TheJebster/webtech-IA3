@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Alert, Button, Card, Form, Spinner } from 'react-bootstrap';
+import { Alert, Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { ShieldLock } from 'react-bootstrap-icons';
 import { homePathFor, useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { parseError } from '../api/client';
@@ -67,37 +66,34 @@ export default function ChangePassword() {
 
   return (
     <div className="auth-wrapper">
-      <Card className="auth-card">
-        <Card.Body className="p-4 p-sm-5">
-          <div className="icon-circle black mb-3"><ShieldLock size={22} /></div>
-          <h1 className="h2 mb-1">Change password <span className="sticker" aria-hidden="true">🔐</span></h1>
-          <p className="text-muted mb-4">Keep your account secure with a strong password.</p>
+      <div className="auth-card">
+                  <h1 className="mb-2">Change password</h1>
+        <p className="text-muted mb-4">Keep your account secure with a strong password.</p>
 
-          {serverError && <Alert variant="danger">{serverError}</Alert>}
+        {serverError && <Alert variant="danger">{serverError}</Alert>}
 
-          <Form noValidate onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="currentPassword">
-              <Form.Label>Current password</Form.Label>
-              <PasswordInput name="currentPassword" autoComplete="current-password" value={form.currentPassword} onChange={handleChange} error={errors.currentPassword} />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="newPassword">
-              <Form.Label>New password</Form.Label>
-              <PasswordInput name="newPassword" autoComplete="new-password" value={form.newPassword} onChange={handleChange} error={errors.newPassword} />
-              <PasswordStrength password={form.newPassword} />
-            </Form.Group>
-            <Form.Group className="mb-4" controlId="confirmPassword">
-              <Form.Label>Confirm new password</Form.Label>
-              <PasswordInput name="confirmPassword" autoComplete="new-password" value={form.confirmPassword} onChange={handleChange} error={errors.confirmPassword} />
-            </Form.Group>
-            <div className="d-flex gap-2">
-              <Button variant="outline-secondary" onClick={() => navigate(-1)} disabled={submitting}>Cancel</Button>
-              <Button type="submit" className="flex-grow-1" disabled={submitting}>
-                {submitting ? <><Spinner size="sm" className="me-2" />Saving…</> : 'Update password'}
-              </Button>
-            </div>
-          </Form>
-        </Card.Body>
-      </Card>
+        <Form noValidate onSubmit={handleSubmit}>
+          <Form.Group className="mb-4" controlId="currentPassword">
+            <Form.Label>Current password</Form.Label>
+            <PasswordInput name="currentPassword" autoComplete="current-password" value={form.currentPassword} onChange={handleChange} error={errors.currentPassword} />
+          </Form.Group>
+          <Form.Group className="mb-4" controlId="newPassword">
+            <Form.Label>New password</Form.Label>
+            <PasswordInput name="newPassword" autoComplete="new-password" value={form.newPassword} onChange={handleChange} error={errors.newPassword} />
+            <PasswordStrength password={form.newPassword} />
+          </Form.Group>
+          <Form.Group className="mb-4" controlId="confirmPassword">
+            <Form.Label>Confirm new password</Form.Label>
+            <PasswordInput name="confirmPassword" autoComplete="new-password" value={form.confirmPassword} onChange={handleChange} error={errors.confirmPassword} />
+          </Form.Group>
+          <div className="action-row mt-2">
+            <Button type="submit" variant="primary" disabled={submitting}>
+              {submitting ? 'Saving…' : 'Update password'}
+            </Button>
+            <Button variant="outline-secondary" onClick={() => navigate(-1)} disabled={submitting}>Cancel</Button>
+          </div>
+        </Form>
+      </div>
     </div>
   );
 }

@@ -1,20 +1,19 @@
-import { Button, Modal, Spinner } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 
 export default function ConfirmModal({
-  show, title = 'Are you sure?', body, confirmLabel = 'Confirm', variant = 'danger', busy = false, onConfirm, onCancel,
+  show, title = 'Are you sure?', body, confirmLabel = 'Confirm', busy = false, onConfirm, onCancel,
 }) {
   return (
     <Modal show={show} onHide={busy ? undefined : onCancel} centered>
       <Modal.Header closeButton={!busy}>
-        <Modal.Title className="h5">{title}</Modal.Title>
+        <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>{body}</Modal.Body>
       <Modal.Footer>
-        <Button variant="outline-secondary" onClick={onCancel} disabled={busy}>Cancel</Button>
-        <Button variant={variant} onClick={onConfirm} disabled={busy}>
-          {busy && <Spinner size="sm" className="me-2" />}
-          {confirmLabel}
+        <Button variant="primary" onClick={onConfirm} disabled={busy}>
+          {busy ? 'Working…' : confirmLabel}
         </Button>
+        <Button variant="outline-secondary" onClick={onCancel} disabled={busy}>Cancel</Button>
       </Modal.Footer>
     </Modal>
   );

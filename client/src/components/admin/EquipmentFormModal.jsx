@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Button, Col, Form, InputGroup, Modal, Row, Spinner } from 'react-bootstrap';
+import { Alert, Button, Col, Form, InputGroup, Modal, Row } from 'react-bootstrap';
 import api, { parseError } from '../../api/client';
 import EquipmentImage from '../EquipmentImage';
 import { hasErrors } from '../../utils/validators';
@@ -94,7 +94,7 @@ export default function EquipmentFormModal({ show, item, categories, conditions,
     <Modal show={show} onHide={saving ? undefined : onClose} size="lg" centered backdrop="static">
       <Form noValidate onSubmit={handleSubmit}>
         <Modal.Header closeButton={!saving}>
-          <Modal.Title className="h5">{isEdit ? `Edit “${item.name}”` : 'Add new equipment'}</Modal.Title>
+          <Modal.Title>{isEdit ? `Edit “${item.name}”` : 'Add new equipment'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {serverError && <Alert variant="danger">{serverError}</Alert>}
@@ -147,15 +147,17 @@ export default function EquipmentFormModal({ show, item, categories, conditions,
               </Row>
             </Col>
             <Col md={4}>
-              <Form.Label>Preview</Form.Label>
-              <EquipmentImage item={{ ...form, imageUrl: errors.imageUrl ? '' : form.imageUrl }} height={150} key={form.imageUrl} />
+              {/* Photo preview appears once a valid image URL is entered */}
+              {form.imageUrl && !errors.imageUrl && (
+                <EquipmentImage item={{ ...form, imageUrl: form.imageUrl.trim() }} height={150} key={form.imageUrl} />
+              )}
             </Col>
             <Col xs={12}>
               <Form.Group controlId="eq-image">
-                <Form.Label>Image URL <span className="text-muted small">(optional)</span></Form.Label>
+                <Form.Label>Image URL</Form.Label>
                 <Form.Control {...fieldProps('imageUrl')} placeholder="https://…" />
                 <Form.Control.Feedback type="invalid">{errors.imageUrl}</Form.Control.Feedback>
-                <Form.Text>Leave blank to use the category illustration.</Form.Text>
+                <Form.Text>Optional. Without a photo the item is shown in type only.</Form.Text>
               </Form.Group>
             </Col>
             <Col md={7}>
@@ -173,12 +175,12 @@ export default function EquipmentFormModal({ show, item, categories, conditions,
             </Col>
             <Col xs={12}>
               <Form.Check
-                type="switch"
+                type="checkbox"
                 id="eq-active"
                 name="isActive"
                 checked={form.isActive}
                 onChange={handleChange}
-                label="Visible to customers (active)"
+                label="Visible to customers"
               />
             </Col>
           </Row>
@@ -186,7 +188,6 @@ export default function EquipmentFormModal({ show, item, categories, conditions,
         <Modal.Footer>
           <Button variant="outline-secondary" onClick={onClose} disabled={saving}>Cancel</Button>
           <Button type="submit" disabled={saving}>
-            {saving && <Spinner size="sm" className="me-2" />}
             {isEdit ? 'Save changes' : 'Add equipment'}
           </Button>
         </Modal.Footer>

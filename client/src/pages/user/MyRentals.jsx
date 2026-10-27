@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Badge, Button, Card, Col, Container, Nav, Row } from 'react-bootstrap';
+import { Button, Col, Container, Nav, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { CalendarEvent, ClipboardCheck, GeoAlt } from 'react-bootstrap-icons';
 import api, { parseError } from '../../api/client';
 import { useToast } from '../../context/ToastContext';
 import { formatCurrency, formatDate, formatDayRange } from '../../utils/format';
@@ -66,15 +65,15 @@ export default function MyRentals() {
 
   return (
     <Container className="py-4">
-      <PageHeader title="My rentals" sticker="📋" subtitle="Track the status of your rental requests.">
+      <PageHeader title="My rentals" subtitle="Track the status of your rental requests.">
         <Link to="/catalog" className="btn btn-primary">New request</Link>
       </PageHeader>
 
-      <Nav variant="pills" activeKey={tab} onSelect={setTab} className="mb-3 gap-2 flex-nowrap overflow-auto pb-1">
+      <Nav variant="pills" activeKey={tab} onSelect={setTab} className="mb-5 flex-nowrap overflow-auto pb-1">
         {TABS.map((t) => (
           <Nav.Item key={t.key}>
             <Nav.Link eventKey={t.key} className="text-nowrap">
-              {t.label} <Badge bg="light" text="dark" className="ms-1">{countFor(t)}</Badge>
+              {t.label} <span className="badge">{countFor(t)}</span>
             </Nav.Link>
           </Nav.Item>
         ))}
@@ -83,17 +82,14 @@ export default function MyRentals() {
       {loading ? (
         <PageLoader />
       ) : visible.length === 0 ? (
-        <Card className="">
-          <EmptyState icon={ClipboardCheck} title="No rentals here yet" text="When you request equipment for an event, it shows up here.">
-            <Link to="/catalog" className="btn btn-outline-primary">Browse equipment</Link>
-          </EmptyState>
-        </Card>
+        <EmptyState title="No rentals here yet" text="When you request equipment for an event, it shows up here.">
+          <Link to="/catalog" className="btn btn-primary">Browse equipment</Link>
+        </EmptyState>
       ) : (
-        <Row xs={1} md={2} className="g-3">
+        <Row xs={1} md={2} className="g-5">
           {visible.map((r) => (
             <Col key={r._id}>
-              <Card className="h-100 rental-card">
-                <Card.Body className="d-flex flex-column">
+              <div className="h-100 d-flex flex-column rental-card">
                   <div className="d-flex justify-content-between align-items-start gap-2 mb-2">
                     <div className="min-w-0">
                       <div className="small text-muted">{r.code} · requested {formatDate(r.createdAt)}</div>
@@ -102,25 +98,24 @@ export default function MyRentals() {
                     <RentalStatusBadge status={r.status} />
                   </div>
                   <div className="small text-muted d-flex flex-column gap-1 mb-2">
-                    <span><CalendarEvent className="me-1" />{formatDayRange(r.startDate, r.endDate)} · {r.days} day{r.days > 1 ? 's' : ''}</span>
-                    <span><GeoAlt className="me-1" />{r.venue}</span>
+                    <span>{formatDayRange(r.startDate, r.endDate)} · {r.days} day{r.days > 1 ? 's' : ''}</span>
+                    <span>{r.venue}</span>
                   </div>
                   <div className="small mb-3">
                     {r.items.slice(0, 3).map((i) => `${i.quantity} × ${i.name}`).join(', ')}
                     {r.items.length > 3 && ` +${r.items.length - 3} more`}
                   </div>
-                  {r.adminNote && <div className="small bg-light rounded p-2 mb-3"><strong>Note:</strong> {r.adminNote}</div>}
+                  {r.adminNote && <p className="small mb-3"><strong>Note from RentKit:</strong> {r.adminNote}</p>}
                   <div className="mt-auto d-flex justify-content-between align-items-center">
-                    <span className="h5 fw-bold mb-0">{formatCurrency(r.totalCost)}</span>
-                    <div className="d-flex gap-2">
+                    <span>{formatCurrency(r.totalCost)}</span>
+                    <div className="action-row">
+                      <button type="button" className="text-action" onClick={() => setViewing(r)}>Details</button>
                       {r.status === 'pending' && (
-                        <Button size="sm" variant="outline-danger" onClick={() => setCancelling(r)}>Cancel</Button>
+                        <button type="button" className="text-action quiet" onClick={() => setCancelling(r)}>Cancel</button>
                       )}
-                      <Button size="sm" variant="outline-primary" onClick={() => setViewing(r)}>Details</Button>
                     </div>
                   </div>
-                </Card.Body>
-              </Card>
+              </div>
             </Col>
           ))}
         </Row>
@@ -131,7 +126,7 @@ export default function MyRentals() {
         show={Boolean(viewing)}
         onClose={() => setViewing(null)}
         footer={viewing?.status === 'pending' && (
-          <Button variant="outline-danger" className="me-auto" onClick={() => setCancelling(viewing)}>Cancel request</Button>
+          <Button variant="primary" onClick={() => setCancelling(viewing)}>Cancel request</Button>
         )}
       />
       <ConfirmModal

@@ -1,6 +1,5 @@
 import { Container, Nav, Tab } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
-import { BoxSeam, ClipboardCheck } from 'react-bootstrap-icons';
 import PageHeader from '../../components/PageHeader';
 import EquipmentManager from '../../components/admin/EquipmentManager';
 import RentalsManager from '../../components/admin/RentalsManager';
@@ -13,15 +12,15 @@ export default function Operations() {
   const tab = params.get('tab') || 'equipment';
 
   return (
-    <Container className="py-4">
-      <PageHeader title="Operations" sticker="🛠️" subtitle="View, add, update and delete equipment and manage rental requests." />
+    <Container>
+      <PageHeader title="Operations" subtitle="View, add, update and delete equipment and manage rental requests." />
       <Tab.Container activeKey={tab} onSelect={(key) => setParams({ tab: key }, { replace: true })}>
-        <Nav variant="pills" className="mb-3 gap-2">
+        <Nav variant="pills" className="mb-5">
           <Nav.Item>
-            <Nav.Link eventKey="equipment" className="d-flex align-items-center gap-2"><BoxSeam />Equipment</Nav.Link>
+            <Nav.Link eventKey="equipment">Equipment</Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link eventKey="rentals" className="d-flex align-items-center gap-2"><ClipboardCheck />Rentals</Nav.Link>
+            <Nav.Link eventKey="rentals">Rentals</Nav.Link>
           </Nav.Item>
         </Nav>
         <Tab.Content>

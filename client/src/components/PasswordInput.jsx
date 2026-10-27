@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Button, Form, InputGroup } from 'react-bootstrap';
-import { Eye, EyeSlash } from 'react-bootstrap-icons';
 
-// Password field with a show/hide toggle and inline validation feedback
+// Password field with a text "Show / Hide" toggle and inline validation feedback
 export default function PasswordInput({ error, ...props }) {
   const [visible, setVisible] = useState(false);
   return (
@@ -14,7 +13,7 @@ export default function PasswordInput({ error, ...props }) {
         aria-label={visible ? 'Hide password' : 'Show password'}
         tabIndex={-1}
       >
-        {visible ? <EyeSlash /> : <Eye />}
+        {visible ? 'Hide' : 'Show'}
       </Button>
       <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
     </InputGroup>

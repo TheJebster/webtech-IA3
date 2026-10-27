@@ -1,18 +1,13 @@
-import { Badge } from 'react-bootstrap';
-
+// Status as type alone: open states in ink, closed states recede to ash
 export const STATUS_META = {
-  pending: { label: 'Pending', bg: 'warning', text: 'dark' },
-  approved: { label: 'Approved', bg: 'success' },
-  rejected: { label: 'Rejected', bg: 'danger' },
-  cancelled: { label: 'Cancelled', bg: 'secondary' },
-  returned: { label: 'Returned', bg: 'info', text: 'dark' },
+  pending: { label: 'Pending', open: true },
+  approved: { label: 'Approved', open: true },
+  rejected: { label: 'Rejected', open: false },
+  cancelled: { label: 'Cancelled', open: false },
+  returned: { label: 'Returned', open: false },
 };
 
 export default function RentalStatusBadge({ status }) {
-  const meta = STATUS_META[status] || { label: status, bg: 'secondary' };
-  return (
-    <Badge bg={meta.bg} text={meta.text} className="fw-semibold">
-      {meta.label}
-    </Badge>
-  );
+  const meta = STATUS_META[status] || { label: status, open: false };
+  return <span className={`status ${meta.open ? 'status-active' : 'status-closed'}`}>{meta.label}</span>;
 }

@@ -1,18 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Badge, Button, Card, Col, Container, Form, InputGroup, Row } from 'react-bootstrap';
+import { Col, Container, Form, Row } from 'react-bootstrap';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, XLg } from 'react-bootstrap-icons';
+import usePageTitle from '../../hooks/usePageTitle';
 import api, { parseError } from '../../api/client';
 import useDebounce from '../../hooks/useDebounce';
 import { formatCurrency } from '../../utils/format';
-import { categoryMeta } from '../../utils/categories';
 import PageHeader from '../../components/PageHeader';
 import EquipmentImage from '../../components/EquipmentImage';
 import Paginator from '../../components/Paginator';
 import PageLoader from '../../components/PageLoader';
 import EmptyState from '../../components/EmptyState';
 import UserSummary from '../../components/UserSummary';
-import usePageTitle from '../../hooks/usePageTitle';
 
 const PAGE_SIZE = 12;
 
@@ -64,64 +62,47 @@ export default function Catalog() {
   };
 
   return (
-    <Container className="py-4">
-      <PageHeader title="Browse equipment" sticker="🔊" subtitle="Find everything you need for your event — sound, lighting, staging, furniture and more." />
+    <Container>
+      <PageHeader title="Equipment" subtitle="Sound, lighting, staging, furniture and more for your event." />
       <UserSummary />
 
-      <Card className="mb-3">
-        <Card.Body className="p-3">
-          <Row className="g-2">
-            <Col md={8}>
-              <InputGroup>
-                <InputGroup.Text><Search /></InputGroup.Text>
-                <Form.Control
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search speakers, lights, chairs…"
-                  aria-label="Search equipment"
-                />
-                {search && (
-                  <Button variant="outline-secondary" onClick={() => setSearch('')} aria-label="Clear search"><XLg /></Button>
-                )}
-              </InputGroup>
-            </Col>
-            <Col md={4}>
-              <Form.Select value={sort} onChange={(e) => update({ sort: e.target.value })} aria-label="Sort by">
-                <option value="name">Sort: Name A–Z</option>
-                <option value="price_asc">Sort: Price low → high</option>
-                <option value="price_desc">Sort: Price high → low</option>
-                <option value="newest">Sort: Newest</option>
-              </Form.Select>
-            </Col>
-          </Row>
-          <div className="category-pills d-flex gap-2 mt-3 pb-1">
-            <Button size="sm" variant={!category ? 'primary' : 'outline-secondary'} className="rounded-pill text-nowrap" onClick={() => update({ category: '' })}>
-              All
-            </Button>
-            {categories.map((c) => {
-              const Icon = categoryMeta(c.name).icon;
-              return (
-                <Button
-                  key={c.name}
-                  size="sm"
-                  variant={category === c.name ? 'primary' : 'outline-secondary'}
-                  className="rounded-pill text-nowrap d-inline-flex align-items-center gap-1"
-                  onClick={() => update({ category: c.name })}
-                >
-                  <Icon /> {c.name} <span className="opacity-75">({c.count})</span>
-                </Button>
-              );
-            })}
-          </div>
-        </Card.Body>
-      </Card>
+      <Row className="g-4 mb-4">
+        <Col md={8}>
+          <Form.Control
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search speakers, lights, chairs…"
+            aria-label="Search equipment"
+          />
+        </Col>
+        <Col md={4}>
+          <Form.Select value={sort} onChange={(e) => update({ sort: e.target.value })} aria-label="Sort by">
+            <option value="name">Name A–Z</option>
+            <option value="price_asc">Price, low to high</option>
+            <option value="price_desc">Price, high to low</option>
+            <option value="newest">Newest</option>
+          </Form.Select>
+        </Col>
+      </Row>
 
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <small className="text-muted">
-          {loading ? 'Loading…' : `${data.total} item${data.total === 1 ? '' : 's'} found`}
-        </small>
+      <div className="filter-row category-pills mb-5" role="group" aria-label="Category">
+        <button type="button" className={`text-action ${!category ? 'active' : ''}`} onClick={() => update({ category: '' })}>All</button>
+        {categories.map((c) => (
+          <button
+            key={c.name}
+            type="button"
+            className={`text-action ${category === c.name ? 'active' : ''}`}
+            onClick={() => update({ category: c.name })}
+          >
+            {c.name} <span className="text-muted">{c.count}</span>
+          </button>
+        ))}
+      </div>
+
+      <div className="d-flex justify-content-between align-items-baseline mb-4 small">
+        <span className="text-muted">{loading ? 'Loading…' : `${data.total} item${data.total === 1 ? '' : 's'}`}</span>
         {(params.get('q') || category) && (
-          <Button variant="link" size="sm" className="p-0" onClick={clearAll}>Clear filters</Button>
+          <button type="button" className="text-action quiet" onClick={clearAll}>Clear filters</button>
         )}
       </div>
 
@@ -130,31 +111,21 @@ export default function Catalog() {
       ) : loading ? (
         <PageLoader />
       ) : data.items.length === 0 ? (
-        <EmptyState title="No equipment matches your search" text="Try another keyword or category.">
-          <Button variant="outline-primary" onClick={clearAll}>Show all equipment</Button>
+        <EmptyState title="Nothing matches your search" text="Try another keyword or category.">
+          <button type="button" className="text-action" onClick={clearAll}>Show all equipment</button>
         </EmptyState>
       ) : (
-        <Row xs={1} sm={2} lg={3} xl={4} className="g-3 mb-4">
+        <div className="catalog-grid mb-5">
           {data.items.map((item) => (
-            <Col key={item._id}>
-              <Card className="h-100 equipment-card">
-                <EquipmentImage item={item} height={160} rounded={false} className="card-img-top" />
-                <Card.Body className="d-flex flex-column">
-                  <div className="mb-1"><Badge bg="light" text="dark" className="border fw-medium">{item.category}</Badge></div>
-                  <Card.Title as="h2" className="h6 fw-bold mb-1">{item.name}</Card.Title>
-                  <Card.Text className="small text-muted line-clamp-2 mb-3">{item.description}</Card.Text>
-                  <div className="mt-auto d-flex justify-content-between align-items-end">
-                    <div>
-                      <span className="fw-bold fs-5">{formatCurrency(item.dailyRate)}</span>
-                      <span className="small text-muted"> / day</span>
-                    </div>
-                    <Link to={`/equipment/${item._id}`} className="btn btn-sm btn-outline-primary stretched-link">Details</Link>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
+            <Link key={item._id} to={`/equipment/${item._id}`} className="catalog-item equipment-card">
+              <EquipmentImage item={item} height={180} />
+              <span className="catalog-meta">{item.category}</span>
+              <span className="catalog-name card-title">{item.name}</span>
+              <span className="catalog-desc">{item.description}</span>
+              <span>{formatCurrency(item.dailyRate)} <span className="text-muted">/ day</span></span>
+            </Link>
           ))}
-        </Row>
+        </div>
       )}
 
       <Paginator page={page} pages={data.pages} onChange={(p) => { update({ page: String(p) }); window.scrollTo(0, 0); }} />

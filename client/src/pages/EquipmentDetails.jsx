@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Badge, Button, Card, Col, Container, Form, InputGroup, Row } from 'react-bootstrap';
+import { Col, Container, Form, Row } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Cart3, CheckCircleFill, DashLg, PencilSquare, PlusLg } from 'react-bootstrap-icons';
+import usePageTitle from '../hooks/usePageTitle';
 import api, { parseError } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { formatCurrency } from '../utils/format';
 import EquipmentImage from '../components/EquipmentImage';
-import ConditionBadge from '../components/ConditionBadge';
 import PageLoader from '../components/PageLoader';
 import EmptyState from '../components/EmptyState';
-import usePageTitle from '../hooks/usePageTitle';
 
 export default function EquipmentDetails() {
   const { id } = useParams();
@@ -34,17 +32,15 @@ export default function EquipmentDetails() {
   }, [id]);
 
   const back = (
-    <button type="button" className="btn btn-link px-0 mb-3 text-decoration-none" onClick={() => navigate(-1)}>
-      <ArrowLeft className="me-1" /> Back
-    </button>
+    <button type="button" className="text-action quiet mb-5" onClick={() => navigate(-1)}>← Back</button>
   );
 
   if (error) {
     return (
-      <Container className="py-4">
+      <Container>
         {back}
         <EmptyState title="Equipment not available" text={error}>
-          <Link to={isAdmin ? '/admin/operations' : '/catalog'} className="btn btn-primary">Back to {isAdmin ? 'operations' : 'catalog'}</Link>
+          <Link to={isAdmin ? '/admin/operations' : '/catalog'} className="btn btn-primary">Back to {isAdmin ? 'operations' : 'equipment'}</Link>
         </EmptyState>
       </Container>
     );
@@ -58,85 +54,68 @@ export default function EquipmentDetails() {
     notify(`Added ${quantity} × ${item.name} to your rental request.`);
     setQty(1);
   };
+  const clamp = (n) => Math.max(1, Math.min(item.quantityTotal, n));
 
   return (
-    <Container className="py-4">
+    <Container>
       {back}
-      <Row className="g-4">
-        <Col lg={6}>
-          <EquipmentImage item={item} height={340} iconSize={110} />
-        </Col>
-        <Col lg={6}>
-          <div className="d-flex flex-wrap gap-2 mb-2">
-            <Badge bg="light" text="dark" className="border fw-medium">{item.category}</Badge>
-            <ConditionBadge condition={item.condition} prefix="Condition: " />
-            {!item.isActive && <Badge bg="secondary">Hidden from customers</Badge>}
+      <Row className="g-5">
+        {item.imageUrl && (
+          <Col lg={6}>
+            <EquipmentImage item={item} height={380} />
+          </Col>
+        )}
+        <Col lg={item.imageUrl ? 6 : 8}>
+          <div className="text-muted mb-2">
+            {item.category} · Condition: {item.condition}{!item.isActive && ' · Hidden from customers'}
           </div>
-          <h1 className="heading-lg mb-3" style={{ fontSize: 'clamp(1.8rem, 4vw, 44px)' }}>{item.name}</h1>
-          <div className="mb-3">
-            <span className="display-6 fw-bold">{formatCurrency(item.dailyRate)}</span>
-            <span className="text-muted"> / day</span>
+          <h1 className="mb-3">{item.name}</h1>
+          <div className="mb-4">
+            <span className="price-xl">{formatCurrency(item.dailyRate)}</span> <span className="text-muted">/ day</span>
           </div>
-          {item.description && <p className="text-muted">{item.description}</p>}
+          {item.description && <p className="mb-5" style={{ maxWidth: 620 }}>{item.description}</p>}
 
           {item.features?.length > 0 && (
-            <Card className="mb-3">
-              <Card.Body>
-                <h2 className="h6 fw-bold mb-2">Key features</h2>
-                <ul className="list-unstyled mb-0">
-                  {item.features.map((f) => (
-                    <li key={f} className="d-flex gap-2 mb-1"><CheckCircleFill className="text-success mt-1 flex-shrink-0" />{f}</li>
-                  ))}
-                </ul>
-              </Card.Body>
-            </Card>
+            <div className="mb-5">
+              <h2 className="mb-3">Key features</h2>
+              <ul className="plain-list">
+                {item.features.map((f) => <li key={f}>{f}</li>)}
+              </ul>
+            </div>
           )}
 
-          <Card className="mb-3">
-            <Card.Body className="d-flex justify-content-between">
-              <span className="text-muted">Units in our inventory</span>
-              <strong>{item.quantityTotal}</strong>
-            </Card.Body>
-          </Card>
+          <p className="mb-5"><span className="text-muted">Units in our inventory</span> <strong>{item.quantityTotal}</strong></p>
 
           {!isAdmin && (
-            <Card className="mb-3">
-              <Card.Body>
-                <h2 className="h6 fw-bold mb-3">Rent this for your event</h2>
-                <div className="d-flex flex-wrap gap-2 align-items-center">
-                  <InputGroup style={{ width: 140 }}>
-                    <Button variant="outline-secondary" aria-label="Decrease quantity" onClick={() => setQty((q) => Math.max(1, (Number(q) || 1) - 1))} disabled={qty <= 1}><DashLg /></Button>
-                    <Form.Control
-                      className="text-center"
-                      type="number"
-                      min="1"
-                      max={item.quantityTotal}
-                      value={qty}
-                      aria-label="Quantity"
-                      onChange={(e) => setQty(e.target.value === '' ? '' : Math.max(1, Math.min(item.quantityTotal, Math.floor(Number(e.target.value)) || 1)))}
-                      onBlur={() => setQty((q) => q || 1)}
-                    />
-                    <Button variant="outline-secondary" aria-label="Increase quantity" onClick={() => setQty((q) => Math.min(item.quantityTotal, (Number(q) || 0) + 1))} disabled={qty >= item.quantityTotal}><PlusLg /></Button>
-                  </InputGroup>
-                  <Button onClick={handleAdd} disabled={item.quantityTotal < 1} className="flex-grow-1">
-                    <Cart3 className="me-2" />Add to rental request
-                  </Button>
-                </div>
-                {inCart && (
-                  <div className="small mt-2">
-                    {inCart.quantity} already in your request · <Link to="/rental-request">Review request &amp; pick dates →</Link>
-                  </div>
-                )}
-                <div className="small text-muted mt-2">Availability for your dates is checked on the request page.</div>
-              </Card.Body>
-            </Card>
+            <div>
+              <h2 className="mb-3">Rent this for your event</h2>
+              <div className="action-row">
+                <button type="button" className="text-action" aria-label="Decrease quantity" onClick={() => setQty((q) => clamp((Number(q) || 1) - 1))} disabled={Number(qty) <= 1}>−</button>
+                <Form.Control
+                  className="text-center"
+                  style={{ width: 70 }}
+                  type="number"
+                  min="1"
+                  max={item.quantityTotal}
+                  value={qty}
+                  aria-label="Quantity"
+                  onChange={(e) => setQty(e.target.value === '' ? '' : clamp(Math.floor(Number(e.target.value)) || 1))}
+                  onBlur={() => setQty((q) => q || 1)}
+                />
+                <button type="button" className="text-action" aria-label="Increase quantity" onClick={() => setQty((q) => clamp((Number(q) || 0) + 1))} disabled={Number(qty) >= item.quantityTotal}>+</button>
+                <button type="button" className="btn btn-primary ms-3" onClick={handleAdd} disabled={item.quantityTotal < 1}>Add to rental request</button>
+              </div>
+              {inCart && (
+                <p className="mt-4 mb-0">
+                  <span className="text-muted">{inCart.quantity} already in your request.</span>{' '}
+                  <Link to="/rental-request">Review request and pick dates →</Link>
+                </p>
+              )}
+              <p className="small text-muted mt-3 mb-0">Availability for your dates is checked on the request page.</p>
+            </div>
           )}
 
-          {isAdmin && (
-            <Link to="/admin/operations" className="btn btn-outline-primary">
-              <PencilSquare className="me-1" /> Manage in Operations
-            </Link>
-          )}
+          {isAdmin && <Link to="/admin/operations" className="btn btn-primary">Manage in Operations</Link>}
         </Col>
       </Row>
     </Container>

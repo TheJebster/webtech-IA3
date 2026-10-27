@@ -1,50 +1,34 @@
 import { Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import {
-  CalendarCheck, ClipboardCheck, GraphUp, PeopleFill, Search, ShieldLock, BoxSeam, Tools,
-} from 'react-bootstrap-icons';
 import usePageTitle from '../hooks/usePageTitle';
 import { homePathFor, useAuth } from '../context/AuthContext';
-import ProductPreview from '../components/ProductPreview';
 
 const STEPS = [
-  { icon: Search, accent: '', title: 'Browse the catalog', text: 'Search and filter sound, lighting, staging, furniture and more — with live daily rates.' },
-  { icon: CalendarCheck, accent: 'blue', title: 'Request your dates', text: 'Pick your event dates and quantities. Availability and cost are calculated instantly.' },
-  { icon: ClipboardCheck, accent: 'peach', title: 'Get it approved', text: 'Our team reviews and approves your request. Track every status from your rentals page.' },
+  { title: 'Browse the catalog', text: 'Search sound, lighting, staging, furniture and more, with daily rates.' },
+  { title: 'Request your dates', text: 'Choose dates and quantities. Availability and cost are calculated instantly.' },
+  { title: 'Get it approved', text: 'Our team reviews the request. Follow its status from your rentals page.' },
 ];
 
-const ADMIN_CAPS = [
-  { icon: GraphUp, text: 'Dashboard with inventory, user and rental statistics plus recent activity' },
-  { icon: Tools, text: 'One operations page to view, add, update and delete equipment' },
-  { icon: ClipboardCheck, text: 'Approve, reject and close rental requests' },
-  { icon: PeopleFill, text: 'Manage users — add, edit details, change roles, deactivate or remove' },
+const ROLES = [
+  {
+    title: 'Administrators',
+    caps: [
+      'A dashboard of inventory, users, rentals and recent activity',
+      'One operations page to view, add, update and delete equipment',
+      'Approve, reject and close rental requests',
+      'Add users, edit details and roles, deactivate or remove them',
+    ],
+  },
+  {
+    title: 'Customers',
+    caps: [
+      'Browse and search the full equipment catalog',
+      'Read the details, rate and features of every item',
+      'Request rentals for an event and follow their status',
+      'Change their password at any time',
+    ],
+  },
 ];
-
-const USER_CAPS = [
-  { icon: Search, text: 'Browse and search the full equipment catalog' },
-  { icon: BoxSeam, text: 'See detailed specs, rates and availability for every item' },
-  { icon: CalendarCheck, text: 'Request rentals for an event and track their status' },
-  { icon: ShieldLock, text: 'Secure account with password change at any time' },
-];
-
-// Yellow + black pill pair used at every conversion moment
-function ButtonPair({ user }) {
-  if (user) {
-    const isAdmin = user.role === 'admin';
-    return (
-      <div className="d-flex flex-wrap justify-content-center gap-3">
-        <Link to={homePathFor(user)} className="btn btn-primary btn-lg">Go to {isAdmin ? 'dashboard' : 'catalog'}</Link>
-        <Link to={isAdmin ? '/admin/operations' : '/my-rentals'} className="btn btn-dark btn-lg">{isAdmin ? 'Operations' : 'My rentals'}</Link>
-      </div>
-    );
-  }
-  return (
-    <div className="d-flex flex-wrap justify-content-center gap-3">
-      <Link to="/signup" className="btn btn-primary btn-lg">Create an account</Link>
-      <Link to="/login" className="btn btn-dark btn-lg">Log in</Link>
-    </div>
-  );
-}
 
 export default function Landing() {
   usePageTitle(null);
@@ -52,86 +36,69 @@ export default function Landing() {
 
   return (
     <>
-      <section className="hero-section text-center">
+      <section>
         <Container>
-          <span className="hero-eyebrow mb-4"><span className="dot" />Event Equipment Rental System</span>
-          <h1 className="display-heading mb-4 mx-auto" style={{ maxWidth: 900 }}>
-            Rent the <span className="sticker" aria-hidden="true">🔊</span>sound,
-            the <span className="sticker sticker-alt" aria-hidden="true">💡</span>lights and
-            the <span className="sticker" aria-hidden="true">🎪</span>stage for your next event
-          </h1>
-          <p className="hero-lead text-muted mb-4">
-            RentKit lets you rent professional equipment for weddings, concerts, college fests and corporate
-            events — and gives our team the tools to manage it all.
-          </p>
-          <ButtonPair user={user} />
-        </Container>
-        <Container className="mt-5">
-          <ProductPreview />
-        </Container>
-      </section>
-
-      <section className="section">
-        <Container>
-          <h2 className="heading-lg text-center mb-3">
-            From idea to <span className="sticker" aria-hidden="true">🎉</span>equipped event
-          </h2>
-          <p className="text-muted text-center mb-5">Three steps. No phone calls, no spreadsheets.</p>
-          <Row xs={1} md={3} className="g-4">
-            {STEPS.map(({ icon: Icon, accent, title, text }, i) => (
-              <Col key={title}>
-                <div className="feature-card">
-                  <div className={`icon-circle ${accent} mb-4`}><Icon size={22} /></div>
-                  <div className="small fw-semibold mb-1">Step {i + 1}</div>
-                  <h3 className="h4 mb-2">{title}</h3>
-                  <p className="text-muted mb-0">{text}</p>
-                </div>
-              </Col>
-            ))}
-          </Row>
-        </Container>
-      </section>
-
-      <section className="section">
-        <Container>
-          <h2 className="heading-lg text-center mb-3">
-            Built for <span className="sticker" aria-hidden="true">🧑‍💼</span>admins and <span className="sticker sticker-alt" aria-hidden="true">🙋</span>customers
-          </h2>
-          <p className="text-muted text-center mb-5">Role-based access keeps every user to exactly what they need.</p>
-          <Row xs={1} md={2} className="g-4">
-            {[
-              { title: 'Administrators', caps: ADMIN_CAPS, highlight: true },
-              { title: 'Customers', caps: USER_CAPS, highlight: false },
-            ].map(({ title, caps, highlight }) => (
-              <Col key={title}>
-                <div className={`feature-card ${highlight ? 'highlight' : ''}`}>
-                  <h3 className="h3 mb-4">{title}</h3>
-                  <ul className="list-unstyled mb-0 d-grid gap-3">
-                    {caps.map(({ icon: CapIcon, text }) => (
-                      <li key={text} className="d-flex gap-3 align-items-start">
-                        <span className={`icon-circle ${highlight ? 'black' : ''} flex-shrink-0`} style={{ width: 34, height: 34, borderRadius: 11 }}>
-                          <CapIcon size={15} />
-                        </span>
-                        <span className="pt-1">{text}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </Col>
-            ))}
-          </Row>
-        </Container>
-      </section>
-
-      <section className="section text-center">
-        <Container>
-          <div className="feature-card py-5">
-            <h2 className="heading-lg mb-3">
-              Ready to light up your <span className="sticker" aria-hidden="true">🎤</span>next event?
-            </h2>
-            <p className="text-muted mb-4">Create a free account and send your first rental request in minutes.</p>
-            <ButtonPair user={user} />
+          <div className="intro">
+            <h1 className="display-xl mb-0">Event equipment, rented simply.</h1>
+            <p>
+              Sound, lighting, staging and furniture for weddings, concerts, college fests and corporate events —
+              requested online and approved by our team.
+            </p>
+            <div className="action-row mt-4">
+              {user ? (
+                <Link to={homePathFor(user)} className="btn btn-primary">
+                  {user.role === 'admin' ? 'Open the dashboard' : 'Browse equipment'}
+                </Link>
+              ) : (
+                <>
+                  <Link to="/signup" className="btn btn-primary">Create an account</Link>
+                  <Link to="/login" className="btn btn-outline-secondary">Log in</Link>
+                </>
+              )}
+            </div>
           </div>
+
+          {/* Project row: the product itself, shown in device frames */}
+          <div className="project-row section" aria-hidden="true">
+            <div className="device-laptop">
+              <div className="screen"><img src="/showcase/desktop.png" alt="" loading="lazy" /></div>
+              <div className="base" />
+            </div>
+            <div className="device-phone">
+              <img src="/showcase/mobile.png" alt="" loading="lazy" />
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="section">
+        <Container>
+          <h2 className="mb-5">How it works</h2>
+          <div className="step-list">
+            {STEPS.map(({ title, text }, i) => (
+              <div key={title}>
+                <span className="step-no">{i + 1}</span>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="section">
+        <Container>
+          <h2 className="mb-5">Two roles</h2>
+          <Row xs={1} md={2} className="g-5">
+            {ROLES.map(({ title, caps }) => (
+              <Col key={title}>
+                <h3 className="mb-3">{title}</h3>
+                <ul className="plain-list text-muted">
+                  {caps.map((c) => <li key={c}>{c}</li>)}
+                </ul>
+              </Col>
+            ))}
+          </Row>
         </Container>
       </section>
     </>

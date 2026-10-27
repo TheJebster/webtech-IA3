@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import { Container } from 'react-bootstrap';
 import { Outlet } from 'react-router-dom';
 import AppNavbar from './AppNavbar';
 import PageLoader from './PageLoader';
@@ -16,11 +15,8 @@ export default function Layout() {
           <Outlet />
         </Suspense>
       </main>
-      <footer className="site-footer py-4 mt-5">
-        <Container className="d-flex flex-column flex-sm-row justify-content-between small text-muted gap-1">
-          <span>© {new Date().getFullYear()} RentKit — Event Equipment Rental</span>
-          <span>Built with MongoDB · Express · React · Node.js</span>
-        </Container>
+      <footer className="site-footer">
+        <div className="container">RentKit — event equipment rental. MongoDB, Express, React, Node.js.</div>
       </footer>
     </div>
   );

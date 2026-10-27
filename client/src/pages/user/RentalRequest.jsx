@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, Button, Card, Col, Container, Form, InputGroup, Row, Spinner } from 'react-bootstrap';
+import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { CalendarEvent, CartX, DashLg, ExclamationTriangleFill, PlusLg, Trash3 } from 'react-bootstrap-icons';
 import api, { parseError } from '../../api/client';
 import { useCart } from '../../context/CartContext';
 import { useToast } from '../../context/ToastContext';
@@ -9,7 +8,6 @@ import useDebounce from '../../hooks/useDebounce';
 import { formatCurrency, todayInput } from '../../utils/format';
 import { hasErrors } from '../../utils/validators';
 import PageHeader from '../../components/PageHeader';
-import EquipmentImage from '../../components/EquipmentImage';
 import EmptyState from '../../components/EmptyState';
 import usePageTitle from '../../hooks/usePageTitle';
 
@@ -121,151 +119,129 @@ export default function RentalRequest() {
 
   if (!items.length) {
     return (
-      <Container className="py-4">
-        <PageHeader title="Rental request" sticker="🛒" />
-        <Card className="">
-          <EmptyState icon={CartX} title="Your rental request is empty" text="Browse the catalog and add the equipment you need for your event.">
-            <Link to="/catalog" className="btn btn-primary">Browse equipment</Link>
-          </EmptyState>
-        </Card>
+      <Container>
+        <PageHeader title="Rental request" />
+        <EmptyState title="Your rental request is empty" text="Browse the catalog and add the equipment you need for your event.">
+          <Link to="/catalog" className="btn btn-primary">Browse equipment</Link>
+        </EmptyState>
       </Container>
     );
   }
 
   return (
-    <Container className="py-4">
-      <PageHeader title="Rental request" sticker="🛒" subtitle="Review your equipment, choose event dates and send the request for approval." />
+    <Container>
+      <PageHeader title="Rental request" subtitle="Review your equipment, choose event dates and send the request for approval." />
       <Form noValidate onSubmit={handleSubmit}>
-        <Row className="g-4">
+        <Row className="g-5">
           <Col lg={7}>
-            <Card className="">
-              <Card.Header className="bg-white d-flex justify-content-between align-items-center py-3">
-                <span className="fw-semibold">Equipment ({items.length})</span>
-                <Link to="/catalog" className="small">+ Add more</Link>
-              </Card.Header>
-              <Card.Body className="p-0">
-                {items.map(({ equipment, quantity }) => {
-                  const line = lineFor(equipment._id);
-                  return (
-                    <div key={equipment._id} className="d-flex gap-3 p-3 border-bottom request-line">
-                      <div style={{ width: 72 }} className="flex-shrink-0">
-                        <EquipmentImage item={equipment} height={64} iconSize={26} />
-                      </div>
-                      <div className="flex-grow-1 min-w-0">
-                        <div className="d-flex justify-content-between gap-2">
-                          <Link to={`/equipment/${equipment._id}`} className="fw-semibold text-body text-decoration-none">{equipment.name}</Link>
-                          <Button variant="link" size="sm" className="text-danger p-0" aria-label={`Remove ${equipment.name}`} onClick={() => removeItem(equipment._id)}>
-                            <Trash3 />
-                          </Button>
-                        </div>
-                        <div className="small text-muted mb-2">{formatCurrency(equipment.dailyRate)} / day</div>
-                        <div className="d-flex flex-wrap align-items-center justify-content-between gap-2">
-                          <InputGroup size="sm" style={{ width: 130 }}>
-                            <Button variant="outline-secondary" aria-label="Decrease quantity" onClick={() => setQty(equipment._id, (quantity || 1) - 1)} disabled={!quantity || quantity <= 1}><DashLg /></Button>
-                            <Form.Control
-                              className="text-center"
-                              type="number"
-                              min="1"
-                              value={quantity}
-                              aria-label={`Quantity of ${equipment.name}`}
-                              onChange={(e) => setQty(equipment._id, e.target.value)}
-                              onBlur={() => !quantity && setQty(equipment._id, 1)}
-                            />
-                            <Button variant="outline-secondary" aria-label="Increase quantity" onClick={() => setQty(equipment._id, (quantity || 0) + 1)}><PlusLg /></Button>
-                          </InputGroup>
-                          {line ? (
-                            line.ok ? (
-                              <span className="small text-success">{line.available} available for your dates</span>
-                            ) : (
-                              <span className="small text-danger fw-semibold">
-                                <ExclamationTriangleFill className="me-1" />
-                                {line.missing ? 'No longer available' : `Only ${line.available} available`}
-                              </span>
-                            )
-                          ) : (
-                            <span className="small text-muted">Pick dates to check availability</span>
-                          )}
-                          <span className="fw-semibold">
-                            {line ? formatCurrency(line.subtotal) : `${formatCurrency(equipment.dailyRate * (quantity || 0))}/day`}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </Card.Body>
-            </Card>
+            <div className="d-flex justify-content-between align-items-baseline mb-4">
+              <h2 className="mb-0">Equipment ({items.length})</h2>
+              <Link to="/catalog" className="text-muted">Add more</Link>
+            </div>
+            {items.map(({ equipment, quantity }) => {
+              const line = lineFor(equipment._id);
+              return (
+                <div key={equipment._id} className="request-line mb-5">
+                  <div className="d-flex justify-content-between gap-3">
+                    <Link to={`/equipment/${equipment._id}`} className="fw-semibold">{equipment.name}</Link>
+                    <span className="text-nowrap">
+                      {line ? formatCurrency(line.subtotal) : `${formatCurrency(equipment.dailyRate * (quantity || 0))} / day`}
+                    </span>
+                  </div>
+                  <div className="small text-muted mb-3">{formatCurrency(equipment.dailyRate)} / day</div>
+                  <div className="action-row">
+                    <button type="button" className="text-action" aria-label="Decrease quantity" onClick={() => setQty(equipment._id, (quantity || 1) - 1)} disabled={!quantity || quantity <= 1}>−</button>
+                    <Form.Control
+                      className="text-center"
+                      style={{ width: 70 }}
+                      type="number"
+                      min="1"
+                      value={quantity}
+                      aria-label={`Quantity of ${equipment.name}`}
+                      onChange={(e) => setQty(equipment._id, e.target.value)}
+                      onBlur={() => !quantity && setQty(equipment._id, 1)}
+                    />
+                    <button type="button" className="text-action" aria-label="Increase quantity" onClick={() => setQty(equipment._id, (quantity || 0) + 1)}>+</button>
+                    <span className="small ms-2">
+                      {line ? (
+                        line.ok ? (
+                          <span className="text-muted">{line.available} available for your dates</span>
+                        ) : (
+                          <strong>{line.missing ? 'No longer available' : `Only ${line.available} available`}</strong>
+                        )
+                      ) : (
+                        <span className="text-muted">Pick dates to check availability</span>
+                      )}
+                    </span>
+                    <button type="button" className="text-action quiet ms-auto" aria-label={`Remove ${equipment.name}`} onClick={() => removeItem(equipment._id)}>
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </Col>
 
           <Col lg={5}>
-            <Card className="sticky-lg-top" style={{ top: 80 }}>
-              <Card.Body className="p-4">
-                <h2 className="h4 mb-3 d-flex align-items-center gap-2"><CalendarEvent />Event details</h2>
-                {serverError && <Alert variant="danger" className="small">{serverError}</Alert>}
-                <Row className="g-3">
-                  <Col xs={12}>
-                    <Form.Group controlId="eventName">
-                      <Form.Label>Event name <span className="text-danger">*</span></Form.Label>
-                      <Form.Control name="eventName" value={form.eventName} onChange={handleChange} isInvalid={Boolean(errors.eventName)} placeholder="e.g. College Cultural Fest" />
-                      <Form.Control.Feedback type="invalid">{errors.eventName}</Form.Control.Feedback>
-                    </Form.Group>
-                  </Col>
-                  <Col xs={12}>
-                    <Form.Group controlId="venue">
-                      <Form.Label>Venue <span className="text-danger">*</span></Form.Label>
-                      <Form.Control name="venue" value={form.venue} onChange={handleChange} isInvalid={Boolean(errors.venue)} placeholder="e.g. Main Auditorium, Coimbatore" />
-                      <Form.Control.Feedback type="invalid">{errors.venue}</Form.Control.Feedback>
-                    </Form.Group>
-                  </Col>
-                  <Col sm={6}>
-                    <Form.Group controlId="startDate">
-                      <Form.Label>Start date <span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="date" name="startDate" min={todayInput()} value={form.startDate} onChange={handleChange} isInvalid={Boolean(errors.startDate)} />
-                      <Form.Control.Feedback type="invalid">{errors.startDate}</Form.Control.Feedback>
-                    </Form.Group>
-                  </Col>
-                  <Col sm={6}>
-                    <Form.Group controlId="endDate">
-                      <Form.Label>End date <span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="date" name="endDate" min={form.startDate || todayInput()} value={form.endDate} onChange={handleChange} isInvalid={Boolean(errors.endDate)} />
-                      <Form.Control.Feedback type="invalid">{errors.endDate}</Form.Control.Feedback>
-                    </Form.Group>
-                  </Col>
-                  <Col xs={12}>
-                    <Form.Group controlId="notes">
-                      <Form.Label>Notes <span className="text-muted small">(optional)</span></Form.Label>
-                      <Form.Control as="textarea" rows={2} name="notes" value={form.notes} onChange={handleChange} isInvalid={Boolean(errors.notes)} placeholder="Delivery time, setup needs…" />
-                      <Form.Control.Feedback type="invalid">{errors.notes}</Form.Control.Feedback>
-                    </Form.Group>
-                  </Col>
-                </Row>
+            <div className="sticky-lg-top request-summary" style={{ top: 24 }}>
+              <h2 className="mb-4">Event details</h2>
+              {serverError && <Alert variant="danger" className="small">{serverError}</Alert>}
+              <Row className="g-4">
+                <Col xs={12}>
+                  <Form.Group controlId="eventName">
+                    <Form.Label>Event name</Form.Label>
+                    <Form.Control name="eventName" value={form.eventName} onChange={handleChange} isInvalid={Boolean(errors.eventName)} placeholder="College cultural fest" />
+                    <Form.Control.Feedback type="invalid">{errors.eventName}</Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+                <Col xs={12}>
+                  <Form.Group controlId="venue">
+                    <Form.Label>Venue</Form.Label>
+                    <Form.Control name="venue" value={form.venue} onChange={handleChange} isInvalid={Boolean(errors.venue)} placeholder="Main Auditorium, Coimbatore" />
+                    <Form.Control.Feedback type="invalid">{errors.venue}</Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+                <Col sm={6}>
+                  <Form.Group controlId="startDate">
+                    <Form.Label>Start date</Form.Label>
+                    <Form.Control type="date" name="startDate" min={todayInput()} value={form.startDate} onChange={handleChange} isInvalid={Boolean(errors.startDate)} />
+                    <Form.Control.Feedback type="invalid">{errors.startDate}</Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+                <Col sm={6}>
+                  <Form.Group controlId="endDate">
+                    <Form.Label>End date</Form.Label>
+                    <Form.Control type="date" name="endDate" min={form.startDate || todayInput()} value={form.endDate} onChange={handleChange} isInvalid={Boolean(errors.endDate)} />
+                    <Form.Control.Feedback type="invalid">{errors.endDate}</Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+                <Col xs={12}>
+                  <Form.Group controlId="notes">
+                    <Form.Label>Notes (optional)</Form.Label>
+                    <Form.Control as="textarea" rows={2} name="notes" value={form.notes} onChange={handleChange} isInvalid={Boolean(errors.notes)} placeholder="Delivery time, setup needs…" />
+                    <Form.Control.Feedback type="invalid">{errors.notes}</Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+              </Row>
 
-                <hr />
-                <div className="d-flex justify-content-between small text-muted mb-1">
-                  <span>Daily total</span>
-                  <span>{formatCurrency(estimatedTotal)} / day</span>
+              <div className="stack mt-5 mb-4">
+                <div className="d-flex justify-content-between"><span className="text-muted">Daily total</span><span>{formatCurrency(estimatedTotal)} / day</span></div>
+                <div className="d-flex justify-content-between"><span className="text-muted">Rental days</span><span>{quote ? quote.days : '—'}</span></div>
+                <div className="d-flex justify-content-between align-items-baseline">
+                  <span className="text-muted">Estimated total</span>
+                  <span className="price-xl">{quoting ? '…' : quote ? formatCurrency(quote.totalCost) : '—'}</span>
                 </div>
-                <div className="d-flex justify-content-between small text-muted mb-2">
-                  <span>Rental days</span>
-                  <span>{quote ? quote.days : '—'}</span>
-                </div>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <span className="fw-semibold">Estimated total</span>
-                  <span className="h4 fw-bold mb-0 text-primary">
-                    {quoting ? <Spinner size="sm" /> : quote ? formatCurrency(quote.totalCost) : '—'}
-                  </span>
-                </div>
-                {quote && !quote.ok && (
-                  <Alert variant="warning" className="small py-2">
-                    Some items don’t have enough stock for these dates. Reduce the quantity or pick other dates.
-                  </Alert>
-                )}
-                <Button type="submit" size="lg" className="w-100" disabled={submitting || quoting || (quote && !quote.ok)}>
-                  {submitting ? <><Spinner size="sm" className="me-2" />Submitting…</> : 'Submit rental request'}
-                </Button>
-                <p className="small text-muted text-center mt-2 mb-0">You won’t be charged now — our team will confirm your booking.</p>
-              </Card.Body>
-            </Card>
+              </div>
+              {quote && !quote.ok && (
+                <Alert variant="warning" className="small">
+                  Some items don’t have enough stock for these dates. Reduce the quantity or pick other dates.
+                </Alert>
+              )}
+              <Button type="submit" variant="primary" disabled={submitting || quoting || (quote && !quote.ok)}>
+                {submitting ? 'Submitting…' : 'Submit rental request'}
+              </Button>
+              <p className="small text-muted mt-3 mb-0">You won’t be charged now — our team will confirm your booking.</p>
+            </div>
           </Col>
         </Row>
       </Form>

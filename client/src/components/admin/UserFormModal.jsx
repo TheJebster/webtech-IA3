@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Button, Col, Form, Modal, Row, Spinner } from 'react-bootstrap';
+import { Alert, Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import api, { parseError } from '../../api/client';
 import PasswordInput from '../PasswordInput';
 import PasswordStrength from '../PasswordStrength';
@@ -74,7 +74,7 @@ export default function UserFormModal({ show, user, currentUserId, onClose, onSa
     <Modal show={show} onHide={saving ? undefined : onClose} centered backdrop="static">
       <Form noValidate onSubmit={handleSubmit}>
         <Modal.Header closeButton={!saving}>
-          <Modal.Title className="h5">{isEdit ? `Edit ${user.name}` : 'Add new user'}</Modal.Title>
+          <Modal.Title>{isEdit ? `Edit ${user.name}` : 'Add new user'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {serverError && <Alert variant="danger">{serverError}</Alert>}
@@ -113,7 +113,7 @@ export default function UserFormModal({ show, user, currentUserId, onClose, onSa
             {isEdit && (
               <Col sm={6} className="d-flex align-items-sm-end">
                 <Form.Check
-                  type="switch"
+                  type="checkbox"
                   id="u-active"
                   name="isActive"
                   checked={form.isActive}
@@ -138,7 +138,6 @@ export default function UserFormModal({ show, user, currentUserId, onClose, onSa
         <Modal.Footer>
           <Button variant="outline-secondary" onClick={onClose} disabled={saving}>Cancel</Button>
           <Button type="submit" disabled={saving}>
-            {saving && <Spinner size="sm" className="me-2" />}
             {isEdit ? 'Save changes' : 'Create user'}
           </Button>
         </Modal.Footer>

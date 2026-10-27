@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Badge, Button, ButtonGroup, Card, Col, Form, InputGroup, Row, Table } from 'react-bootstrap';
+import { Col, Form, Row, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { Eye, EyeSlash, PencilSquare, PlusLg, Search, Trash3 } from 'react-bootstrap-icons';
 import api, { parseError } from '../../api/client';
 import { useToast } from '../../context/ToastContext';
 import useDebounce from '../../hooks/useDebounce';
 import { formatCurrency } from '../../utils/format';
-import EquipmentImage from '../EquipmentImage';
 import ConditionBadge from '../ConditionBadge';
 import ConfirmModal from '../ConfirmModal';
 import Paginator from '../Paginator';
@@ -88,106 +86,88 @@ export default function EquipmentManager() {
   };
 
   return (
-    <Card className="">
-      <Card.Body className="p-3 p-md-4">
-        <Row className="g-2 align-items-center mb-3">
-          <Col lg={4}>
-            <InputGroup>
-              <InputGroup.Text><Search /></InputGroup.Text>
-              <Form.Control name="q" value={filters.q} onChange={setFilter} placeholder="Search name or description…" aria-label="Search equipment" />
-            </InputGroup>
-          </Col>
-          <Col sm={4} lg={2}>
-            <Form.Select name="category" value={filters.category} onChange={setFilter} aria-label="Category">
-              <option value="">All categories</option>
-              {meta.categories.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
-            </Form.Select>
-          </Col>
-          <Col sm={4} lg={2}>
-            <Form.Select name="status" value={filters.status} onChange={setFilter} aria-label="Status">
-              <option value="all">All statuses</option>
-              <option value="active">Active</option>
-              <option value="inactive">Hidden</option>
-            </Form.Select>
-          </Col>
-          <Col sm={4} lg={2}>
-            <Form.Select name="sort" value={filters.sort} onChange={setFilter} aria-label="Sort">
-              <option value="newest">Newest first</option>
-              <option value="name">Name A–Z</option>
-              <option value="price_asc">Rate: low → high</option>
-              <option value="price_desc">Rate: high → low</option>
-            </Form.Select>
-          </Col>
-          <Col lg={2} className="d-grid">
-            <Button onClick={() => setEditing({})}><PlusLg className="me-1" />Add equipment</Button>
-          </Col>
-        </Row>
+    <div>
+      <div className="action-row mb-4">
+        <button type="button" className="btn btn-primary" onClick={() => setEditing({})}>Add equipment</button>
+      </div>
+      <Row className="g-4 mb-4">
+        <Col lg={6}>
+          <Form.Control name="q" value={filters.q} onChange={setFilter} placeholder="Search name or description…" aria-label="Search equipment" />
+        </Col>
+        <Col xs={4} lg={2}>
+          <Form.Select name="category" value={filters.category} onChange={setFilter} aria-label="Category">
+            <option value="">All categories</option>
+            {meta.categories.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
+          </Form.Select>
+        </Col>
+        <Col xs={4} lg={2}>
+          <Form.Select name="status" value={filters.status} onChange={setFilter} aria-label="Status">
+            <option value="all">All statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Hidden</option>
+          </Form.Select>
+        </Col>
+        <Col xs={4} lg={2}>
+          <Form.Select name="sort" value={filters.sort} onChange={setFilter} aria-label="Sort">
+            <option value="newest">Newest first</option>
+            <option value="name">Name A–Z</option>
+            <option value="price_asc">Rate, low to high</option>
+            <option value="price_desc">Rate, high to low</option>
+          </Form.Select>
+        </Col>
+      </Row>
 
-        <div className="small text-muted mb-2">{data.total} item{data.total === 1 ? '' : 's'}</div>
+      <div className="small text-muted mb-3">{data.total} item{data.total === 1 ? '' : 's'}</div>
 
-        {loading ? (
-          <PageLoader />
-        ) : data.items.length === 0 ? (
-          <EmptyState title="No equipment found" text="Try a different search or filter, or add new equipment." />
-        ) : (
-          <Table responsive hover className="align-middle mb-3 ops-table">
-            <thead className="table-light">
-              <tr>
-                <th>Equipment</th>
-                <th className="d-none d-md-table-cell">Category</th>
-                <th className="text-end">Rate / day</th>
-                <th className="text-center d-none d-sm-table-cell">Qty</th>
-                <th className="d-none d-lg-table-cell">Condition</th>
-                <th className="d-none d-sm-table-cell">Status</th>
-                <th className="text-end">Actions</th>
+      {loading ? (
+        <PageLoader />
+      ) : data.items.length === 0 ? (
+        <EmptyState title="No equipment found" text="Try a different search or filter, or add new equipment." />
+      ) : (
+        <Table responsive className="mb-4 ops-table">
+          <thead>
+            <tr>
+              <th>Equipment</th>
+              <th className="d-none d-md-table-cell">Category</th>
+              <th className="text-end">Rate / day</th>
+              <th className="text-end d-none d-sm-table-cell">Qty</th>
+              <th className="d-none d-lg-table-cell">Condition</th>
+              <th className="d-none d-sm-table-cell">Status</th>
+              <th className="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.items.map((item) => (
+              <tr key={item._id} className={item.isActive ? '' : 'text-muted'}>
+                <td><Link to={`/equipment/${item._id}`} className="fw-semibold">{item.name}</Link></td>
+                <td className="text-nowrap d-none d-md-table-cell">{item.category}</td>
+                <td className="text-end text-nowrap">{formatCurrency(item.dailyRate)}</td>
+                <td className="text-end d-none d-sm-table-cell">{item.quantityTotal}</td>
+                <td className="d-none d-lg-table-cell"><ConditionBadge condition={item.condition} /></td>
+                <td className="d-none d-sm-table-cell">
+                  <span className={`status ${item.isActive ? 'status-active' : 'status-closed'}`}>{item.isActive ? 'Active' : 'Hidden'}</span>
+                </td>
+                <td className="text-end">
+                  <span className="action-row justify-content-end flex-nowrap">
+                    <button type="button" className="text-action" aria-label={`Edit ${item.name}`} onClick={() => setEditing(item)}>Edit</button>
+                    <button
+                      type="button"
+                      className="text-action quiet"
+                      aria-label={item.isActive ? `Hide ${item.name}` : `Show ${item.name}`}
+                      onClick={() => toggleActive(item)}
+                    >
+                      {item.isActive ? 'Hide' : 'Show'}
+                    </button>
+                    <button type="button" className="text-action quiet" aria-label={`Delete ${item.name}`} onClick={() => setDeleting(item)}>Delete</button>
+                  </span>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {data.items.map((item) => (
-                <tr key={item._id} className={item.isActive ? '' : 'opacity-75'}>
-                  <td>
-                    <div className="d-flex align-items-center gap-2">
-                      <div style={{ width: 48 }} className="flex-shrink-0 ops-thumb">
-                        <EquipmentImage item={item} height={40} iconSize={18} />
-                      </div>
-                      <Link to={`/equipment/${item._id}`} className="fw-semibold text-body text-decoration-none">{item.name}</Link>
-                    </div>
-                  </td>
-                  <td className="text-nowrap d-none d-md-table-cell">{item.category}</td>
-                  <td className="text-end text-nowrap">{formatCurrency(item.dailyRate)}</td>
-                  <td className="text-center d-none d-sm-table-cell">{item.quantityTotal}</td>
-                  <td className="d-none d-lg-table-cell"><ConditionBadge condition={item.condition} /></td>
-                  <td className="d-none d-sm-table-cell">
-                    {item.isActive
-                      ? <Badge bg="success-subtle" text="success">Active</Badge>
-                      : <Badge bg="secondary-subtle" text="secondary">Hidden</Badge>}
-                  </td>
-                  <td className="text-end">
-                    <ButtonGroup size="sm">
-                      <Button variant="outline-secondary" title="Edit" aria-label={`Edit ${item.name}`} onClick={() => setEditing(item)}>
-                        <PencilSquare />
-                      </Button>
-                      <Button
-                        variant="outline-secondary"
-                        title={item.isActive ? 'Hide from customers' : 'Show to customers'}
-                        aria-label={item.isActive ? `Hide ${item.name}` : `Show ${item.name}`}
-                        onClick={() => toggleActive(item)}
-                      >
-                        {item.isActive ? <EyeSlash /> : <Eye />}
-                      </Button>
-                      <Button variant="outline-danger" title="Delete" aria-label={`Delete ${item.name}`} onClick={() => setDeleting(item)}>
-                        <Trash3 />
-                      </Button>
-                    </ButtonGroup>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        )}
+            ))}
+          </tbody>
+        </Table>
+      )}
 
-        <Paginator page={page} pages={data.pages} onChange={setPage} />
-      </Card.Body>
+      <Paginator page={page} pages={data.pages} onChange={setPage} />
 
       <EquipmentFormModal
         show={editing !== null}
@@ -207,6 +187,6 @@ export default function EquipmentManager() {
         onConfirm={confirmDelete}
         onCancel={() => setDeleting(null)}
       />
-    </Card>
+    </div>
   );
 }
