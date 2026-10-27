@@ -11,6 +11,7 @@ import EquipmentImage from '../../components/EquipmentImage';
 import Paginator from '../../components/Paginator';
 import PageLoader from '../../components/PageLoader';
 import EmptyState from '../../components/EmptyState';
+import UserSummary from '../../components/UserSummary';
 
 const PAGE_SIZE = 12;
 
@@ -63,6 +64,7 @@ export default function Catalog() {
   return (
     <Container className="py-4">
       <PageHeader title="Browse equipment" subtitle="Find everything you need for your event — sound, lighting, staging, furniture and more." />
+      <UserSummary />
 
       <Card className="border-0 shadow-sm mb-3">
         <Card.Body className="p-3">

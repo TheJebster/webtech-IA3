@@ -8,6 +8,7 @@ import authRoutes from './routes/authRoutes.js';
 import equipmentRoutes from './routes/equipmentRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import rentalRoutes from './routes/rentalRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -43,6 +44,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/equipment', equipmentRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/rentals', rentalRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

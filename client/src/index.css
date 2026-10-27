@@ -213,3 +213,44 @@ body {
 .rental-card {
   border-left: 4px solid var(--brand) !important;
 }
+
+/* Dashboard */
+.dash-hero {
+  background: linear-gradient(135deg, #312e81 0%, #4f46e5 60%, #7c3aed 100%);
+}
+.capability-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.capability-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1.25rem rgba(15, 23, 42, 0.1) !important;
+}
+.bar-track {
+  height: 8px;
+  border-radius: 4px;
+  background: #eef0f5;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--brand);
+}
+.activity-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+.user-summary {
+  border-left: 4px solid var(--brand) !important;
+}
+.next-rental {
+  background: var(--brand-soft);
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+}

@@ -73,3 +73,42 @@ export const EQUIPMENT = [
     description: 'Backdrop light curtains that add instant glow to any stage or wall.',
     features: ['3 × 3 m', '300 LEDs', '8 modes'] },
 ];
+
+// Demo rentals: start/end are day offsets from today; items are [equipment name, quantity]
+export const DEMO_RENTALS = [
+  {
+    customer: 'user@rentkit.com', eventName: 'Sharma–Iyer Wedding Reception', venue: 'Le Méridien Lawn, Coimbatore',
+    start: -24, end: -23, requestedDaysAgo: 40, status: 'returned', adminNote: 'Returned in good condition. Thank you!',
+    items: [['Chiavari Chair (Gold)', 200], ['Round Banquet Table (8-seater)', 25], ['Floral Arch (Artificial)', 1], ['Fairy Light Curtain (Warm White)', 10]],
+  },
+  {
+    customer: 'arjun@rentkit.com', eventName: 'TechNova Product Launch', venue: 'CODISSIA Trade Fair Complex, Hall C',
+    start: -12, end: -11, requestedDaysAgo: 25, status: 'returned',
+    items: [['LED Video Wall Panel (P3.9)', 12], ['JBL PRX 815 Powered Speaker', 4], ['Shure SLXD24 Wireless Handheld Mic', 4], ['Lounge Sofa Set', 2]],
+  },
+  {
+    customer: 'arjun@rentkit.com', eventName: 'Startup Meetup Q4', venue: 'Brookefields Mall Atrium',
+    start: -6, end: -6, requestedDaysAgo: 14, status: 'rejected', adminNote: 'Venue does not permit generators — please contact us for alternatives.',
+    items: [['Silent Diesel Generator 62.5 kVA', 1], ['Pop-up Canopy 10 × 10 ft', 4]],
+  },
+  {
+    customer: 'user@rentkit.com', eventName: 'Karunya Cultural Fest — Day 1', venue: 'Karunya University Main Auditorium',
+    start: 6, end: 8, requestedDaysAgo: 5, status: 'approved', adminNote: 'Delivery and setup at 7 AM on day one.',
+    items: [['JBL PRX 815 Powered Speaker', 4], ['18" Subwoofer (Active)', 2], ['Moving Head Beam 230', 8], ['DMX Lighting Controller', 1], ['Modular Stage Deck 4 × 8 ft', 12]],
+  },
+  {
+    customer: 'arjun@rentkit.com', eventName: 'Open-air Movie Night', venue: 'Race Course Community Park',
+    start: 10, end: 10, requestedDaysAgo: 2, status: 'pending', notes: 'Need setup by 5 PM.',
+    items: [['Full HD Projector 5000 lm', 1], ['Projection Screen 12 ft', 1], ['JBL PRX 815 Powered Speaker', 2], ['Pagoda Tent 20 × 20 ft', 1]],
+  },
+  {
+    customer: 'user@rentkit.com', eventName: 'Family Get-together', venue: 'Home terrace, RS Puram',
+    start: 15, end: 15, requestedDaysAgo: 1, status: 'pending',
+    items: [['Cocktail Table (High-top)', 6], ['Fairy Light Curtain (Warm White)', 4]],
+  },
+  {
+    customer: 'arjun@rentkit.com', eventName: 'Corporate Offsite', venue: 'Kovai Kondattam Resort',
+    start: 20, end: 21, requestedDaysAgo: 3, status: 'cancelled',
+    items: [['Pop-up Canopy 10 × 10 ft', 6]],
+  },
+];

@@ -4,7 +4,6 @@ import { ToastProvider } from './context/ToastContext';
 import { CartProvider } from './context/CartContext';
 import Layout from './components/Layout';
 import ProtectedRoute, { GuestRoute } from './components/ProtectedRoute';
-import ComingSoon from './components/ComingSoon';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -14,6 +13,7 @@ import EquipmentDetails from './pages/EquipmentDetails';
 import Catalog from './pages/user/Catalog';
 import MyRentals from './pages/user/MyRentals';
 import RentalRequest from './pages/user/RentalRequest';
+import AdminHome from './pages/admin/AdminHome';
 import Operations from './pages/admin/Operations';
 import Users from './pages/admin/Users';
 
@@ -48,7 +48,7 @@ export default function App() {
 
                 {/* Admins */}
                 <Route path="admin" element={<ProtectedRoute roles={['admin']} />}>
-                  <Route index element={<ComingSoon title="Admin Dashboard" />} />
+                  <Route index element={<AdminHome />} />
                   <Route path="operations" element={<Operations />} />
                   <Route path="users" element={<Users />} />
                 </Route>
