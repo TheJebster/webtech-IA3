@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Badge, Card, Col, Container, Row } from 'react-bootstrap';
+import { Badge, Button, Card, Col, Container, Form, InputGroup, Row } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircleFill, PencilSquare } from 'react-bootstrap-icons';
+import { ArrowLeft, Cart3, CheckCircleFill, DashLg, PencilSquare, PlusLg } from 'react-bootstrap-icons';
 import api, { parseError } from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
 import { formatCurrency } from '../utils/format';
 import EquipmentImage from '../components/EquipmentImage';
 import ConditionBadge from '../components/ConditionBadge';
@@ -14,7 +16,10 @@ export default function EquipmentDetails() {
   const { id } = useParams();
   const { isAdmin } = useAuth();
   const navigate = useNavigate();
+  const { items: cartItems, addItem } = useCart();
+  const notify = useToast();
   const [item, setItem] = useState(null);
+  const [qty, setQty] = useState(1);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -43,6 +48,14 @@ export default function EquipmentDetails() {
     );
   }
   if (!item) return <PageLoader />;
+
+  const inCart = cartItems.find((i) => i.equipment._id === item._id);
+  const handleAdd = () => {
+    const quantity = Number(qty) || 1;
+    addItem(item, quantity);
+    notify(`Added ${quantity} × ${item.name} to your rental request.`);
+    setQty(1);
+  };
 
   return (
     <Container className="py-4">
@@ -83,6 +96,39 @@ export default function EquipmentDetails() {
               <strong>{item.quantityTotal}</strong>
             </Card.Body>
           </Card>
+
+          {!isAdmin && (
+            <Card className="border-0 shadow-sm mb-3">
+              <Card.Body>
+                <h2 className="h6 fw-bold mb-3">Rent this for your event</h2>
+                <div className="d-flex flex-wrap gap-2 align-items-center">
+                  <InputGroup style={{ width: 140 }}>
+                    <Button variant="outline-secondary" aria-label="Decrease quantity" onClick={() => setQty((q) => Math.max(1, (Number(q) || 1) - 1))} disabled={qty <= 1}><DashLg /></Button>
+                    <Form.Control
+                      className="text-center"
+                      type="number"
+                      min="1"
+                      max={item.quantityTotal}
+                      value={qty}
+                      aria-label="Quantity"
+                      onChange={(e) => setQty(e.target.value === '' ? '' : Math.max(1, Math.min(item.quantityTotal, Math.floor(Number(e.target.value)) || 1)))}
+                      onBlur={() => setQty((q) => q || 1)}
+                    />
+                    <Button variant="outline-secondary" aria-label="Increase quantity" onClick={() => setQty((q) => Math.min(item.quantityTotal, (Number(q) || 0) + 1))} disabled={qty >= item.quantityTotal}><PlusLg /></Button>
+                  </InputGroup>
+                  <Button onClick={handleAdd} disabled={item.quantityTotal < 1} className="flex-grow-1">
+                    <Cart3 className="me-2" />Add to rental request
+                  </Button>
+                </div>
+                {inCart && (
+                  <div className="small mt-2">
+                    {inCart.quantity} already in your request · <Link to="/rental-request">Review request &amp; pick dates →</Link>
+                  </div>
+                )}
+                <div className="small text-muted mt-2">Availability for your dates is checked on the request page.</div>
+              </Card.Body>
+            </Card>
+          )}
 
           {isAdmin && (
             <Link to="/admin/operations" className="btn btn-outline-primary">

@@ -23,3 +23,21 @@ export function timeAgo(value) {
   }
   return 'just now';
 }
+
+// Rental dates are stored as UTC midnight, so format them in UTC to avoid off-by-one days
+export const formatDay = (value, opts = { day: 'numeric', month: 'short', year: 'numeric' }) =>
+  value ? new Date(value).toLocaleDateString('en-IN', { ...opts, timeZone: 'UTC' }) : '—';
+
+export function formatDayRange(start, end) {
+  if (!start) return '—';
+  const s = new Date(start).toISOString().slice(0, 10);
+  const e = new Date(end).toISOString().slice(0, 10);
+  return s === e ? formatDay(start) : `${formatDay(start, { day: 'numeric', month: 'short' })} – ${formatDay(end)}`;
+}
+
+// Today's date as YYYY-MM-DD in the user's local timezone (for <input type="date" min>)
+export function todayInput() {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 10);
+}

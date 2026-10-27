@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import Rental, { RESERVING_STATUSES } from '../models/Rental.js';
 import ApiError from '../utils/ApiError.js';
 import { logActivity } from '../utils/logActivity.js';
 
@@ -111,6 +112,11 @@ export async function deleteUser(req, res) {
   if (!user) throw new ApiError(404, 'User not found.');
   if (user._id.equals(req.user._id)) throw new ApiError(400, 'You cannot delete your own account.');
   if (user.role === 'admin' && user.isActive) await assertAnotherActiveAdmin(user._id, 'delete');
+
+  const active = await Rental.countDocuments({ user: user._id, status: { $in: RESERVING_STATUSES } });
+  if (active > 0) {
+    throw new ApiError(409, `${user.name} has ${active} pending/approved rental${active > 1 ? 's' : ''}. Deactivate the account instead, or close those rentals first.`);
+  }
 
   await user.deleteOne();
   await logActivity({ actor: req.user, action: 'user.delete', entity: 'user', entityId: user._id, message: `removed user ${user.name}` });

@@ -205,3 +205,11 @@ body {
     display: none;
   }
 }
+
+/* Rentals */
+.request-line:last-child {
+  border-bottom: 0 !important;
+}
+.rental-card {
+  border-left: 4px solid var(--brand) !important;
+}

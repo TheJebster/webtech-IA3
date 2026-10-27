@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { BoxSeam, PersonCircle } from 'react-bootstrap-icons';
+import { BoxSeam, Cart3, PersonCircle } from 'react-bootstrap-icons';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { useCart } from '../context/CartContext';
 
 const ADMIN_LINKS = [
   { to: '/admin', label: 'Dashboard', end: true },
@@ -18,6 +19,7 @@ const USER_LINKS = [
 
 export default function AppNavbar() {
   const { user, isAdmin, logout } = useAuth();
+  const { count } = useCart();
   const notify = useToast();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
@@ -49,6 +51,13 @@ export default function AppNavbar() {
             ))}
           </Nav>
           <Nav className="align-items-md-center">
+            {user && !isAdmin && (
+              <Nav.Link as={NavLink} to="/rental-request" onClick={close} className="d-flex align-items-center gap-1 me-md-2" aria-label={`Rental request, ${count} items`}>
+                <Cart3 size={18} />
+                <span className="d-md-none d-lg-inline">Request</span>
+                {count > 0 && <span className="badge rounded-pill text-bg-primary">{count}</span>}
+              </Nav.Link>
+            )}
             {user ? (
               <NavDropdown
                 align="end"

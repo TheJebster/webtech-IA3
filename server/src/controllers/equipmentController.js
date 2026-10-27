@@ -1,4 +1,5 @@
 import Equipment, { CATEGORIES, CONDITIONS } from '../models/Equipment.js';
+import Rental, { RESERVING_STATUSES } from '../models/Rental.js';
 import ApiError from '../utils/ApiError.js';
 import { logActivity } from '../utils/logActivity.js';
 
@@ -86,6 +87,11 @@ export async function updateEquipment(req, res) {
 export async function deleteEquipment(req, res) {
   const item = await Equipment.findById(req.params.id);
   if (!item) throw new ApiError(404, 'Equipment not found.');
+
+  const active = await Rental.countDocuments({ 'items.equipment': item._id, status: { $in: RESERVING_STATUSES } });
+  if (active > 0) {
+    throw new ApiError(409, `"${item.name}" is part of ${active} pending/approved rental${active > 1 ? 's' : ''}. Hide it instead, or close those rentals first.`);
+  }
 
   await item.deleteOne();
   await logActivity({ actor: req.user, action: 'equipment.delete', entity: 'equipment', entityId: item._id, message: `deleted equipment "${item.name}"` });

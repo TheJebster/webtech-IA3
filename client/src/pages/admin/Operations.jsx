@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { BoxSeam, ClipboardCheck } from 'react-bootstrap-icons';
 import PageHeader from '../../components/PageHeader';
 import EquipmentManager from '../../components/admin/EquipmentManager';
+import RentalsManager from '../../components/admin/RentalsManager';
 
 // Consolidated operations page: one place to view, update and delete records
 export default function Operations() {
@@ -26,7 +27,7 @@ export default function Operations() {
             <EquipmentManager />
           </Tab.Pane>
           <Tab.Pane eventKey="rentals" mountOnEnter>
-            <p className="text-muted">Rental management arrives in the next phase.</p>
+            <RentalsManager />
           </Tab.Pane>
         </Tab.Content>
       </Tab.Container>
