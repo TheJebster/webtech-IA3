@@ -4,6 +4,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { env } from './config/env.js';
 import { connectDB } from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import { notFound, errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 
@@ -33,5 +35,10 @@ app.use('/api', async (req, res, next) => {
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', service: 'event-rental-api', time: new Date().toISOString() });
 });
+
+app.use('/api/auth', authRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
 
 export default app;
