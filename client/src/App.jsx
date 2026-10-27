@@ -9,6 +9,9 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ChangePassword from './pages/ChangePassword';
 import NotFound from './pages/NotFound';
+import EquipmentDetails from './pages/EquipmentDetails';
+import Catalog from './pages/user/Catalog';
+import Operations from './pages/admin/Operations';
 
 export default function App() {
   return (
@@ -28,18 +31,19 @@ export default function App() {
               {/* Any logged-in user */}
               <Route element={<ProtectedRoute />}>
                 <Route path="account/password" element={<ChangePassword />} />
+                <Route path="equipment/:id" element={<EquipmentDetails />} />
               </Route>
 
               {/* Normal users */}
               <Route element={<ProtectedRoute roles={['user']} />}>
-                <Route path="catalog" element={<ComingSoon title="Browse Equipment" />} />
+                <Route path="catalog" element={<Catalog />} />
                 <Route path="my-rentals" element={<ComingSoon title="My Rentals" />} />
               </Route>
 
               {/* Admins */}
               <Route path="admin" element={<ProtectedRoute roles={['admin']} />}>
                 <Route index element={<ComingSoon title="Admin Dashboard" />} />
-                <Route path="operations" element={<ComingSoon title="Operations" />} />
+                <Route path="operations" element={<Operations />} />
                 <Route path="users" element={<ComingSoon title="User Management" />} />
               </Route>
 
