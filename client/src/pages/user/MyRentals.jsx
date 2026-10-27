@@ -11,6 +11,7 @@ import EmptyState from '../../components/EmptyState';
 import ConfirmModal from '../../components/ConfirmModal';
 import RentalStatusBadge from '../../components/rentals/RentalStatusBadge';
 import RentalDetailsModal from '../../components/rentals/RentalDetailsModal';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const TABS = [
   { key: 'all', label: 'All' },
@@ -20,6 +21,7 @@ const TABS = [
 ];
 
 export default function MyRentals() {
+  usePageTitle('My rentals');
   const notify = useToast();
   const [rentals, setRentals] = useState([]);
   const [loading, setLoading] = useState(true);

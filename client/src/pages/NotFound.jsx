@@ -1,8 +1,10 @@
 import { Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { homePathFor, useAuth } from '../context/AuthContext';
+import usePageTitle from '../hooks/usePageTitle';
 
 export default function NotFound() {
+  usePageTitle('Page not found');
   const { user } = useAuth();
   return (
     <Container className="py-5 text-center">

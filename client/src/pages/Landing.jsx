@@ -5,6 +5,7 @@ import {
   ClipboardCheck, GraphUp, PersonBadge, Umbrella, BoxSeam,
 } from 'react-bootstrap-icons';
 import { homePathFor, useAuth } from '../context/AuthContext';
+import usePageTitle from '../hooks/usePageTitle';
 
 const CATEGORIES = [
   { icon: Boombox, label: 'Audio' },
@@ -36,6 +37,7 @@ const USER_CAPS = [
 ];
 
 export default function Landing() {
+  usePageTitle(null);
   const { user } = useAuth();
 
   return (

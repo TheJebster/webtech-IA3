@@ -6,8 +6,10 @@ import { useToast } from '../context/ToastContext';
 import { parseError } from '../api/client';
 import PasswordInput from '../components/PasswordInput';
 import { hasErrors, validateEmail } from '../utils/validators';
+import usePageTitle from '../hooks/usePageTitle';
 
 export default function Login() {
+  usePageTitle('Log in');
   const { login } = useAuth();
   const notify = useToast();
   const navigate = useNavigate();

@@ -11,6 +11,7 @@ import EquipmentImage from '../components/EquipmentImage';
 import ConditionBadge from '../components/ConditionBadge';
 import PageLoader from '../components/PageLoader';
 import EmptyState from '../components/EmptyState';
+import usePageTitle from '../hooks/usePageTitle';
 
 export default function EquipmentDetails() {
   const { id } = useParams();
@@ -20,6 +21,7 @@ export default function EquipmentDetails() {
   const notify = useToast();
   const [item, setItem] = useState(null);
   const [qty, setQty] = useState(1);
+  usePageTitle(item?.name || 'Equipment');
   const [error, setError] = useState('');
 
   useEffect(() => {

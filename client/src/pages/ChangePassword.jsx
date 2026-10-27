@@ -8,6 +8,7 @@ import { parseError } from '../api/client';
 import PasswordInput from '../components/PasswordInput';
 import PasswordStrength from '../components/PasswordStrength';
 import { hasErrors, validatePassword } from '../utils/validators';
+import usePageTitle from '../hooks/usePageTitle';
 
 const EMPTY = { currentPassword: '', newPassword: '', confirmPassword: '' };
 
@@ -28,6 +29,7 @@ function validate(form) {
 }
 
 export default function ChangePassword() {
+  usePageTitle('Change password');
   const { user, changePassword } = useAuth();
   const notify = useToast();
   const navigate = useNavigate();

@@ -10,6 +10,7 @@ import userRoutes from './routes/userRoutes.js';
 import rentalRoutes from './routes/rentalRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
+import ApiError from './utils/ApiError.js';
 
 const app = express();
 
@@ -19,7 +20,7 @@ app.use(
     origin(origin, callback) {
       // Allow non-browser clients (curl, Postman) and configured frontends
       if (!origin || env.clientUrls.includes(origin)) return callback(null, true);
-      return callback(new Error(`Origin ${origin} not allowed by CORS`));
+      return callback(new ApiError(403, `Origin ${origin} is not allowed by CORS.`));
     },
   })
 );

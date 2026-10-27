@@ -11,6 +11,7 @@ import { hasErrors } from '../../utils/validators';
 import PageHeader from '../../components/PageHeader';
 import EquipmentImage from '../../components/EquipmentImage';
 import EmptyState from '../../components/EmptyState';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const MAX_DAYS = 30;
 const EMPTY_EVENT = { eventName: '', venue: '', startDate: '', endDate: '', notes: '' };
@@ -32,6 +33,7 @@ function validateEvent(form) {
 }
 
 export default function RentalRequest() {
+  usePageTitle('Rental request');
   const { items, updateQuantity, removeItem, clear } = useCart();
   const notify = useToast();
   const navigate = useNavigate();

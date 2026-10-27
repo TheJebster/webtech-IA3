@@ -12,10 +12,12 @@ import Paginator from '../../components/Paginator';
 import PageLoader from '../../components/PageLoader';
 import EmptyState from '../../components/EmptyState';
 import UserSummary from '../../components/UserSummary';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const PAGE_SIZE = 12;
 
 export default function Catalog() {
+  usePageTitle('Browse equipment');
   // Filters live in the URL so the back button and shared links keep them
   const [params, setParams] = useSearchParams();
   const category = params.get('category') || '';

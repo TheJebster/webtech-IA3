@@ -15,11 +15,13 @@ import Paginator from '../../components/Paginator';
 import PageLoader from '../../components/PageLoader';
 import EmptyState from '../../components/EmptyState';
 import UserFormModal from '../../components/admin/UserFormModal';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const PAGE_SIZE = 10;
 const initials = (name) => name.split(/\s+/).map((p) => p[0]).slice(0, 2).join('').toUpperCase();
 
 export default function Users() {
+  usePageTitle('User management');
   const { user: me } = useAuth();
   const notify = useToast();
   const [filters, setFilters] = useState({ q: '', role: '', status: '' });

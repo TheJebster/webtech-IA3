@@ -13,6 +13,7 @@ import BarList from '../../components/BarList';
 import PageLoader from '../../components/PageLoader';
 import EmptyState from '../../components/EmptyState';
 import RentalStatusBadge, { STATUS_META } from '../../components/rentals/RentalStatusBadge';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const CAPABILITIES = [
   { to: '/admin/operations?tab=equipment', icon: Tools, title: 'Equipment operations', text: 'View, add, update, hide and delete catalog items.' },
@@ -24,6 +25,7 @@ const CAPABILITIES = [
 const ACTIVITY_ICON = { user: PeopleFill, equipment: BoxSeam, rental: ClipboardCheck };
 
 export default function AdminHome() {
+  usePageTitle('Admin dashboard');
   const { user } = useAuth();
   const [data, setData] = useState(null);
   const [error, setError] = useState('');

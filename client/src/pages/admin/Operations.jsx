@@ -4,9 +4,11 @@ import { BoxSeam, ClipboardCheck } from 'react-bootstrap-icons';
 import PageHeader from '../../components/PageHeader';
 import EquipmentManager from '../../components/admin/EquipmentManager';
 import RentalsManager from '../../components/admin/RentalsManager';
+import usePageTitle from '../../hooks/usePageTitle';
 
 // Consolidated operations page: one place to view, update and delete records
 export default function Operations() {
+  usePageTitle('Operations');
   const [params, setParams] = useSearchParams();
   const tab = params.get('tab') || 'equipment';
 

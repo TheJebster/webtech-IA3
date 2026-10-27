@@ -21,7 +21,9 @@ export function CartProvider({ children }) {
   const [items, setItems] = useState(() => readCart(user));
 
   // Load the right cart when the logged-in user changes
-  useEffect(() => setItems(readCart(user)), [user]);
+  useEffect(() => {
+    setItems(readCart(user));
+  }, [user]);
 
   const persist = useCallback(
     (updater) => {
