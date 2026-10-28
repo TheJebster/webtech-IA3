@@ -4,6 +4,8 @@ A role-based full-stack web application built on the **MERN stack** (MongoDB, Ex
 
 > Web Technology — IA3 Capstone Project: *Role-Based Web Application using MERN Stack*
 
+**Live:** https://rentkit-seven.vercel.app
+
 ## Features
 
 ### Authentication
