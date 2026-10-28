@@ -42,7 +42,8 @@ export default function MotionLayer() {
       .set(barRef.current, { transformOrigin: '100% 50%' })
       .to(barRef.current, { scaleX: 0, duration: 0.9, ease: EASE });
     if (main) {
-      tl.fromTo(main, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 1.1, ease: EASE, clearProps: 'all' }, first.current ? 0.35 : 0.2);
+      // Opacity only (never visibility: hidden), so the text stays readable for screen readers throughout
+      tl.fromTo(main, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.1, ease: EASE, clearProps: 'opacity,transform' }, first.current ? 0.35 : 0.2);
     }
     first.current = false;
     // New page layout: let ScrollTrigger re-measure once things settle
@@ -50,7 +51,7 @@ export default function MotionLayer() {
     return () => {
       clearTimeout(refresh);
       tl.kill();
-      if (main) gsap.set(main, { clearProps: 'all' });
+      if (main) gsap.set(main, { clearProps: 'opacity,transform' });
     };
   }, [pathname]);
 
