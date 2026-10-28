@@ -3,8 +3,6 @@
 A role-based **MERN** web app (MongoDB, Express, React, Node) where customers rent event equipment — sound, lighting,
 staging, furniture, tents, power and décor — and admins run the catalog, rental requests and users.
 
-> Web Technology IA3 Capstone: *Role-Based Web Application using MERN Stack*
-
 **Live:** https://rentkit-seven.vercel.app
 
 ## Features
