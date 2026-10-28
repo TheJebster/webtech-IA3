@@ -1,1 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#c2410c"/><g fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"><path d="M16 6 25 11v10l-9 5-9-5V11z"/><path d="M7 11l9 5 9-5M16 16v10"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="512" height="512">
+  <!-- Dark rounded background (squircle) -->
+  <rect width="128" height="128" rx="32" fill="#1C1C1E" />
+
+  <!-- Bold, perfectly proportioned wireframe core -->
+  <g fill="none" stroke="#E8ED6B" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Top bar -> Right loop -> Middle bar -> Left curve -> Left leg -->
+    <path d="M 35 40 h 42 a 16 16 0 0 1 0 32 h -28 a 14 14 0 0 0 -14 14 v 2" />
+    
+    <!-- Right leg, smoothly sweeping outward from the loop -->
+    <path d="M 68 72 c 8 0, 12 4, 22 16" />
+  </g>
+</svg>

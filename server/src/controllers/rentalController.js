@@ -1,9 +1,8 @@
 import Rental from '../models/Rental.js';
 import ApiError from '../utils/ApiError.js';
+import { fuzzyFilter } from '../utils/fuzzy.js';
 import { logActivity } from '../utils/logActivity.js';
 import { assertQuoteAvailable, buildQuote } from '../utils/rentalPricing.js';
-
-const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // Allowed admin status changes
 const TRANSITIONS = {
@@ -80,16 +79,17 @@ export async function listRentals(req, res) {
 
   const filter = {};
   if (status) filter.status = status;
-  if (q?.trim()) {
-    const rx = new RegExp(escapeRegex(q.trim()), 'i');
-    filter.$or = [{ eventName: rx }, { venue: rx }, { customerName: rx }, { customerEmail: rx }, { 'items.name': rx }];
-  }
 
-  const [items, total, counts] = await Promise.all([
-    Rental.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
-    Rental.countDocuments(filter),
+  const [found, counts] = await Promise.all([
+    Rental.find(filter).sort({ createdAt: -1 }),
     Rental.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
   ]);
+
+  const matches = q?.trim()
+    ? fuzzyFilter(found, q, (r) => [r.eventName, r.venue, r.customerName, r.customerEmail, ...r.items.map((i) => i.name)])
+    : found;
+  const total = matches.length;
+  const items = matches.slice((page - 1) * limit, page * limit);
 
   res.json({
     items,

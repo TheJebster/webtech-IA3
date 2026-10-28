@@ -1,9 +1,8 @@
 import User from '../models/User.js';
 import Rental, { RESERVING_STATUSES } from '../models/Rental.js';
 import ApiError from '../utils/ApiError.js';
+import { fuzzyFilter } from '../utils/fuzzy.js';
 import { logActivity } from '../utils/logActivity.js';
-
-const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // There must always be at least one active admin who can log in
 async function assertAnotherActiveAdmin(excludeId, action) {
@@ -20,14 +19,10 @@ export async function listUsers(req, res) {
   const filter = {};
   if (role) filter.role = role;
   if (status) filter.isActive = status === 'active';
-  if (q?.trim()) {
-    const rx = new RegExp(escapeRegex(q.trim()), 'i');
-    filter.$or = [{ name: rx }, { email: rx }, { phone: rx }];
-  }
+  const searching = Boolean(q?.trim());
 
-  const [items, total, summary] = await Promise.all([
-    User.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
-    User.countDocuments(filter),
+  const [found, summary] = await Promise.all([
+    User.find(filter).sort({ createdAt: -1 }),
     User.aggregate([
       {
         $group: {
@@ -39,6 +34,10 @@ export async function listUsers(req, res) {
       },
     ]),
   ]);
+
+  const matches = searching ? fuzzyFilter(found, q, (u) => [u.name, u.email, u.phone]) : found;
+  const total = matches.length;
+  const items = matches.slice((page - 1) * limit, page * limit);
 
   const s = summary[0] || { total: 0, admins: 0, active: 0 };
   res.json({

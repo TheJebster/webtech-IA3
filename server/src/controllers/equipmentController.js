@@ -1,6 +1,7 @@
 import Equipment, { CATEGORIES, CONDITIONS } from '../models/Equipment.js';
 import Rental, { RESERVING_STATUSES } from '../models/Rental.js';
 import ApiError from '../utils/ApiError.js';
+import { fuzzyFilter } from '../utils/fuzzy.js';
 import { logActivity } from '../utils/logActivity.js';
 import { parseDay, reservedQuantities } from '../utils/rentalPricing.js';
 
@@ -10,8 +11,6 @@ const SORTS = {
   price_asc: { dailyRate: 1 },
   price_desc: { dailyRate: -1 },
 };
-
-const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // Customers only ever see active equipment; admins can filter by status.
 function visibilityFilter(user, status = 'all') {
@@ -48,24 +47,31 @@ export async function listEquipment(req, res) {
 
   const filter = visibilityFilter(req.user, status);
   if (category) filter.category = category;
-  if (q?.trim()) {
-    const rx = new RegExp(escapeRegex(q.trim()), 'i');
-    filter.$or = [{ name: rx }, { description: rx }, { category: rx }];
-  }
   if (req.query.minRate || req.query.maxRate) {
     filter.dailyRate = {};
     if (req.query.minRate) filter.dailyRate.$gte = Number(req.query.minRate);
     if (req.query.maxRate) filter.dailyRate.$lte = Number(req.query.maxRate);
   }
 
+  // A keyword search is fuzzy (typos are fine), so it runs in memory over the small catalogue
+  // and the best match comes first; other sorts still apply when chosen.
+  const searching = Boolean(q?.trim());
   let items;
-  const total = await Equipment.countDocuments(filter);
-  if (sort === 'popular') {
-    // Small catalogue: rank in memory by units rented, then by name
-    const [all, units] = await Promise.all([Equipment.find(filter), rentedUnits()]);
-    all.sort((a, b) => (units.get(String(b._id)) || 0) - (units.get(String(a._id)) || 0) || a.name.localeCompare(b.name));
-    items = all.slice((page - 1) * limit, page * limit);
+  let total;
+  if (searching || sort === 'popular') {
+    const [all, units] = await Promise.all([Equipment.find(filter), sort === 'popular' ? rentedUnits() : null]);
+    let list = all;
+    if (sort === 'popular') {
+      list.sort((a, b) => (units.get(String(b._id)) || 0) - (units.get(String(a._id)) || 0) || a.name.localeCompare(b.name));
+    } else if (SORTS[sort]) {
+      const [[key, dir]] = Object.entries(SORTS[sort]);
+      list.sort((a, b) => (a[key] > b[key] ? 1 : a[key] < b[key] ? -1 : 0) * dir);
+    }
+    if (searching) list = fuzzyFilter(list, q, (i) => [i.name, i.category, i.description]);
+    total = list.length;
+    items = list.slice((page - 1) * limit, page * limit);
   } else {
+    total = await Equipment.countDocuments(filter);
     items = await Equipment.find(filter).sort(SORTS[sort]).skip((page - 1) * limit).limit(limit);
   }
 
