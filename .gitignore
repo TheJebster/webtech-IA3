@@ -24,5 +24,6 @@ npm-debug.log*
 # Internal agent / handoff docs (not pushed)
 CLAUDE.md
 AGENTS.md
+GEMINI.md
 docs-internal/
 .claude/
