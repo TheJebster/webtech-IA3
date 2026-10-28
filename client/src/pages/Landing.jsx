@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { CalendarCheck, CheckCircleFill, ClipboardCheck, ShieldCheck, Stars, Truck, Search } from 'react-bootstrap-icons';
+import {
+  IconArrowUpRight, IconBolt, IconCheck, IconClipboardList, IconPackages, IconReceiptOff,
+  IconShieldCheck, IconTruckDelivery, IconUsersGroup,
+} from '@tabler/icons-react';
 import usePageTitle from '../hooks/usePageTitle';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
@@ -12,39 +15,27 @@ import { formatCurrency, todayInput } from '../utils/format';
 import ProductCard from '../components/store/ProductCard';
 import ItemVisual from '../components/store/ItemVisual';
 
-const TRUST = [
-  { icon: Truck, title: 'Delivery & setup', text: 'Our crew delivers, installs and picks up.' },
-  { icon: ShieldCheck, title: 'Tested before every event', text: 'Every item is checked before dispatch.' },
-  { icon: CalendarCheck, title: 'Live availability', text: 'See what’s free for your exact dates.' },
-  { icon: ClipboardCheck, title: 'No payment up front', text: 'We confirm your request before you pay.' },
+const SMALL_FEATURES = [
+  { icon: IconShieldCheck, title: 'Tested before every event', text: 'Every item is checked before dispatch.' },
+  { icon: IconReceiptOff, title: 'No payment up front', text: 'We confirm your request before you pay.' },
+  { icon: IconPackages, title: 'Ready-made kits', text: 'Wedding, concert, corporate and fest bundles.' },
+  { icon: IconClipboardList, title: 'Track every request', text: 'From pending to approved to returned.' },
+  { icon: IconUsersGroup, title: 'Crew on site', text: 'Setup, operation and pickup by our team.' },
+  { icon: IconBolt, title: 'Power covered', text: 'Generators and distribution for outdoor shows.' },
 ];
 
-const STEPS = [
-  { title: 'Pick your dates', text: 'Tell us when your event is and see what’s available for those days.' },
-  { title: 'Build your request', text: 'Add equipment or a ready-made kit. The total updates as you go.' },
-  { title: 'We confirm & deliver', text: 'Our team approves the request, then delivers and sets up on the day.' },
+const COMPARE = [
+  ['Upfront cost', 'Buy everything, often lakhs.', 'Deposit plus advance payment.', 'Pay per day, only after approval.'],
+  ['Availability', 'Whatever you own.', 'Call around and wait for quotes.', 'Live stock for your exact dates.'],
+  ['Delivery & setup', 'Hire transport and crew yourself.', 'Usually extra, booked separately.', 'Included — delivered, set up, picked up.'],
+  ['Maintenance', 'Repairs and testing are on you.', 'Varies by shop.', 'Every item tested before dispatch.'],
+  ['Storage', 'Space for gear all year.', 'None.', 'None.'],
+  ['Changes', 'Not applicable.', 'Phone calls and emails.', 'Cancel free while the request is pending.'],
 ];
-
-function CategoryTile({ category }) {
-  const { icon: Icon, from, to, accent } = categoryStyle(category.name);
-  return (
-    <Link
-      to={`/catalog?category=${encodeURIComponent(category.name)}`}
-      className="category-tile category-tile-icon"
-      style={{ '--tile-from': from, '--tile-to': to, '--tile-accent': accent }}
-    >
-      <span className="item-visual-badge"><Icon size={28} /></span>
-      <span>
-        <strong>{category.name}</strong>
-        <span>{category.count} item{category.count === 1 ? '' : 's'}</span>
-      </span>
-    </Link>
-  );
-}
 
 export default function Landing() {
   usePageTitle(null);
-  const { user, isAdmin } = useAuth();
+  const { isAdmin } = useAuth();
   const { dates, setDates } = useCart();
   const addToRequest = useAddToRequest();
   const navigate = useNavigate();
@@ -84,129 +75,149 @@ export default function Landing() {
 
   return (
     <>
-      <section className="hero hero-gradient">
+      {/* ---- Hero on the grid canvas ---- */}
+      <section className="studio-hero grid-canvas hero">
         <Container>
-          <Row className="g-5 align-items-center">
-            <Col lg={7}>
-              <span className="hero-pill"><Stars /> Now booking for the wedding &amp; fest season</span>
-              <h1 className="hero-title">
-                Everything your event needs, <span className="text-gradient">delivered and set up.</span>
-              </h1>
-              <p className="hero-lead">
-                Rent sound, lighting, staging, furniture and tents for weddings, concerts, college fests and corporate events —
-                with live availability for your exact dates.
-              </p>
+          <span className="badge-dark-pill mb-4">
+            <span className="dot-icon"><span className="live-dot" /></span>
+            Live availability for your event dates
+          </span>
+          <h1 className="display-xxl mt-4 mb-4">
+            Event gear,
+            <br />
+            <span className="accent">delivered &amp; set up.</span>
+          </h1>
+          <p className="lead-strong">Rent everything your event needs in minutes.</p>
+          <p className="lead-muted">
+            Sound, lighting, staging, furniture and tents for weddings, concerts, college fests and corporate events.
+          </p>
 
-              <Form className="hero-search" onSubmit={handleSearch} aria-label="Find equipment">
-                <Row className="g-2 align-items-end">
-                  <Col sm={12}>
-                    <Form.Group controlId="hero-q">
-                      <Form.Label>What do you need?</Form.Label>
-                      <Form.Control value={search.q} onChange={(e) => setSearch({ ...search, q: e.target.value })} placeholder="Speakers, chairs, tents…" />
-                    </Form.Group>
-                  </Col>
-                  <Col sm={4}>
-                    <Form.Group controlId="hero-category">
-                      <Form.Label>Category</Form.Label>
-                      <Form.Select value={search.category} onChange={(e) => setSearch({ ...search, category: e.target.value })}>
-                        <option value="">All categories</option>
-                        {categories.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                  <Col xs={6} sm={3}>
-                    <Form.Group controlId="hero-start">
-                      <Form.Label>Event from</Form.Label>
-                      <Form.Control type="date" min={todayInput()} value={search.start} onChange={(e) => setSearch({ ...search, start: e.target.value, end: search.end && search.end < e.target.value ? e.target.value : search.end })} />
-                    </Form.Group>
-                  </Col>
-                  <Col xs={6} sm={3}>
-                    <Form.Group controlId="hero-end">
-                      <Form.Label>To</Form.Label>
-                      <Form.Control type="date" min={search.start || todayInput()} value={search.end} onChange={(e) => setSearch({ ...search, end: e.target.value })} />
-                    </Form.Group>
-                  </Col>
-                  <Col sm={2} className="d-grid">
-                    <Button type="submit" aria-label="Search equipment"><Search className="me-1" /> Search</Button>
-                  </Col>
-                </Row>
-              </Form>
-              <div className="hero-stats">
-                <span><strong>{allItems.length || 24}+</strong> items</span>
-                <span><strong>8</strong> categories</span>
-                <span><strong>4</strong> ready-made kits</span>
+          <Form className="prompt-search hero-search" onSubmit={handleSearch} aria-label="Find equipment">
+            <Form.Control
+              id="hero-q"
+              className="main-input"
+              value={search.q}
+              onChange={(e) => setSearch({ ...search, q: e.target.value })}
+              placeholder="What does your event need? Speakers, chairs, a tent…"
+              aria-label="What do you need?"
+            />
+            <div className="options">
+              <Form.Group controlId="hero-category" className="flex-grow-1" style={{ minWidth: 170 }}>
+                <Form.Label>Category</Form.Label>
+                <Form.Select value={search.category} onChange={(e) => setSearch({ ...search, category: e.target.value })}>
+                  <option value="">All categories</option>
+                  {categories.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
+                </Form.Select>
+              </Form.Group>
+              <Form.Group controlId="hero-start" style={{ minWidth: 150 }}>
+                <Form.Label>Event from</Form.Label>
+                <Form.Control type="date" min={todayInput()} value={search.start} onChange={(e) => setSearch({ ...search, start: e.target.value, end: search.end && search.end < e.target.value ? e.target.value : search.end })} />
+              </Form.Group>
+              <Form.Group controlId="hero-end" style={{ minWidth: 150 }}>
+                <Form.Label>To</Form.Label>
+                <Form.Control type="date" min={search.start || todayInput()} value={search.end} onChange={(e) => setSearch({ ...search, end: e.target.value })} />
+              </Form.Group>
+              <Button type="submit" className="ms-auto">
+                Find equipment<IconArrowUpRight size={18} className="arrow" />
+              </Button>
+            </div>
+          </Form>
+          <div className="stat-row">
+            <span><strong>{allItems.length || 24}+</strong> items in stock</span>
+            <span><strong>8</strong> categories</span>
+            <span><strong>4</strong> ready-made kits</span>
+          </div>
+        </Container>
+
+        {/* Floating product cards over the blue band */}
+        <div className="float-band" aria-hidden="true">
+          <div className="float-row">
+            {popular.slice(0, 6).map((item) => (
+              <div key={item._id} className="float-card">
+                <div className="visual"><ItemVisual item={item} /></div>
+                <div className="meta text-start">
+                  <div className="fw-semibold text-truncate" style={{ color: 'var(--ink)' }}>{item.name}</div>
+                  <div className="text-muted">{formatCurrency(item.dailyRate)} / day</div>
+                </div>
               </div>
-            </Col>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Decorative preview of the product experience */}
-            <Col lg={5} className="d-none d-lg-block" aria-hidden="true">
-              <div className="hero-mock">
-                {popular.slice(0, 2).map((item, i) => (
-                  <div key={item._id} className={`mock-card mock-card-${i}`}>
-                    <div className="mock-visual"><ItemVisual item={item} /></div>
-                    <div className="p-3">
-                      <div className="small text-muted">{item.category}</div>
-                      <div className="fw-bold" style={{ color: 'var(--ink)' }}>{item.name}</div>
-                      <div className="d-flex justify-content-between align-items-center mt-2">
-                        <span className="price" style={{ fontSize: 16 }}>{formatCurrency(item.dailyRate)} <small>/ day</small></span>
-                        <span className="avail avail-ok">Available</span>
-                      </div>
+      {/* ---- Features ---- */}
+      <section className="section">
+        <Container>
+          <h2 className="section-title mb-5">Oh, and everything else is handled too.</h2>
+          <Row className="g-3 mb-3">
+            <Col lg={5}>
+              <div className="bezel">
+                <div className="bezel-inner d-flex flex-column">
+                  <h3 className="h3 mb-1" style={{ fontSize: 26, fontWeight: 500 }}>Delivered, set up, picked up.</h3>
+                  <p className="text-muted">Our crew handles transport, installation and collection across Coimbatore.</p>
+                  <div className="mt-auto d-flex align-items-center gap-3 p-3 rounded-4" style={{ background: '#fff' }}>
+                    <span className="feature-tile"><span className="ficon"><IconTruckDelivery size={20} /></span></span>
+                    <div>
+                      <div className="fw-semibold" style={{ color: 'var(--ink)' }}>Out for delivery</div>
+                      <div className="small text-muted">Crew arriving at 7:30 AM · Main Auditorium</div>
                     </div>
                   </div>
-                ))}
-                <div className="mock-toast">
-                  <CheckCircleFill className="text-success" />
-                  <div>
-                    <div className="fw-semibold" style={{ color: 'var(--ink)' }}>Request approved</div>
-                    <div className="small text-muted">Delivery at 8 AM on your event day</div>
+                </div>
+              </div>
+            </Col>
+            <Col lg={7}>
+              <div className="bezel">
+                <div className="bezel-inner">
+                  <h3 className="h3 mb-1" style={{ fontSize: 26, fontWeight: 500 }}>See what’s free for your exact dates.</h3>
+                  <p className="text-muted">Pick dates once — every product shows live stock, and your request totals update as you go.</p>
+                  <div className="d-grid gap-2 mt-3">
+                    {popular.slice(0, 3).map((item, i) => (
+                      <div key={item._id} className="d-flex align-items-center gap-3 p-2 pe-3 rounded-4" style={{ background: '#fff' }}>
+                        <span className="top-thumb"><ItemVisual item={item} size="thumb" /></span>
+                        <span className="flex-grow-1 text-truncate fw-semibold" style={{ color: 'var(--ink)' }}>{item.name}</span>
+                        <span className={`avail ${i === 2 ? 'avail-low' : 'avail-ok'}`}>{i === 2 ? 'Only 4 left' : 'Available'}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
             </Col>
           </Row>
-        </Container>
-      </section>
-
-      <div className="trust-bar">
-        <Container>
-          <Row xs={1} sm={2} lg={4} className="g-0">
-            {TRUST.map(({ icon: Icon, title, text }) => (
+          <Row xs={1} sm={2} lg={3} xl={6} className="g-3">
+            {SMALL_FEATURES.map(({ icon: Icon, title, text }) => (
               <Col key={title}>
-                <div className="item pe-3">
-                  <span className="icon"><Icon size={20} /></span>
-                  <div><strong>{title}</strong><span>{text}</span></div>
+                <div className="bezel bezel-sm feature-tile">
+                  <div className="bezel-inner">
+                    <span className="ficon"><Icon size={18} /></span>
+                    <h3>{title}</h3>
+                    <p>{text}</p>
+                  </div>
                 </div>
               </Col>
             ))}
           </Row>
         </Container>
-      </div>
+      </section>
 
+      {/* ---- Categories ---- */}
       <section className="section">
         <Container>
           <div className="section-head">
-            <div>
-              <span className="eyebrow">Browse</span>
-              <h2 className="mb-0">Shop by category</h2>
-            </div>
-            <Link to="/catalog" className="link-arrow">All equipment</Link>
+            <h2 className="section-title mb-0">Shop by category</h2>
+            <Link to="/catalog" className="btn btn-outline-secondary">All equipment<IconArrowUpRight size={16} className="arrow" /></Link>
           </div>
           <div className="category-grid">
-            {categories.map((c) => (
-              <CategoryTile key={c.name} category={c} />
-            ))}
+            {categories.map((c) => <CategoryTile key={c.name} category={c} />)}
           </div>
         </Container>
       </section>
 
+      {/* ---- Popular ---- */}
       <section className="section">
         <Container>
           <div className="section-head">
-            <div>
-              <span className="eyebrow">Customer favourites</span>
-              <h2 className="mb-0">Most rented equipment</h2>
-            </div>
-            <Link to="/catalog?sort=popular" className="link-arrow">See more</Link>
+            <h2 className="section-title mb-0">Most rented <span className="heading-accent">right now.</span></h2>
+            <Link to="/catalog?sort=popular" className="btn btn-outline-secondary">See more<IconArrowUpRight size={16} className="arrow" /></Link>
           </div>
           <div className="product-grid">
             {popular.map((item) => <ProductCard key={item._id} item={item} />)}
@@ -214,15 +225,12 @@ export default function Landing() {
         </Container>
       </section>
 
-      <section className="section-alt" id="packages">
+      {/* ---- Kits on the navy band ---- */}
+      <section className="navy-band" id="packages">
         <Container>
-          <div className="section-head">
-            <div>
-              <span className="eyebrow">Ready-made kits</span>
-              <h2 className="mb-0">Packages for every occasion</h2>
-              <p>Start from a kit, then adjust quantities on your request.</p>
-            </div>
-          </div>
+          <span className="eyebrow text-uppercase">Ready-made kits</span>
+          <h2 className="section-title mt-2 mb-2">One click, a whole event.</h2>
+          <p className="text-muted mb-5">Start from a kit, then adjust quantities on your request.</p>
           <Row xs={1} md={2} xl={4} className="g-3">
             {kits.map((kit) => (
               <Col key={kit.id}>
@@ -231,8 +239,8 @@ export default function Landing() {
                     {kit.icons.map((Icon, i) => <span key={i} className="kit-icon"><Icon size={22} /></span>)}
                   </div>
                   <div className="body">
-                    <h3 className="mb-1">{kit.name}</h3>
-                    <p className="text-muted small mb-0">{kit.blurb}</p>
+                    <h3 className="mb-1" style={{ fontWeight: 600 }}>{kit.name}</h3>
+                    <p className="text-muted small mb-0" style={{ color: 'var(--muted)' }}>{kit.blurb}</p>
                     <ul>
                       {kit.lines.map((l) => <li key={l.equipment._id}>{l.quantity} × {l.equipment.name}</li>)}
                     </ul>
@@ -252,42 +260,58 @@ export default function Landing() {
         </Container>
       </section>
 
+      {/* ---- Comparison ---- */}
       <section className="section">
         <Container>
-          <div className="section-head">
-            <div>
-              <span className="eyebrow">How it works</span>
-              <h2 className="mb-0">Equipped in three steps</h2>
-            </div>
+          <h2 className="section-title mb-4">
+            Your next event.
+            <br />
+            <span className="heading-accent">Less to manage.</span>
+          </h2>
+          <div className="compare">
+            <table>
+              <thead>
+                <tr>
+                  <th><small>From idea to event day</small></th>
+                  <th>Buying your own<small>You own and run everything</small></th>
+                  <th>Other rental shops<small>Phone, quotes, deposits</small></th>
+                  <th className="hl">RentKit<small>One request, we handle the rest</small></th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARE.map(([label, own, other, us]) => (
+                  <tr key={label}>
+                    <td>{label}</td>
+                    <td>{own}</td>
+                    <td>{other}</td>
+                    <td className="hl"><span className="tick"><IconCheck size={13} stroke={3} /></span>{us}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <Row xs={1} md={3} className="g-4">
-            {STEPS.map(({ title, text }, i) => (
-              <Col key={title}>
-                <div className="step-card">
-                  <span className="step-no">{i + 1}</span>
-                  <h3>{title}</h3>
-                  <p className="text-muted mb-0">{text}</p>
-                </div>
-              </Col>
-            ))}
-          </Row>
+          <div className="d-flex justify-content-end mt-4">
+            <Link to="/catalog" className="btn btn-primary btn-lg">Start your request<IconArrowUpRight size={18} className="arrow" /></Link>
+          </div>
         </Container>
       </section>
-
-      {!user && (
-        <section className="section">
-          <Container>
-            <div className="cta-band cta-gradient">
-              <h2 className="mb-2">Planning an event?</h2>
-              <p className="mb-4">Create a free account to save a rental request and track it from approval to pickup.</p>
-              <div className="action-row">
-                <Link to="/signup" className="btn btn-primary btn-lg">Create an account</Link>
-                <Link to="/catalog" className="btn btn-outline-light btn-lg">Browse equipment</Link>
-              </div>
-            </div>
-          </Container>
-        </section>
-      )}
     </>
+  );
+}
+
+function CategoryTile({ category }) {
+  const { icon: Icon, from, to, accent } = categoryStyle(category.name);
+  return (
+    <Link
+      to={`/catalog?category=${encodeURIComponent(category.name)}`}
+      className="category-tile category-tile-icon"
+      style={{ '--tile-from': from, '--tile-to': to, '--tile-accent': accent }}
+    >
+      <span className="item-visual-badge"><Icon size={28} /></span>
+      <span>
+        <strong>{category.name}</strong>
+        <span>{category.count} item{category.count === 1 ? '' : 's'}</span>
+      </span>
+    </Link>
   );
 }

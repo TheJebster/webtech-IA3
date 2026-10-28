@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Cart3, Envelope, Search, Telephone, Truck } from 'react-bootstrap-icons';
+import { Cart3, Search } from 'react-bootstrap-icons';
+import { IconArrowUpRight } from '@tabler/icons-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useCart } from '../context/CartContext';
-import { CONTACT } from '../data/storefront';
 import BrandMark from './BrandMark';
 
 const ADMIN_LINKS = [
@@ -46,18 +46,9 @@ export default function AppNavbar() {
 
   return (
     <>
-      <div className="topbar d-none d-md-block">
-        <div className="container">
-          <span className="d-inline-flex align-items-center gap-2"><Truck /> Delivery, setup and pickup across {CONTACT.area}</span>
-          <span className="d-inline-flex gap-3">
-            <a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`} className="d-inline-flex align-items-center gap-1"><Telephone /> {CONTACT.phone}</a>
-            <a href={`mailto:${CONTACT.email}`} className="d-inline-flex align-items-center gap-1"><Envelope /> {CONTACT.email}</a>
-          </span>
-        </div>
-      </div>
       <header className="site-header">
-        <Navbar expand="lg" expanded={expanded} onToggle={setExpanded}>
-          <Container>
+        <Navbar expand="lg" expanded={expanded} onToggle={setExpanded} className="nav-pill">
+          <Container fluid className="px-0">
             <Link to="/" className="brand me-3" onClick={close}>
               <BrandMark />
               RentKit
@@ -102,7 +93,7 @@ export default function AppNavbar() {
                 ) : (
                   <>
                     <Nav.Link as={NavLink} to="/login" onClick={close}>Log in</Nav.Link>
-                    <Link to="/signup" className="btn btn-primary btn-sm ms-lg-1 align-self-start align-self-lg-center" onClick={close}>Sign up</Link>
+                    <Link to="/signup" className="btn btn-primary ms-lg-1 align-self-start align-self-lg-center" onClick={close}>Sign up<IconArrowUpRight size={16} className="arrow" /></Link>
                   </>
                 )}
               </Nav>
