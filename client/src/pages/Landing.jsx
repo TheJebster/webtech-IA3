@@ -1,26 +1,24 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  IconArrowDown, IconArrowUpRight, IconBolt, IconCheck, IconClipboardList, IconPackages, IconReceiptOff,
+  IconArrowDown, IconArrowUpRight, IconBolt, IconCheck, IconClipboardList, IconReceiptOff,
   IconShieldCheck, IconTruckDelivery, IconUsersGroup,
 } from '@tabler/icons-react';
 import usePageTitle from '../hooks/usePageTitle';
 import api from '../api/client';
-import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import useAddToRequest from '../hooks/useAddToRequest';
-import { categoryStyle, PACKAGES } from '../data/storefront';
+import { categoryStyle } from '../data/storefront';
 import { formatCurrency, todayInput } from '../utils/format';
 import ProductCard from '../components/store/ProductCard';
 import EquipmentImage from '../components/EquipmentImage';
+import DateInput from '../components/DateInput';
 import SplitText from '../motion/SplitText';
 import { gsap, reducedMotion, ScrollTrigger } from '../motion/engine';
 
 const SMALL_FEATURES = [
   { icon: IconShieldCheck, title: 'Tested before every event', text: 'Every item is checked before dispatch.' },
   { icon: IconReceiptOff, title: 'No payment up front', text: 'We confirm your request before you pay.' },
-  { icon: IconPackages, title: 'Ready-made kits', text: 'Wedding, concert, corporate and fest bundles.' },
   { icon: IconClipboardList, title: 'Track every request', text: 'From pending to approved to returned.' },
   { icon: IconUsersGroup, title: 'Crew on site', text: 'Setup, operation and pickup by our team.' },
   { icon: IconBolt, title: 'Power covered', text: 'Generators and distribution for outdoor shows.' },
@@ -37,9 +35,7 @@ const COMPARE = [
 
 export default function Landing() {
   usePageTitle(null);
-  const { isAdmin } = useAuth();
   const { dates, setDates } = useCart();
-  const addToRequest = useAddToRequest();
   const navigate = useNavigate();
 
   const [search, setSearch] = useState({ q: '', category: '', start: dates.start, end: dates.end });
@@ -77,15 +73,6 @@ export default function Landing() {
     return () => ctx.revert();
   }, [popular.length]);
 
-  // Resolve each kit's item names against the live catalogue to price it
-  const kits = useMemo(() => {
-    const byName = new Map(allItems.map((i) => [i.name, i]));
-    return PACKAGES.map((p) => {
-      const lines = p.items.map(([name, quantity]) => ({ equipment: byName.get(name), quantity })).filter((l) => l.equipment);
-      return { ...p, lines, perDay: lines.reduce((sum, l) => sum + l.equipment.dailyRate * l.quantity, 0) };
-    });
-  }, [allItems]);
-
   const handleSearch = (e) => {
     e.preventDefault();
     if (search.start && search.end) setDates({ start: search.start, end: search.end });
@@ -105,8 +92,7 @@ export default function Landing() {
       <section className="studio-hero grid-canvas hero" ref={heroRef}>
         <Container>
           <div className="hero-copy">
-            <span className="badge-dark-pill badge-plain mb-4">Live availability for your event dates</span>
-            <SplitText as="h1" className="display-xxl mt-4 mb-4">
+            <SplitText as="h1" className="display-xxl mb-4">
               Event gear,
               <br />
               <span className="accent">delivered &amp; set up.</span>
@@ -136,11 +122,11 @@ export default function Landing() {
               </Form.Group>
               <Form.Group controlId="hero-start" style={{ minWidth: 150 }}>
                 <Form.Label>Event from</Form.Label>
-                <Form.Control type="date" min={todayInput()} value={search.start} onChange={(e) => setSearch({ ...search, start: e.target.value, end: search.end && search.end < e.target.value ? e.target.value : search.end })} />
+                <DateInput id="hero-start" min={todayInput()} value={search.start} onChange={(v) => setSearch({ ...search, start: v, end: search.end && search.end < v ? v : search.end })} />
               </Form.Group>
               <Form.Group controlId="hero-end" style={{ minWidth: 150 }}>
                 <Form.Label>To</Form.Label>
-                <Form.Control type="date" min={search.start || todayInput()} value={search.end} onChange={(e) => setSearch({ ...search, end: e.target.value })} />
+                <DateInput id="hero-end" min={search.start || todayInput()} value={search.end} onChange={(v) => setSearch({ ...search, end: v })} />
               </Form.Group>
               <Button type="submit" className="ms-auto">
                 Find equipment<IconArrowUpRight size={18} className="arrow" />
@@ -150,7 +136,6 @@ export default function Landing() {
           <div className="stat-row">
             <span><strong>{allItems.length || 24}+</strong> items in stock</span>
             <span><strong>8</strong> categories</span>
-            <span><strong>4</strong> ready-made kits</span>
           </div>
           <span className="scroll-cue" aria-hidden="true">Scroll to explore <IconArrowDown size={14} /></span>
         </Container>
@@ -211,7 +196,7 @@ export default function Landing() {
               </div>
             </Col>
           </Row>
-          <Row xs={1} sm={2} lg={3} xl={6} className="g-3">
+          <Row xs={1} sm={2} lg={3} xl={5} className="g-3">
             {SMALL_FEATURES.map(({ icon: Icon, title, text }) => (
               <Col key={title}>
                 <div className="bezel bezel-sm feature-tile">
@@ -250,41 +235,6 @@ export default function Landing() {
           <div className="product-grid">
             {popular.map((item) => <ProductCard key={item._id} item={item} />)}
           </div>
-        </Container>
-      </section>
-
-      {/* ---- Kits on the navy band ---- */}
-      <section className="navy-band" id="packages">
-        <Container>
-          <span className="eyebrow text-uppercase">Ready-made kits</span>
-          <SplitText as="h2" className="section-title mt-2 mb-2">One click, a whole event.</SplitText>
-          <p className="text-muted mb-5">Start from a kit, then adjust quantities on your request.</p>
-          <Row xs={1} md={2} xl={4} className="g-3">
-            {kits.map((kit) => (
-              <Col key={kit.id}>
-                <article className="package-card">
-                  <div className="cover kit-cover" aria-hidden="true">
-                    {kit.icons.map((Icon, i) => <span key={i} className="kit-icon"><Icon size={22} /></span>)}
-                  </div>
-                  <div className="body">
-                    <h3 className="mb-1" style={{ fontWeight: 600 }}>{kit.name}</h3>
-                    <p className="text-muted small mb-0" style={{ color: 'var(--muted)' }}>{kit.blurb}</p>
-                    <ul>
-                      {kit.lines.map((l) => <li key={l.equipment._id}>{l.quantity} × {l.equipment.name}</li>)}
-                    </ul>
-                    <div className="foot">
-                      <span className="price">{formatCurrency(kit.perDay)} <small>/ day</small></span>
-                      {!isAdmin && (
-                        <button type="button" className="btn btn-sm btn-primary" onClick={() => addToRequest(kit.lines)} disabled={!kit.lines.length}>
-                          Add kit
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </article>
-              </Col>
-            ))}
-          </Row>
         </Container>
       </section>
 

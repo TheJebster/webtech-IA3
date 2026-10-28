@@ -60,4 +60,5 @@ export function useAuth() {
   return ctx;
 }
 
-export const homePathFor = (user) => (user?.role === 'admin' ? '/admin' : '/catalog');
+// Where each role lands after logging in: admins on the dashboard, customers on their rentals
+export const homePathFor = (user) => (user?.role === 'admin' ? '/admin' : '/my-rentals');

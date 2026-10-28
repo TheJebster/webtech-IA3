@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Container, Nav, Navbar } from 'react-bootstrap';
+import { Container, Nav, NavDropdown, Navbar } from 'react-bootstrap';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Cart3, Search } from 'react-bootstrap-icons';
+import { IconChevronDown, IconKey } from '@tabler/icons-react';
 import { IconArrowUpRight } from '@tabler/icons-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -17,7 +18,6 @@ const ADMIN_LINKS = [
 
 const SHOP_LINKS = [
   { to: '/catalog', label: 'Equipment' },
-  { to: '/#packages', label: 'Packages', plain: true },
 ];
 
 export default function AppNavbar() {
@@ -111,8 +111,17 @@ export default function AppNavbar() {
                 )}
                 {user ? (
                   <>
-                    <span className="nav-user px-lg-2 py-1">{user.name} · {user.role}</span>
-                    <Nav.Link as={NavLink} to="/account/password" onClick={close}>Password</Nav.Link>
+                    {/* The name opens the account menu (change password) */}
+                    <NavDropdown
+                      title={<>{user.name}<IconChevronDown size={14} className="chev" aria-hidden="true" /></>}
+                      id="account-menu"
+                      align="end"
+                      className="account-menu"
+                    >
+                      <NavDropdown.Item as={Link} to="/account/password" onClick={close}>
+                        <IconKey size={16} stroke={1.8} /> Change password
+                      </NavDropdown.Item>
+                    </NavDropdown>
                     <button type="button" className="btn btn-sm btn-outline-secondary nav-logout align-self-start align-self-lg-center" onClick={handleLogout}>
                       Log out
                     </button>

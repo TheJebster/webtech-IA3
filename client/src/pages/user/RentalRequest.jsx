@@ -12,6 +12,7 @@ import PageHeader from '../../components/PageHeader';
 import EmptyState from '../../components/EmptyState';
 import EquipmentImage from '../../components/EquipmentImage';
 import usePageTitle from '../../hooks/usePageTitle';
+import DateInput from '../../components/DateInput';
 
 const MAX_DAYS = 30;
 const EMPTY_EVENT = { eventName: '', venue: '', startDate: '', endDate: '', notes: '' };
@@ -224,15 +225,15 @@ export default function RentalRequest() {
                 <Col sm={6}>
                   <Form.Group controlId="startDate">
                     <Form.Label>Start date</Form.Label>
-                    <Form.Control type="date" name="startDate" min={todayInput()} value={form.startDate} onChange={handleChange} isInvalid={Boolean(errors.startDate)} />
-                    <Form.Control.Feedback type="invalid">{errors.startDate}</Form.Control.Feedback>
+                    <DateInput id="startDate" name="startDate" min={todayInput()} value={form.startDate} onChange={(v) => handleChange({ target: { name: 'startDate', value: v } })} isInvalid={Boolean(errors.startDate)} />
+                    <Form.Control.Feedback type="invalid" className={errors.startDate ? 'd-block' : ''}>{errors.startDate}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
                 <Col sm={6}>
                   <Form.Group controlId="endDate">
                     <Form.Label>End date</Form.Label>
-                    <Form.Control type="date" name="endDate" min={form.startDate || todayInput()} value={form.endDate} onChange={handleChange} isInvalid={Boolean(errors.endDate)} />
-                    <Form.Control.Feedback type="invalid">{errors.endDate}</Form.Control.Feedback>
+                    <DateInput id="endDate" name="endDate" min={form.startDate || todayInput()} value={form.endDate} onChange={(v) => handleChange({ target: { name: 'endDate', value: v } })} isInvalid={Boolean(errors.endDate)} />
+                    <Form.Control.Feedback type="invalid" className={errors.endDate ? 'd-block' : ''}>{errors.endDate}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
                 <Col xs={12}>

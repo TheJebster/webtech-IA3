@@ -8,7 +8,7 @@ import {
 import usePageTitle from '../../hooks/usePageTitle';
 import api, { parseError } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
-import { formatCurrency, formatDayRange, timeAgo } from '../../utils/format';
+import { formatCurrency, formatDate, formatDayRange, timeAgo } from '../../utils/format';
 import PageLoader from '../../components/PageLoader';
 import EmptyState from '../../components/EmptyState';
 import ItemVisual from '../../components/store/ItemVisual';
@@ -35,7 +35,7 @@ function activityStyle(action) {
   return { icon: IconUsers, tone: 'gray' };
 }
 
-const today = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
+const today = `${new Date().toLocaleDateString('en-GB', { weekday: 'long' })}, ${formatDate(new Date())}`;
 
 export default function AdminHome() {
   usePageTitle('Admin dashboard');

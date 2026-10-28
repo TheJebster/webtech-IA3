@@ -15,12 +15,14 @@ export default function ProtectedRoute({ roles }) {
 }
 
 // For login/signup pages: logged-in users go back to the page they were sent
-// away from (if any), otherwise to their role's home page.
+// away from (if any), otherwise to their role's home page. A customer who has just
+// signed up has no rentals yet, so they start in the catalog instead.
 export function GuestRoute() {
   const { user, loading } = useAuth();
   const location = useLocation();
   if (loading) return <PageLoader />;
   if (!user) return <Outlet />;
   const from = location.state?.from?.pathname;
-  return <Navigate to={from || homePathFor(user)} replace />;
+  const fresh = location.pathname === '/signup' && user.role !== 'admin';
+  return <Navigate to={from || (fresh ? '/catalog' : homePathFor(user))} replace />;
 }

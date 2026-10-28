@@ -21,7 +21,7 @@ export function startSmoothScroll() {
     lerp: 0.1,
     wheelMultiplier: 1,
     // Let scrollable panels (modals, filters, tables, phone menu) scroll natively
-    prevent: (node) => Boolean(node.closest?.('.modal, .navbar-collapse, .filters, .table-responsive, .compare, .dropdown-menu, [data-lenis-prevent]')),
+    prevent: (node) => Boolean(node.closest?.('.modal, .navbar-collapse, .filters, .react-datepicker, .table-responsive, .compare, .dropdown-menu, [data-lenis-prevent]')),
   });
   lenis.on('scroll', ScrollTrigger.update);
   tick = (time) => lenis.raf(time * 1000);

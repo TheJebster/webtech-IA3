@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { homePathFor, useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { parseError } from '../api/client';
 import PasswordInput from '../components/PasswordInput';
@@ -58,7 +58,8 @@ export default function Signup() {
     try {
       const user = await signup({ ...form, name: form.name.trim(), email: form.email.trim() });
       notify(`Welcome to RentKit, ${user.name}!`);
-      navigate(homePathFor(user), { replace: true });
+      // A brand-new account has no rentals yet, so start them in the catalog
+      navigate('/catalog', { replace: true });
     } catch (err) {
       const { message, errors } = parseError(err);
       setServerError(message);
