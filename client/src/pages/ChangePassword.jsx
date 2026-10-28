@@ -8,7 +8,7 @@ import PasswordInput from '../components/PasswordInput';
 import PasswordStrength from '../components/PasswordStrength';
 import { hasErrors, validatePassword } from '../utils/validators';
 import usePageTitle from '../hooks/usePageTitle';
-import { CalendarCheck, ShieldCheck, Truck } from 'react-bootstrap-icons';
+import AuthLayout from '../components/AuthLayout';
 
 const EMPTY = { currentPassword: '', newPassword: '', confirmPassword: '' };
 
@@ -66,22 +66,12 @@ export default function ChangePassword() {
   };
 
   return (
-    <div className="auth-split">
-      <div className="auth-art auth-art-gradient">
-        <div>
-          <h2 className="mb-2">Keep your account secure</h2>
-          <p>Use a strong password you don’t use anywhere else.</p>
-          <ul className="auth-points">
-            <li><span className="icon"><Truck /></span> Delivery, setup and pickup included</li>
-            <li><span className="icon"><CalendarCheck /></span> Live availability for your dates</li>
-            <li><span className="icon"><ShieldCheck /></span> No payment until we confirm</li>
-          </ul>
-        </div>
-      </div>
-    <div className="auth-wrapper">
-      <div className="auth-card">
-                  <h1 className="mb-2">Change password</h1>
-        <p className="text-muted mb-4">Keep your account secure with a strong password.</p>
+    <AuthLayout
+      title="Change password"
+      subtitle="Use a strong password you don’t use anywhere else."
+      panelTitle="Keep your account secure"
+      panelText="A strong password keeps your bookings and details safe."
+    >
 
         {serverError && <Alert variant="danger">{serverError}</Alert>}
 
@@ -106,8 +96,6 @@ export default function ChangePassword() {
             <Button variant="outline-secondary" onClick={() => navigate(-1)} disabled={submitting}>Cancel</Button>
           </div>
         </Form>
-      </div>
-    </div>
-    </div>
+    </AuthLayout>
   );
 }

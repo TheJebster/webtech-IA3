@@ -78,10 +78,7 @@ export default function Landing() {
       {/* ---- Hero on the grid canvas ---- */}
       <section className="studio-hero grid-canvas hero">
         <Container>
-          <span className="badge-dark-pill mb-4">
-            <span className="dot-icon"><span className="live-dot" /></span>
-            Live availability for your event dates
-          </span>
+          <span className="badge-dark-pill badge-plain mb-4">Live availability for your event dates</span>
           <h1 className="display-xxl mt-4 mb-4">
             Event gear,
             <br />

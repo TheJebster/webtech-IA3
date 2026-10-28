@@ -8,7 +8,7 @@ import PasswordInput from '../components/PasswordInput';
 import PasswordStrength from '../components/PasswordStrength';
 import { hasErrors, validateEmail, validateName, validatePassword, validatePhone } from '../utils/validators';
 import usePageTitle from '../hooks/usePageTitle';
-import { CalendarCheck, ShieldCheck, Truck } from 'react-bootstrap-icons';
+import AuthLayout from '../components/AuthLayout';
 
 const EMPTY = { name: '', email: '', phone: '', password: '', confirmPassword: '' };
 
@@ -76,22 +76,12 @@ export default function Signup() {
   });
 
   return (
-    <div className="auth-split">
-      <div className="auth-art auth-art-gradient">
-        <div>
-          <h2 className="mb-2">Plan your event in minutes</h2>
-          <p>Browse 24+ items, check live availability and send one request.</p>
-          <ul className="auth-points">
-            <li><span className="icon"><Truck /></span> Delivery, setup and pickup included</li>
-            <li><span className="icon"><CalendarCheck /></span> Live availability for your dates</li>
-            <li><span className="icon"><ShieldCheck /></span> No payment until we confirm</li>
-          </ul>
-        </div>
-      </div>
-    <div className="auth-wrapper">
-      <div className="auth-card auth-card-wide">
-        <h1 className="mb-2">Create your account</h1>
-        <p className="text-muted mb-4">Rent equipment for your next event in minutes.</p>
+    <AuthLayout
+      title="Create your account"
+      subtitle="It takes a minute — then rent for your next event."
+      panelTitle="Plan your event in minutes"
+      panelText="Browse the catalog, check live availability and send one request." wide
+    >
 
         {serverError && <Alert variant="danger">{serverError}</Alert>}
 
@@ -141,8 +131,6 @@ export default function Signup() {
         <p className="text-muted mt-5 mb-0">
           Already have an account? <Link to="/login">Log in</Link>
         </p>
-      </div>
-    </div>
-    </div>
+    </AuthLayout>
   );
 }

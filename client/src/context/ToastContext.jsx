@@ -17,7 +17,7 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={notify}>
       {children}
-      <ToastContainer position="bottom-start" className="p-3 position-fixed" style={{ zIndex: 2000 }}>
+      <ToastContainer position="top-center" className="toast-stack position-fixed px-3" style={{ zIndex: 2000 }}>
         {/* Every toast is inverted ink (styled in index.css); the message carries the meaning */}
         {toasts.map((t) => (
           <Toast key={t.id} onClose={() => dismiss(t.id)} delay={3500} autohide>

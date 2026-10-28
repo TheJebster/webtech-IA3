@@ -7,7 +7,7 @@ import { parseError } from '../api/client';
 import PasswordInput from '../components/PasswordInput';
 import { hasErrors, validateEmail } from '../utils/validators';
 import usePageTitle from '../hooks/usePageTitle';
-import { CalendarCheck, ShieldCheck, Truck } from 'react-bootstrap-icons';
+import AuthLayout from '../components/AuthLayout';
 
 export default function Login() {
   usePageTitle('Log in');
@@ -52,22 +52,12 @@ export default function Login() {
   };
 
   return (
-    <div className="auth-split">
-      <div className="auth-art auth-art-gradient">
-        <div>
-          <h2 className="mb-2">Welcome back</h2>
-          <p>Pick up where you left off — your rental requests are waiting.</p>
-          <ul className="auth-points">
-            <li><span className="icon"><Truck /></span> Delivery, setup and pickup included</li>
-            <li><span className="icon"><CalendarCheck /></span> Live availability for your dates</li>
-            <li><span className="icon"><ShieldCheck /></span> No payment until we confirm</li>
-          </ul>
-        </div>
-      </div>
-    <div className="auth-wrapper">
-      <div className="auth-card">
-        <h1 className="mb-2">Log in</h1>
-        <p className="text-muted mb-4">Welcome back to RentKit.</p>
+    <AuthLayout
+      title="Log in"
+      subtitle="Use the email you signed up with."
+      panelTitle="Welcome back"
+      panelText="Pick up where you left off — your rental requests are waiting."
+    >
 
         {serverError && <Alert variant="danger">{serverError}</Alert>}
 
@@ -107,8 +97,6 @@ export default function Login() {
         <p className="text-muted mt-5 mb-0">
           New to RentKit? <Link to="/signup">Create an account</Link>
         </p>
-      </div>
-    </div>
-    </div>
+    </AuthLayout>
   );
 }

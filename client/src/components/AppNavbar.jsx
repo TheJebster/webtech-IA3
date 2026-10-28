@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Cart3, Search } from 'react-bootstrap-icons';
@@ -29,6 +29,14 @@ export default function AppNavbar() {
   const [query, setQuery] = useState('');
   const close = () => setExpanded(false);
 
+  // Escape closes the phone/tablet menu
+  useEffect(() => {
+    if (!expanded) return undefined;
+    const onKey = (e) => e.key === 'Escape' && setExpanded(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [expanded]);
+
   const handleLogout = () => {
     close();
     logout();
@@ -46,6 +54,8 @@ export default function AppNavbar() {
 
   return (
     <>
+      {/* Dims the page behind the open phone/tablet menu; tap to close */}
+      {expanded && <div className="nav-backdrop d-lg-none" onClick={close} aria-hidden="true" />}
       <header className="site-header">
         <Navbar expand="lg" expanded={expanded} onToggle={setExpanded} className="nav-pill">
           <Container fluid className="px-0">
