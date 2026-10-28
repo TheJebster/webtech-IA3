@@ -30,18 +30,37 @@ export default function MyRentals() {
   const [cancelling, setCancelling] = useState(null);
   const [busy, setBusy] = useState(false);
 
-  const load = useCallback(async () => {
+  // `quiet` is for background refreshes: no error toast, so a flaky connection doesn't spam the screen.
+  const load = useCallback(async ({ quiet = false } = {}) => {
     try {
       const { data } = await api.get('/rentals/mine');
       setRentals(data.items);
+      // Keep an open details modal in step with the fresh data (e.g. status changed by an admin).
+      setViewing((current) => (current && data.items.find((r) => r._id === current._id)) || current);
     } catch (err) {
-      notify(parseError(err).message, 'danger');
+      if (!quiet) notify(parseError(err).message, 'danger');
     } finally {
       setLoading(false);
     }
   }, [notify]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Pick up admin decisions without a reload: refresh when the tab comes back into view,
+  // and every 15 seconds while it stays visible.
+  useEffect(() => {
+    const refresh = () => {
+      if (document.visibilityState === 'visible') load({ quiet: true });
+    };
+    const timer = setInterval(refresh, 15000);
+    document.addEventListener('visibilitychange', refresh);
+    window.addEventListener('focus', refresh);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', refresh);
+      window.removeEventListener('focus', refresh);
+    };
+  }, [load]);
 
   const confirmCancel = async () => {
     setBusy(true);
