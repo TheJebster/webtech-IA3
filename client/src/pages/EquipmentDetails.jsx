@@ -14,6 +14,7 @@ import ProductCard from '../components/store/ProductCard';
 import ProductGallery from '../components/store/ProductGallery';
 import Availability from '../components/store/Availability';
 import DateRangeFields from '../components/store/DateRangeFields';
+import SplitText from '../motion/SplitText';
 
 export default function EquipmentDetails() {
   const { id } = useParams();
@@ -94,7 +95,7 @@ export default function EquipmentDetails() {
         <Col lg={5}>
           <div className="buy-box panel">
             <span className="eyebrow">{item.category}</span>
-            <h1 className="mb-2">{item.name}</h1>
+            <SplitText as="h1" key={item._id} className="mb-2">{item.name}</SplitText>
             <div className="d-flex flex-wrap gap-2 mb-3">
               <span className="badge">Condition: {item.condition}</span>
               <span className="badge">{item.quantityTotal} units in stock</span>

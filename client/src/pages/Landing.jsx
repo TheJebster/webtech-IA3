@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  IconArrowUpRight, IconBolt, IconCheck, IconClipboardList, IconPackages, IconReceiptOff,
+  IconArrowDown, IconArrowUpRight, IconBolt, IconCheck, IconClipboardList, IconPackages, IconReceiptOff,
   IconShieldCheck, IconTruckDelivery, IconUsersGroup,
 } from '@tabler/icons-react';
 import usePageTitle from '../hooks/usePageTitle';
@@ -14,6 +14,8 @@ import { categoryStyle, PACKAGES } from '../data/storefront';
 import { formatCurrency, todayInput } from '../utils/format';
 import ProductCard from '../components/store/ProductCard';
 import EquipmentImage from '../components/EquipmentImage';
+import SplitText from '../motion/SplitText';
+import { gsap, reducedMotion, ScrollTrigger } from '../motion/engine';
 
 const SMALL_FEATURES = [
   { icon: IconShieldCheck, title: 'Tested before every event', text: 'Every item is checked before dispatch.' },
@@ -44,12 +46,36 @@ export default function Landing() {
   const [categories, setCategories] = useState([]);
   const [popular, setPopular] = useState([]);
   const [allItems, setAllItems] = useState([]);
+  const heroRef = useRef(null);
 
   useEffect(() => {
     api.get('/equipment/meta').then(({ data }) => setCategories(data.categories)).catch(() => {});
     api.get('/equipment', { params: { sort: 'popular', limit: 8 } }).then(({ data }) => setPopular(data.items)).catch(() => {});
     api.get('/equipment', { params: { limit: 100 } }).then(({ data }) => setAllItems(data.items)).catch(() => {});
   }, []);
+
+  // Scroll-linked motion (floema.com): the hero headline drifts up and fades as you leave it,
+  // and the floating product cards move at different speeds through the band
+  useEffect(() => {
+    if (reducedMotion() || !heroRef.current) return undefined;
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.hero-copy', { yPercent: 0, opacity: 1 }, {
+        yPercent: -18,
+        opacity: 0.15,
+        ease: 'none',
+        scrollTrigger: { trigger: heroRef.current, start: 'top top', end: 'bottom 30%', scrub: true },
+      });
+      gsap.utils.toArray('.float-slot').forEach((slot, i) => {
+        gsap.fromTo(slot, { y: 60 + (i % 3) * 40 }, {
+          y: -40 - (i % 3) * 30,
+          ease: 'none',
+          scrollTrigger: { trigger: '.float-band', start: 'top bottom', end: 'bottom top', scrub: true },
+        });
+      });
+    }, heroRef);
+    ScrollTrigger.refresh();
+    return () => ctx.revert();
+  }, [popular.length]);
 
   // Resolve each kit's item names against the live catalogue to price it
   const kits = useMemo(() => {
@@ -76,18 +102,20 @@ export default function Landing() {
   return (
     <>
       {/* ---- Hero on the grid canvas ---- */}
-      <section className="studio-hero grid-canvas hero">
+      <section className="studio-hero grid-canvas hero" ref={heroRef}>
         <Container>
-          <span className="badge-dark-pill badge-plain mb-4">Live availability for your event dates</span>
-          <h1 className="display-xxl mt-4 mb-4">
-            Event gear,
-            <br />
-            <span className="accent">delivered &amp; set up.</span>
-          </h1>
-          <p className="lead-strong">Rent everything your event needs in minutes.</p>
-          <p className="lead-muted">
-            Sound, lighting, staging, furniture and tents for weddings, concerts, college fests and corporate events.
-          </p>
+          <div className="hero-copy">
+            <span className="badge-dark-pill badge-plain mb-4">Live availability for your event dates</span>
+            <SplitText as="h1" className="display-xxl mt-4 mb-4">
+              Event gear,
+              <br />
+              <span className="accent">delivered &amp; set up.</span>
+            </SplitText>
+            <p className="lead-strong">Rent everything your event needs in minutes.</p>
+            <p className="lead-muted">
+              Sound, lighting, staging, furniture and tents for weddings, concerts, college fests and corporate events.
+            </p>
+          </div>
 
           <Form className="prompt-search hero-search" onSubmit={handleSearch} aria-label="Find equipment">
             <Form.Control
@@ -124,17 +152,20 @@ export default function Landing() {
             <span><strong>8</strong> categories</span>
             <span><strong>4</strong> ready-made kits</span>
           </div>
+          <span className="scroll-cue" aria-hidden="true">Scroll to explore <IconArrowDown size={14} /></span>
         </Container>
 
         {/* Floating product cards over the blue band */}
         <div className="float-band" aria-hidden="true">
           <div className="float-row">
             {popular.slice(0, 6).map((item) => (
-              <div key={item._id} className="float-card">
-                <div className="visual"><EquipmentImage item={item} /></div>
-                <div className="meta text-start">
-                  <div className="fw-semibold text-truncate" style={{ color: 'var(--ink)' }}>{item.name}</div>
-                  <div className="text-muted">{formatCurrency(item.dailyRate)} / day</div>
+              <div key={item._id} className="float-slot">
+                <div className="float-card">
+                  <div className="visual"><EquipmentImage item={item} /></div>
+                  <div className="meta text-start">
+                    <div className="fw-semibold text-truncate" style={{ color: 'var(--ink)' }}>{item.name}</div>
+                    <div className="text-muted">{formatCurrency(item.dailyRate)} / day</div>
+                  </div>
                 </div>
               </div>
             ))}
@@ -145,7 +176,7 @@ export default function Landing() {
       {/* ---- Features ---- */}
       <section className="section">
         <Container>
-          <h2 className="section-title mb-5">Oh, and everything else is handled too.</h2>
+          <SplitText as="h2" className="section-title mb-5">Oh, and everything else is handled too.</SplitText>
           <Row className="g-3 mb-3">
             <Col lg={5}>
               <div className="bezel">
@@ -200,11 +231,11 @@ export default function Landing() {
       <section className="section">
         <Container>
           <div className="section-head">
-            <h2 className="section-title mb-0">Shop by category</h2>
+            <SplitText as="h2" className="section-title mb-0">Shop by category</SplitText>
             <Link to="/catalog" className="btn btn-outline-secondary">All equipment<IconArrowUpRight size={16} className="arrow" /></Link>
           </div>
-          <div className="category-grid">
-            {categories.map((c) => <CategoryTile key={c.name} category={c} />)}
+          <div className="collections">
+            {categories.map((c, i) => <CategoryTile key={c.name} category={c} index={i} />)}
           </div>
         </Container>
       </section>
@@ -213,7 +244,7 @@ export default function Landing() {
       <section className="section">
         <Container>
           <div className="section-head">
-            <h2 className="section-title mb-0">Most rented <span className="heading-accent">right now.</span></h2>
+            <SplitText as="h2" className="section-title mb-0">Most rented <span className="heading-accent">right now.</span></SplitText>
             <Link to="/catalog?sort=popular" className="btn btn-outline-secondary">See more<IconArrowUpRight size={16} className="arrow" /></Link>
           </div>
           <div className="product-grid">
@@ -226,7 +257,7 @@ export default function Landing() {
       <section className="navy-band" id="packages">
         <Container>
           <span className="eyebrow text-uppercase">Ready-made kits</span>
-          <h2 className="section-title mt-2 mb-2">One click, a whole event.</h2>
+          <SplitText as="h2" className="section-title mt-2 mb-2">One click, a whole event.</SplitText>
           <p className="text-muted mb-5">Start from a kit, then adjust quantities on your request.</p>
           <Row xs={1} md={2} xl={4} className="g-3">
             {kits.map((kit) => (
@@ -260,11 +291,11 @@ export default function Landing() {
       {/* ---- Comparison ---- */}
       <section className="section">
         <Container>
-          <h2 className="section-title mb-4">
+          <SplitText as="h2" className="section-title mb-4">
             Your next event.
             <br />
             <span className="heading-accent">Less to manage.</span>
-          </h2>
+          </SplitText>
           <div className="compare">
             <table>
               <thead>
@@ -296,19 +327,19 @@ export default function Landing() {
   );
 }
 
-function CategoryTile({ category }) {
-  const { icon: Icon, from, to, accent } = categoryStyle(category.name);
+// Floema-style collection row: big name with the item count in brackets; on hover the row
+// tints, the icon slides in and the arrow turns
+function CategoryTile({ category, index }) {
+  const { icon: Icon } = categoryStyle(category.name);
   return (
-    <Link
-      to={`/catalog?category=${encodeURIComponent(category.name)}`}
-      className="category-tile category-tile-icon"
-      style={{ '--tile-from': from, '--tile-to': to, '--tile-accent': accent }}
-    >
-      <span className="item-visual-badge"><Icon size={28} /></span>
-      <span>
-        <strong>{category.name}</strong>
-        <span>{category.count} item{category.count === 1 ? '' : 's'}</span>
+    <Link to={`/catalog?category=${encodeURIComponent(category.name)}`} className="collection-row">
+      <span className="collection-no">{String(index + 1).padStart(2, '0')}</span>
+      <span className="collection-icon" aria-hidden="true"><Icon size={26} stroke={1.6} /></span>
+      <span className="collection-name">
+        {category.name}
+        <sup>({category.count})</sup>
       </span>
+      <span className="collection-arrow" aria-hidden="true"><IconArrowUpRight size={22} /></span>
     </Link>
   );
 }

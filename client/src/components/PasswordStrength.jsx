@@ -1,3 +1,4 @@
+import { IconCheck, IconPoint } from '@tabler/icons-react';
 import { PASSWORD_CHECKS, passwordScore } from '../utils/validators';
 
 const LEVELS = ['Too weak', 'Too weak', 'Weak', 'Fair', 'Good', 'Strong'];
@@ -14,8 +15,8 @@ export default function PasswordStrength({ password }) {
         {PASSWORD_CHECKS.map((check) => {
           const ok = check.test(password);
           return (
-            <li key={check.id} className={`col ${ok ? '' : 'text-muted'}`}>
-              {ok ? '✓' : '·'} {check.label}
+            <li key={check.id} className={`col pw-check ${ok ? 'is-ok' : 'text-muted'}`}>
+              {ok ? <IconCheck size={14} stroke={2.4} /> : <IconPoint size={14} />} {check.label}
             </li>
           );
         })}

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Plus } from 'react-bootstrap-icons';
+import { IconArrowUpRight } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext';
 import useAddToRequest from '../../hooks/useAddToRequest';
 import { formatCurrency } from '../../utils/format';
@@ -17,9 +18,10 @@ export default function ProductCard({ item }) {
       <div className="thumb">
         <EquipmentImage item={item} />
         {item.available !== undefined && <Availability available={item.available} total={item.quantityTotal} compact />}
+        <span className="explore-pill" aria-hidden="true">Explore<IconArrowUpRight size={14} /></span>
       </div>
       <div className="body">
-        <span className="meta">{item.category}</span>
+        <span className="meta category-tag">{item.category}</span>
         <h3 className="card-title">
           <Link to={`/equipment/${item._id}`} className="stretched-link">{item.name}</Link>
         </h3>

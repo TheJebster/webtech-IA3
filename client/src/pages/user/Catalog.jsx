@@ -14,6 +14,7 @@ import Paginator from '../../components/Paginator';
 import PageLoader from '../../components/PageLoader';
 import EmptyState from '../../components/EmptyState';
 import UserSummary from '../../components/UserSummary';
+import SplitText from '../../motion/SplitText';
 
 const PAGE_SIZE = 12;
 const PRICE_BANDS = [
@@ -125,7 +126,7 @@ export default function Catalog() {
       </Breadcrumb>
       <div className="page-header mb-3">
         <div>
-          <h1 className="mb-0">{category || 'All equipment'}</h1>
+          <SplitText as="h1" key={category} className="mb-0">{category || 'All equipment'}</SplitText>
           <p>Delivered, set up and picked up by our crew. Prices are per day.</p>
         </div>
       </div>

@@ -7,18 +7,18 @@ import {
   IconPresentation, IconSofa, IconSparkles, IconStairs, IconTent, IconToolsKitchen2,
 } from '@tabler/icons-react';
 
-// Each category has a soft gradient and an accent colour for its icon tiles
+// Each category has a muted, earthy gradient (Floema-style stone palette) and an accent colour for its icon tiles
 export const CATEGORY_STYLE = {
-  Audio: { icon: IconDeviceSpeaker, from: '#fff1e6', to: '#fed7aa', accent: '#c2410c' },
-  Lighting: { icon: IconBulb, from: '#fefce8', to: '#fde68a', accent: '#a16207' },
-  Staging: { icon: IconStairs, from: '#f5f3ff', to: '#ddd6fe', accent: '#6d28d9' },
-  Furniture: { icon: IconArmchair, from: '#fdf2f8', to: '#fbcfe8', accent: '#be185d' },
-  'Tents & Canopies': { icon: IconTent, from: '#f0fdf4', to: '#bbf7d0', accent: '#15803d' },
-  'Video & Projection': { icon: IconDeviceTv, from: '#eff6ff', to: '#bfdbfe', accent: '#1d4ed8' },
-  Power: { icon: IconBolt, from: '#f0f9ff', to: '#bae6fd', accent: '#0369a1' },
-  Decor: { icon: IconFlower, from: '#fff1f2', to: '#fecdd3', accent: '#be123c' },
+  Audio: { icon: IconDeviceSpeaker, from: '#f3efe8', to: '#e6ddd0', accent: '#5b4a3f' },
+  Lighting: { icon: IconBulb, from: '#f6f5d6', to: '#e9e778', accent: '#55531a' },
+  Staging: { icon: IconStairs, from: '#efece6', to: '#dcd5ca', accent: '#4a4340' },
+  Furniture: { icon: IconArmchair, from: '#f4ece6', to: '#e5d3c6', accent: '#6b4a3a' },
+  'Tents & Canopies': { icon: IconTent, from: '#eef0e6', to: '#d6dcc6', accent: '#46523a' },
+  'Video & Projection': { icon: IconDeviceTv, from: '#ebedee', to: '#d5d9dc', accent: '#3d4750' },
+  Power: { icon: IconBolt, from: '#f3f2df', to: '#e2e0b4', accent: '#4f4d22' },
+  Decor: { icon: IconFlower, from: '#f5ebe8', to: '#e6d2cc', accent: '#6e3f37' },
 };
-const FALLBACK_STYLE = { icon: IconPackage, from: '#f5f5f4', to: '#e7e5e4', accent: '#57534e' };
+const FALLBACK_STYLE = { icon: IconPackage, from: '#f2efea', to: '#e4ded3', accent: '#4a4340' };
 
 // Item-specific icons (Tabler), chosen and checked visually so each one depicts the actual item.
 // `rotate` turns an icon (a ladder on its side reads as a truss beam).

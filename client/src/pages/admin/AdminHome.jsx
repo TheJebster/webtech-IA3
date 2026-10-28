@@ -15,6 +15,7 @@ import ItemVisual from '../../components/store/ItemVisual';
 import RentalStatusBadge, { STATUS_META } from '../../components/rentals/RentalStatusBadge';
 import { KpiCard, RevenueChart, StatusDonut, UtilizationRing } from '../../components/dashboard/DashboardWidgets';
 import EquipmentImage from '../../components/EquipmentImage';
+import SplitText from '../../motion/SplitText';
 
 const QUICK_ACTIONS = [
   { to: '/admin/operations?tab=rentals', icon: IconClipboardCheck, title: 'Review requests', text: 'Approve, reject or close bookings.' },
@@ -58,7 +59,7 @@ export default function AdminHome() {
       <div className="dash-header">
         <div>
           <div className="small text-muted mb-1">{today}</div>
-          <h1 className="mb-1">Good to see you, {user.name.split(' ')[0]} 👋</h1>
+          <SplitText as="h1" className="mb-1">Good to see you, {user.name.split(' ')[0]}.</SplitText>
           <p className="text-muted mb-0">
             {pending > 0
               ? <>You have <strong>{pending} rental request{pending > 1 ? 's' : ''}</strong> waiting for review.</>
