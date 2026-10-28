@@ -8,10 +8,10 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import useAddToRequest from '../hooks/useAddToRequest';
 import { formatCurrency } from '../utils/format';
-import EquipmentImage from '../components/EquipmentImage';
 import PageLoader from '../components/PageLoader';
 import EmptyState from '../components/EmptyState';
 import ProductCard from '../components/store/ProductCard';
+import ProductGallery from '../components/store/ProductGallery';
 import Availability from '../components/store/Availability';
 import DateRangeFields from '../components/store/DateRangeFields';
 
@@ -75,7 +75,7 @@ export default function EquipmentDetails() {
 
       <Row className="g-4 g-lg-5">
         <Col lg={7}>
-          <div className="product-media"><EquipmentImage item={item} size="hero" /></div>
+          <ProductGallery item={item} />
 
           <div className="mt-4">
             <h2 className="h3">About this item</h2>

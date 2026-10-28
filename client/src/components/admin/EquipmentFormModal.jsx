@@ -6,7 +6,7 @@ import { hasErrors } from '../../utils/validators';
 
 const EMPTY = {
   name: '', category: '', dailyRate: '', quantityTotal: '1', condition: 'Good',
-  imageUrl: '', description: '', features: '', isActive: true,
+  imageUrl: '', description: '', features: '', gallery: '', isActive: true,
 };
 
 const toForm = (item) =>
@@ -17,6 +17,7 @@ const toForm = (item) =>
         dailyRate: String(item.dailyRate),
         quantityTotal: String(item.quantityTotal),
         features: (item.features || []).join('\n'),
+        gallery: (item.gallery || []).map((g) => g.src).join('\n'),
       }
     : EMPTY;
 
@@ -29,8 +30,13 @@ function validate(form) {
     dailyRate: form.dailyRate === '' ? 'Daily rate is required' : !(rate >= 1) ? 'Daily rate must be a positive number' : '',
     quantityTotal:
       form.quantityTotal === '' ? 'Quantity is required' : !Number.isInteger(qty) || qty < 0 ? 'Quantity must be a whole number ≥ 0' : '',
-    imageUrl: form.imageUrl && !/^https?:\/\/\S+$/i.test(form.imageUrl.trim()) ? 'Image URL must start with http:// or https://' : '',
+    imageUrl: form.imageUrl && !/^(https?:\/\/|\/(images|gallery)\/)\S+$/i.test(form.imageUrl.trim()) ? 'Image URL must start with http(s):// or /gallery/' : '',
     description: form.description.length > 1000 ? 'Description is too long (max 1000)' : '',
+    gallery: (() => {
+      const lines = form.gallery.split('\n').map((l) => l.trim()).filter(Boolean);
+      if (lines.length > 8) return 'Up to 8 photos';
+      return lines.every((l) => /^https?:\/\/\S+$/i.test(l) || /^\/(images|gallery)\/\S+$/.test(l)) ? '' : 'Each line must be an http(s) URL or a /gallery/… path';
+    })(),
   };
 }
 
@@ -71,6 +77,12 @@ export default function EquipmentFormModal({ show, item, categories, conditions,
       imageUrl: form.imageUrl.trim(),
       description: form.description.trim(),
       features: form.features.split('\n').map((f) => f.trim()).filter(Boolean),
+      // Keep alt text / source links for photos that were already in the gallery
+      gallery: form.gallery
+        .split('\n')
+        .map((src) => src.trim())
+        .filter(Boolean)
+        .map((src) => (item?.gallery || []).find((g) => g.src === src) || { src, alt: form.name.trim(), source: '' }),
       isActive: form.isActive,
     };
 
@@ -171,6 +183,13 @@ export default function EquipmentFormModal({ show, item, categories, conditions,
               <Form.Group controlId="eq-features">
                 <Form.Label>Key features <span className="text-muted small">(one per line)</span></Form.Label>
                 <Form.Control {...fieldProps('features')} as="textarea" rows={4} placeholder={'1500 W amplifier\nBluetooth'} />
+              </Form.Group>
+            </Col>
+            <Col xs={12}>
+              <Form.Group controlId="eq-gallery">
+                <Form.Label>Product page photos <span className="text-muted small">(one URL per line, up to 8)</span></Form.Label>
+                <Form.Control {...fieldProps('gallery')} as="textarea" rows={3} placeholder={'https://…/photo-1.jpg\n/gallery/photo-2.webp'} />
+                <Form.Control.Feedback type="invalid">{errors.gallery}</Form.Control.Feedback>
               </Form.Group>
             </Col>
             <Col xs={12}>

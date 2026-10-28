@@ -7,13 +7,16 @@ import User from './models/User.js';
 import Activity from './models/Activity.js';
 import Equipment from './models/Equipment.js';
 import Rental from './models/Rental.js';
-import { EQUIPMENT, DEMO_RENTALS } from './seedData.js';
+import { EQUIPMENT, DEMO_RENTALS, DEMO_HISTORY } from './seedData.js';
+import GALLERY from './galleryData.json' with { type: 'json' };
 import { countDays } from './utils/rentalPricing.js';
 
 export const DEMO_USERS = [
   { name: 'Admin', email: 'admin@rentkit.com', password: 'Admin@123', role: 'admin', phone: '9876543210' },
   { name: 'Riya Sharma', email: 'user@rentkit.com', password: 'User@1234', role: 'user', phone: '9123456780' },
   { name: 'Arjun Nair', email: 'arjun@rentkit.com', password: 'Arjun@1234', role: 'user', phone: '9001122334' },
+  { name: 'Meera Iyer', email: 'meera@rentkit.com', password: 'Meera@1234', role: 'user', phone: '9445566778' },
+  { name: 'Karthik Rao', email: 'karthik@rentkit.com', password: 'Karthik@1234', role: 'user', phone: '9887766554' },
 ];
 
 async function seedUsers() {
@@ -32,8 +35,17 @@ async function seedEquipment() {
   const admin = await User.findOne({ role: 'admin' });
   let created = 0;
   for (const data of EQUIPMENT) {
-    if (await Equipment.exists({ name: data.name })) continue;
-    await Equipment.create({ ...data, createdBy: admin?._id });
+    const gallery = GALLERY[data.name] || [];
+    const existing = await Equipment.findOne({ name: data.name });
+    if (existing) {
+      // Add product photos to databases seeded before galleries existed, without touching admin edits
+      if (!existing.gallery?.length && gallery.length) {
+        existing.gallery = gallery;
+        await existing.save();
+      }
+      continue;
+    }
+    await Equipment.create({ ...data, gallery, createdBy: admin?._id });
     created++;
   }
   console.log(`  + ${created} equipment items created (${EQUIPMENT.length - created} already existed)`);
@@ -60,7 +72,7 @@ async function seedRentals() {
 
   const rentals = [];
   const activities = [];
-  for (const r of DEMO_RENTALS) {
+  for (const r of [...DEMO_HISTORY, ...DEMO_RENTALS]) {
     const user = users[r.customer];
     const startDate = dayFromToday(r.start);
     const endDate = dayFromToday(r.end);

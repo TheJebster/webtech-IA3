@@ -25,7 +25,7 @@ A role-based full-stack web application built on the **MERN stack** (MongoDB, Ex
 - Homepage with a photo hero, a date-first search (keyword, category, event dates), category tiles, most-rented items and ready-made **kits by occasion**
 - Catalog with a filter sidebar (search, event dates, category counts, price bands), applied-filter chips, sorting (including **most popular** from real rental history) and pagination
 - Pick event dates once and every product card shows **how many units are free** for those dates; the dates follow you to product pages and the rental request
-- Product pages with photos, availability check, quantity, delivery details and "You may also need" suggestions
+- Product pages with a photo gallery, availability check, quantity, delivery details and "You may also need" suggestions
 - Guests can browse freely; adding to a request asks them to log in and then brings them back
 
 ### Normal user
@@ -155,3 +155,11 @@ Create a second Vercel project from the same repository with **Root Directory = 
 | `VITE_API_URL` | `https://<api-project>.vercel.app/api` |
 
 After the frontend is deployed, make sure its URL is in the API's `CLIENT_URL` and redeploy the API.
+
+### Demo accounts (storefront branch)
+Also: `meera@rentkit.com` / `Meera@1234` and `karthik@rentkit.com` / `Karthik@1234` (customers with rental history).
+
+## Photos
+
+Product-page photos are from [Unsplash](https://unsplash.com/license) (free to use under the Unsplash License); each gallery links to the photo's source page.
+

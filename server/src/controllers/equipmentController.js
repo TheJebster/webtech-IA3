@@ -98,7 +98,7 @@ export async function getEquipment(req, res) {
   res.json({ item: withAvail });
 }
 
-const EDITABLE = ['name', 'category', 'description', 'features', 'dailyRate', 'quantityTotal', 'condition', 'imageUrl', 'isActive'];
+const EDITABLE = ['name', 'category', 'description', 'features', 'dailyRate', 'quantityTotal', 'condition', 'imageUrl', 'gallery', 'isActive'];
 const pick = (src) => Object.fromEntries(EDITABLE.filter((k) => src[k] !== undefined).map((k) => [k, src[k]]));
 
 // POST /api/equipment (admin)

@@ -77,6 +77,11 @@ export const EQUIPMENT = [
 // Demo rentals: start/end are day offsets from today; items are [equipment name, quantity]
 export const DEMO_RENTALS = [
   {
+    customer: 'karthik@rentkit.com', eventName: 'Product Launch Week', venue: 'CODISSIA Trade Fair Complex, Hall A',
+    start: -1, end: 2, requestedDaysAgo: 9, status: 'approved', adminNote: 'Crew on site daily from 7 AM.',
+    items: [['LED Video Wall Panel (P3.9)', 12], ['Lounge Sofa Set', 2], ['Cocktail Table (High-top)', 10], ['Shure SLXD24 Wireless Handheld Mic', 2]],
+  },
+  {
     customer: 'user@rentkit.com', eventName: 'Sharma–Iyer Wedding Reception', venue: 'Le Méridien Lawn, Coimbatore',
     start: -24, end: -23, requestedDaysAgo: 40, status: 'returned', adminNote: 'Returned in good condition. Thank you!',
     items: [['Chiavari Chair (Gold)', 200], ['Round Banquet Table (8-seater)', 25], ['Floral Arch (Artificial)', 1], ['Fairy Light Curtain (Warm White)', 10]],
@@ -111,4 +116,30 @@ export const DEMO_RENTALS = [
     start: 20, end: 21, requestedDaysAgo: 3, status: 'cancelled',
     items: [['Pop-up Canopy 10 × 10 ft', 6]],
   },
+];
+
+// Six months of completed rentals so the admin dashboard charts have history (all returned, in the past)
+export const DEMO_HISTORY = [
+  { customer: 'meera@rentkit.com', eventName: 'Iyer Family Sangeet', venue: 'Residency Towers Banquet Hall', start: -168, end: -167, requestedDaysAgo: 185, status: 'returned',
+    items: [['Chiavari Chair (Gold)', 120], ['Round Banquet Table (8-seater)', 15], ['Fairy Light Curtain (Warm White)', 8], ['JBL PRX 815 Powered Speaker', 2]] },
+  { customer: 'karthik@rentkit.com', eventName: 'Tech Meetup — Season Opener', venue: 'Tidel Park Auditorium', start: -152, end: -152, requestedDaysAgo: 165, status: 'returned',
+    items: [['Full HD Projector 5000 lm', 1], ['Projection Screen 12 ft', 1], ['Shure SLXD24 Wireless Handheld Mic', 3]] },
+  { customer: 'arjun@rentkit.com', eventName: 'Diwali Night Market', venue: 'Race Course Grounds', start: -140, end: -138, requestedDaysAgo: 150, status: 'returned',
+    items: [['Pop-up Canopy 10 × 10 ft', 10], ['Fairy Light Curtain (Warm White)', 12], ['Silent Diesel Generator 62.5 kVA', 1]] },
+  { customer: 'user@rentkit.com', eventName: 'Engagement Ceremony', venue: 'Hotel Annapoorna Lawn', start: -121, end: -121, requestedDaysAgo: 135, status: 'returned',
+    items: [['Floral Arch (Artificial)', 1], ['Chiavari Chair (Gold)', 80], ['Round Banquet Table (8-seater)', 10]] },
+  { customer: 'karthik@rentkit.com', eventName: 'Startup Pitch Day', venue: 'PSG Tech Convention Centre', start: -104, end: -103, requestedDaysAgo: 118, status: 'returned',
+    items: [['LED Video Wall Panel (P3.9)', 12], ['JBL PRX 815 Powered Speaker', 2], ['Lounge Sofa Set', 2], ['Cocktail Table (High-top)', 8]] },
+  { customer: 'meera@rentkit.com', eventName: 'Classical Music Evening', venue: 'Kikani School Auditorium', start: -90, end: -90, requestedDaysAgo: 100, status: 'returned',
+    items: [['Yamaha MG16XU 16-Channel Mixer', 1], ['Shure SLXD24 Wireless Handheld Mic', 4], ['LED Par Can RGBW (Set of 4)', 6]] },
+  { customer: 'arjun@rentkit.com', eventName: 'New Year Countdown Party', venue: 'Brookefields Rooftop', start: -76, end: -75, requestedDaysAgo: 90, status: 'returned',
+    items: [['JBL PRX 815 Powered Speaker', 4], ['18" Subwoofer (Active)', 2], ['Moving Head Beam 230', 8], ['Fog Machine 1500 W', 2], ['DMX Lighting Controller', 1]] },
+  { customer: 'karthik@rentkit.com', eventName: 'Annual Sales Conference', venue: 'Le Méridien Ballroom', start: -62, end: -61, requestedDaysAgo: 75, status: 'returned',
+    items: [['Full HD Projector 5000 lm', 2], ['Projection Screen 12 ft', 2], ['Shure SLXD24 Wireless Handheld Mic', 4], ['Modular Stage Deck 4 × 8 ft', 6], ['Stage Stairs with Handrail', 1]] },
+  { customer: 'meera@rentkit.com', eventName: 'Pongal Community Fest', venue: 'Saibaba Colony Grounds', start: -49, end: -48, requestedDaysAgo: 60, status: 'returned',
+    items: [['Pagoda Tent 20 × 20 ft', 2], ['Chiavari Chair (Gold)', 60], ['JBL PRX 815 Powered Speaker', 2], ['Power Distribution Box', 1]] },
+  { customer: 'user@rentkit.com', eventName: 'College Alumni Meet', venue: 'Karunya Convention Hall', start: -36, end: -36, requestedDaysAgo: 46, status: 'returned',
+    items: [['Round Banquet Table (8-seater)', 12], ['Chiavari Chair (Gold)', 96], ['Projection Screen 12 ft', 1], ['Full HD Projector 5000 lm', 1]] },
+  { customer: 'arjun@rentkit.com', eventName: 'Indie Band Showcase', venue: 'Black Box Studio', start: -18, end: -18, requestedDaysAgo: 30, status: 'returned',
+    items: [['Truss Goal Post 20 ft', 1], ['Moving Head Beam 230', 6], ['LED Par Can RGBW (Set of 4)', 4], ['18" Subwoofer (Active)', 2]] },
 ];

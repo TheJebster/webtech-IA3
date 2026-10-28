@@ -56,14 +56,48 @@ export async function adminDashboard(req, res) {
         },
       },
       { $sort: { revenue: -1 } },
-      { $limit: 5 },
+      { $limit: 6 },
     ]),
     Equipment.aggregate([
       { $group: { _id: '$category', items: { $sum: 1 }, units: { $sum: '$quantityTotal' } } },
       { $sort: { units: -1 } },
     ]),
-    Activity.find().sort({ createdAt: -1 }).limit(8),
+    Activity.find().sort({ createdAt: -1 }).limit(10),
   ]);
+
+  // Last 6 calendar months (UTC) of revenue (approved + returned, by event start) and request volume
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - i, 1));
+    months.push({ key: d.toISOString().slice(0, 7), label: d.toLocaleString('en', { month: 'short', timeZone: 'UTC' }) });
+  }
+  const since = new Date(`${months[0].key}-01T00:00:00Z`);
+  const [revenueRows, requestRows, outToday] = await Promise.all([
+    Rental.aggregate([
+      { $match: { status: { $in: EARNING_STATUSES }, startDate: { $gte: since } } },
+      { $group: { _id: { $dateToString: { format: '%Y-%m', date: '$startDate' } }, revenue: { $sum: '$totalCost' }, rentals: { $sum: 1 } } },
+    ]),
+    Rental.aggregate([
+      { $match: { createdAt: { $gte: since } } },
+      { $group: { _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } }, requests: { $sum: 1 } } },
+    ]),
+    // Units physically out with customers today (approved rentals running today)
+    Rental.aggregate([
+      { $match: { status: 'approved', startDate: { $lte: today }, endDate: { $gte: today } } },
+      { $unwind: '$items' },
+      { $group: { _id: null, units: { $sum: '$items.quantity' } } },
+    ]),
+  ]);
+  const revByMonth = new Map(revenueRows.map((r) => [r._id, r]));
+  const reqByMonth = new Map(requestRows.map((r) => [r._id, r.requests]));
+  const monthly = months.map((m) => ({
+    month: m.label,
+    revenue: revByMonth.get(m.key)?.revenue || 0,
+    rentals: revByMonth.get(m.key)?.rentals || 0,
+    requests: reqByMonth.get(m.key) || 0,
+  }));
+  const thisMonth = monthly[5].revenue;
+  const lastMonth = monthly[4].revenue;
 
   const e = equipmentAgg[0] || { total: 0, active: 0, units: 0 };
   const u = userAgg[0] || { total: 0, admins: 0, active: 0 };
@@ -77,7 +111,16 @@ export async function adminDashboard(req, res) {
       total: statusAgg.reduce((sum, s) => sum + s.count, 0),
       pending: rentalsByStatus.pending || 0,
     },
-    revenue: { total: revenueAgg[0]?.revenue || 0, rentals: revenueAgg[0]?.count || 0 },
+    revenue: {
+      total: revenueAgg[0]?.revenue || 0,
+      rentals: revenueAgg[0]?.count || 0,
+      thisMonth,
+      lastMonth,
+      // % change vs last month; null when there is nothing to compare against
+      change: lastMonth ? Math.round(((thisMonth - lastMonth) / lastMonth) * 100) : null,
+    },
+    monthly,
+    utilization: { unitsOut: outToday[0]?.units || 0, totalUnits: e.units },
     upcoming,
     topEquipment: topEquipment.map(({ _id, ...rest }) => ({ equipment: _id, ...rest })),
     byCategory: byCategory.map(({ _id, ...rest }) => ({ category: _id, ...rest })),

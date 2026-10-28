@@ -23,6 +23,17 @@ const equipmentSchema = new mongoose.Schema(
     quantityTotal: { type: Number, required: true, min: [0, 'Quantity cannot be negative'], default: 1 },
     condition: { type: String, enum: CONDITIONS, default: 'Good' },
     imageUrl: { type: String, trim: true, default: '' },
+    // Product-page photo gallery: [{ src, alt, source }] — source links to where the photo came from
+    gallery: {
+      type: [
+        new mongoose.Schema(
+          { src: { type: String, required: true, trim: true }, alt: { type: String, trim: true, default: '' }, source: { type: String, trim: true, default: '' } },
+          { _id: false }
+        ),
+      ],
+      default: [],
+      validate: [(v) => v.length <= 8, 'Up to 8 gallery photos'],
+    },
     // Inactive equipment is hidden from customers but kept for history
     isActive: { type: Boolean, default: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

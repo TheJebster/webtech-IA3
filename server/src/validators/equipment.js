@@ -18,8 +18,12 @@ const rules = (optional) => {
       .optional({ values: 'falsy' })
       .trim()
       // Full http(s) URLs, or paths to images bundled with the site (e.g. /images/equipment/mixer.webp)
-      .custom((v) => /^https?:\/\/\S+$/i.test(v) || /^\/images\/[\w\-./]+\.(webp|jpe?g|png)$/i.test(v))
-      .withMessage('Image URL must start with http(s):// or be a /images/… path'),
+      .custom((v) => /^https?:\/\/\S+$/i.test(v) || /^\/(images|gallery)\/[\w\-./]+\.(webp|jpe?g|png)$/i.test(v))
+      .withMessage('Image URL must start with http(s):// or be a /gallery/… path'),
+    body('gallery').optional().isArray({ max: 8 }).withMessage('Up to 8 gallery photos'),
+    body('gallery.*.src')
+      .custom((v) => typeof v === 'string' && (/^https?:\/\/\S+$/i.test(v) || /^\/(images|gallery)\/[\w\-./]+\.(webp|jpe?g|png)$/i.test(v)))
+      .withMessage('Each gallery photo must be an http(s) URL or a /gallery/… path'),
     body('isActive').optional().isBoolean().withMessage('isActive must be true or false').toBoolean(),
   ];
 };
