@@ -51,6 +51,8 @@ A role-based full-stack web application built on the **MERN stack** (MongoDB, Ex
 ## Project structure
 
 ```
+├── vercel.json             Single Vercel deployment: builds client/, routes /api/* to api/index.js
+├── api/index.js            Vercel serverless entry (loads the Express app)
 ├── client/                 React frontend (Vite)
 │   └── src/
 │       ├── api/            Axios instance (JWT header, 401 handling)
@@ -59,7 +61,6 @@ A role-based full-stack web application built on the **MERN stack** (MongoDB, Ex
 │       ├── pages/          Public, user and admin pages
 │       └── utils/          Validation, formatting, category metadata
 └── server/                 Express REST API
-    ├── api/index.js        Vercel serverless entry
     └── src/
         ├── config/         Environment + MongoDB connection
         ├── models/         User, Equipment, Rental, Activity
@@ -84,9 +85,8 @@ npm run dev                # http://localhost:5050
 
 # 2. Frontend (new terminal)
 cd client
-cp .env.example .env       # VITE_API_URL=http://localhost:5050/api
 npm install
-npm run dev                # http://localhost:5180
+npm run dev                # http://localhost:5180 (forwards /api to localhost:5050)
 ```
 
 `npm run seed -- --reset` wipes the database and reloads the demo data.
@@ -128,33 +128,34 @@ Validation errors return `422` with `{ message, errors: { field: message } }`.
 
 ## Deployment (Vercel + MongoDB Atlas)
 
-### 1. MongoDB Atlas
-1. Create a free cluster and a database user.
-2. Under **Network Access**, allow `0.0.0.0/0` (Vercel functions don't have fixed IPs).
-3. Copy the connection string, e.g. `mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/event_rental?retryWrites=true&w=majority`.
-4. Seed it once from your machine: `cd server && MONGODB_URI="<atlas-uri>" npm run seed`.
+The site and the API deploy together as **one Vercel project at one address**: the React build is served as static
+files and every `/api/*` request runs the Express app as a serverless function (see `vercel.json`). The frontend calls
+`/api` on its own address, so no API URL or CORS configuration is needed.
 
-### 2. API on Vercel
-Create a Vercel project from this repository with **Root Directory = `server`** (framework preset: *Other*). `server/vercel.json` routes every request to the Express app in `server/api/index.js`.
+### 1. MongoDB Atlas
+1. Create a free (M0) cluster, ideally in **AWS Mumbai (ap-south-1)** to sit next to the Vercel function region (`bom1`).
+2. Create a database user (letters and numbers only in the password).
+3. Under **Network Access**, allow `0.0.0.0/0` (Vercel functions don't have fixed IPs).
+4. Copy the connection string and add the database name before the `?`:
+   `mongodb+srv://<user>:<password>@<cluster>.mongodb.net/event_rental?retryWrites=true&w=majority`
+5. Load the demo data once from your machine: `cd server && MONGODB_URI="<atlas-uri>" npm run seed`.
+   Never run `npm run seed -- --reset` against Atlas — it deletes everything.
+
+### 2. Vercel
+Import the repository as **one** Vercel project with the **Root Directory left as the repository root**
+(framework preset: *Other* — `vercel.json` sets the install, build and output settings).
 
 | Environment variable | Value |
 |---|---|
-| `MONGODB_URI` | Atlas connection string |
+| `MONGODB_URI` | Atlas connection string (with `/event_rental`) |
 | `JWT_SECRET` | a long random string |
 | `JWT_EXPIRES_IN` | `7d` |
 | `NODE_ENV` | `production` |
-| `CLIENT_URL` | the frontend URL, e.g. `https://rentkit.vercel.app` (comma-separate several) |
 
-Check `https://<api-project>.vercel.app/api/health`.
+Then open `https://<project>.vercel.app/api/health`, and the site at `https://<project>.vercel.app`.
+Every push to `main` redeploys; other branches get their own preview URL (site + API together).
 
-### 3. Frontend on Vercel
-Create a second Vercel project from the same repository with **Root Directory = `client`** (framework preset: *Vite*). `client/vercel.json` rewrites all paths to `index.html` so client-side routes work on refresh.
-
-| Environment variable | Value |
-|---|---|
-| `VITE_API_URL` | `https://<api-project>.vercel.app/api` |
-
-After the frontend is deployed, make sure its URL is in the API's `CLIENT_URL` and redeploy the API.
+`CLIENT_URL` and `VITE_API_URL` are only needed if you host the frontend and API on different addresses.
 
 ### Demo accounts (storefront branch)
 Also: `meera@rentkit.com` / `Meera@1234` and `karthik@rentkit.com` / `Karthik@1234` (customers with rental history).

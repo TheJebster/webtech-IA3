@@ -15,13 +15,20 @@ import ApiError from './utils/ApiError.js';
 const app = express();
 
 app.use(helmet());
+// CORS: allow the site's own address (single-address deploy: the frontend and /api share one host),
+// any frontend listed in CLIENT_URL, and non-browser clients (curl, Postman)
 app.use(
-  cors({
-    origin(origin, callback) {
-      // Allow non-browser clients (curl, Postman) and configured frontends
-      if (!origin || env.clientUrls.includes(origin)) return callback(null, true);
-      return callback(new ApiError(403, `Origin ${origin} is not allowed by CORS.`));
-    },
+  cors((req, callback) => {
+    const origin = req.header('Origin');
+    const host = req.header('X-Forwarded-Host') || req.header('Host');
+    let sameOrigin = false;
+    try {
+      sameOrigin = Boolean(origin && host && new URL(origin).host === host);
+    } catch {
+      // malformed Origin (e.g. "null") — treat as cross-origin
+    }
+    if (!origin || sameOrigin || env.clientUrls.includes(origin)) return callback(null, { origin: true });
+    return callback(new ApiError(403, `Origin ${origin} is not allowed by CORS.`));
   })
 );
 app.use(express.json({ limit: '1mb' }));

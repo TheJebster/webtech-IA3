@@ -3,7 +3,8 @@ import axios from 'axios';
 export const TOKEN_KEY = 'rentkit_token';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5050/api',
+  // Same address as the site by default (/api); VITE_API_URL can point at a separately hosted API
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
