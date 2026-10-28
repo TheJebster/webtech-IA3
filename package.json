@@ -4,6 +4,6 @@
   "description": "RentKit — Event Equipment Rental System (MERN). Root manifest used for the single Vercel deployment.",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   }
 }
