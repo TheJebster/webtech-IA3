@@ -14,7 +14,8 @@ export default function ScrollToTop() {
       const el = document.getElementById(hash.slice(1));
       if (el || ++tries > 20) {
         clearInterval(timer);
-        el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        el?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
       }
     }, 100);
     return () => clearInterval(timer);

@@ -74,7 +74,7 @@ export default function Layout() {
       <AppNavbar />
       <main className="flex-grow-1">
         {/* Pages are lazy-loaded, so each route downloads only its own code */}
-        <Suspense fallback={<PageLoader />}>
+        <Suspense fallback={<div className="route-loading"><PageLoader /></div>}>
           <Outlet />
         </Suspense>
       </main>

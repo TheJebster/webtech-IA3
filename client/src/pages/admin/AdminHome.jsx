@@ -126,7 +126,7 @@ export default function AdminHome() {
                           <RentalStatusBadge status={r.status} />
                         </div>
                         <div className="small text-muted text-truncate">{formatDayRange(r.startDate, r.endDate)} · {r.customerName} · {r.venue}</div>
-                        <div className="d-flex justify-content-between align-items-center mt-2">
+                        <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2">
                           <div className="mini-thumbs" aria-hidden="true">
                             {r.items.slice(0, 5).map((i) => <span key={i.equipment}><EquipmentImage item={i} size="thumb" /></span>)}
                             {r.items.length > 5 && <em>+{r.items.length - 5}</em>}

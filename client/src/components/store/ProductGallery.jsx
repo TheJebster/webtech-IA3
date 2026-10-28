@@ -27,7 +27,7 @@ export default function ProductGallery({ item }) {
         }}
         aria-label={`${item.name} photos, ${active + 1} of ${photos.length}`}
       >
-        <img src={current.src} alt={current.alt || item.name} />
+        <img key={current.src} className="gallery-fade" src={current.src} alt={current.alt || item.name} />
         {photos.length > 1 && (
           <>
             <button type="button" className="gallery-nav prev" onClick={() => step(-1)} aria-label="Previous photo">‹</button>

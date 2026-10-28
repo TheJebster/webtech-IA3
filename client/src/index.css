@@ -729,10 +729,7 @@ main > .container:first-child { padding-top: 28px; }
   .price { font-size: 16px; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .equipment-card, .equipment-card .thumb img, .category-tile img { transition: none; }
-  .equipment-card:hover, .equipment-card:hover .thumb img, .category-tile:hover img { transform: none; }
-}
+
 
 /* ---------- Icon tiles (instead of stock photos) ---------- */
 .item-visual {
@@ -1365,3 +1362,63 @@ body { background: var(--bg); color: var(--ink-2); }
 .equipment-card:hover .thumb .item-photo { transform: scale(1.04); }
 .equipment-card .thumb .item-photo { transition: transform 0.3s ease; }
 .mini-thumbs > span .item-photo, .rental-thumb .item-photo { border-radius: inherit; }
+
+/* =====================================================================
+   UI review fixes (branch `fixes`)
+   ===================================================================== */
+
+/* Grid/flex lists: let long names truncate instead of widening the page (375px overflow) */
+.d-grid, .timeline, .feed, .top-list, .plain-list, .rank-list, .stack { grid-template-columns: minmax(0, 1fr); }
+.d-grid > .d-flex > .text-truncate, .timeline .text-truncate { min-width: 0; }
+
+/* Phone/tablet menu drops over the page instead of pushing it down */
+@media (max-width: 991.98px) {
+  .site-header .navbar-collapse {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: var(--shadow-pop), 0 0 0 1px rgba(15, 21, 29, 0.05);
+    padding: 4px 16px;
+    z-index: 1040;
+  }
+  .site-header .navbar-collapse.show,
+  .site-header .navbar-collapse.collapsing { padding: 10px 16px 14px; }
+}
+/* Menu button focus ring in the brand colour, like every other control */
+.site-header .navbar-toggler:focus { box-shadow: 0 0 0 3px rgba(208, 68, 26, 0.25); }
+
+/* One shared hover/focus timing for every text link and option (buttons already use 0.15s) */
+a, .text-action, .cat-option, .breadcrumb a, .footer-card a, .chip button {
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Keep the page height while a page's code loads, so the footer doesn't jump up */
+.route-loading { min-height: 70vh; }
+
+/* Filter sidebar: slim, quiet scrollbar when it needs one */
+.filters { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+
+/* Product gallery: soft crossfade when switching photos */
+.gallery-fade { animation: gallery-fade 0.25s ease; }
+@keyframes gallery-fade { from { opacity: 0.35; } to { opacity: 1; } }
+
+/* Respect "reduce motion": no movement, zooms, slides or smooth scrolling anywhere */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .equipment-card:hover, .equipment-card:hover .item-photo, .equipment-card:hover .item-visual-badge,
+  .category-tile-icon:hover, .catalog-item:hover, .btn:hover .arrow { transform: none !important; }
+}
+
+/* Homepage search on phones: every field full width, like the category field */
+@media (max-width: 575.98px) {
+  .prompt-search .options > * { flex: 1 1 100%; min-width: 0 !important; }
+  .prompt-search .options .btn { margin-left: 0 !important; }
+}
