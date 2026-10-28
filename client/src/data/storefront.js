@@ -34,7 +34,7 @@ const ITEM_ICONS = {
   'Modular Stage Deck 4 × 8 ft': { icon: IconBoxAlignBottom },
   'Truss Goal Post 20 ft': { icon: IconLadder, rotate: 90 },
   'Stage Stairs with Handrail': { icon: IconStairs },
-  'Chiavari Chair (Gold)': { icon: IconChairDirector },
+  'Chair (Gold)': { icon: IconChairDirector },
   'Round Banquet Table (8-seater)': { icon: IconToolsKitchen2 },
   'Cocktail Table (High-top)': { icon: IconGlassCocktail },
   'Lounge Sofa Set': { icon: IconSofa },
@@ -61,7 +61,7 @@ export const PACKAGES = [
     blurb: 'Seating, décor and sound for around 100 guests.',
     icons: [IconChairDirector, IconToolsKitchen2, IconFlower, IconSparkles],
     items: [
-      ['Chiavari Chair (Gold)', 100],
+      ['Chair (Gold)', 100],
       ['Round Banquet Table (8-seater)', 13],
       ['Floral Arch (Artificial)', 1],
       ['Fairy Light Curtain (Warm White)', 6],

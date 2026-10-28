@@ -79,7 +79,7 @@ async function seedRentals() {
     const days = countDays(startDate, endDate);
     const items = r.items.map(([name, quantity]) => {
       const eq = equipment[name];
-      return { equipment: eq._id, name: eq.name, category: eq.category, imageUrl: eq.imageUrl, dailyRate: eq.dailyRate, quantity, subtotal: eq.dailyRate * quantity * days };
+      return { equipment: eq._id, name: eq.name, category: eq.category, imageUrl: eq.imageUrl || eq.gallery?.[0]?.src || '', dailyRate: eq.dailyRate, quantity, subtotal: eq.dailyRate * quantity * days };
     });
     const _id = new mongoose.Types.ObjectId();
     const code = `RK-${_id.toString().slice(-6).toUpperCase()}`;

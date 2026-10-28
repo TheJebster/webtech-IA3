@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import ItemVisual from './store/ItemVisual';
+import { primaryPhoto } from '../utils/photo';
 
-// Uses the item's own photo when an admin has added one; otherwise the designed icon tile
+// Item photo (see primaryPhoto); falls back to the designed icon tile when there is none or it fails to load
 export default function EquipmentImage({ item, size = 'card', className = '' }) {
   const [failed, setFailed] = useState(false);
-  if (!item.imageUrl || failed) return <ItemVisual item={item} size={size} className={className} />;
-  return <img src={item.imageUrl} alt={item.name} onError={() => setFailed(true)} className={className} loading="lazy" />;
+  const src = primaryPhoto(item);
+  if (!src || failed) return <ItemVisual item={item} size={size} className={className} />;
+  return <img src={src} alt={item.name} onError={() => setFailed(true)} className={`item-photo ${className}`} loading="lazy" />;
 }

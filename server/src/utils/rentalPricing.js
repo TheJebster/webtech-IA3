@@ -57,7 +57,8 @@ export async function buildQuote({ items, startDate, endDate, excludeRentalId, i
       equipment: eq._id,
       name: eq.name,
       category: eq.category,
-      imageUrl: eq.imageUrl,
+      // Snapshot the photo shown for the item (own image, else first gallery photo)
+      imageUrl: eq.imageUrl || eq.gallery?.[0]?.src || '',
       dailyRate: eq.dailyRate,
       quantity,
       subtotal,

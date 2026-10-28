@@ -1345,3 +1345,23 @@ body { background: var(--bg); color: var(--ink-2); }
 .navy-band .package-card .text-muted { color: var(--muted) !important; }
 .navy-band .package-card ul { color: var(--ink-2); }
 .footer-card .btn-sky, .footer-card .btn-sky:hover { color: var(--ink); text-decoration: none; }
+
+/* ---------- Item photos on cards and thumbnails ----------
+   Photos come from different sources, so they get one shared treatment to sit
+   calmly in the soft coral design: same crop, slightly muted colour, a faint warm
+   wash and a hairline inner edge that matches the bezel cards. */
+.item-photo { display: block; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.88) contrast(0.97); }
+.equipment-card .thumb, .float-card .visual, .top-thumb, .ops-thumb, .line-thumb, .rental-thumb, .mini-thumbs > span { position: relative; }
+.equipment-card .thumb::after, .float-card .visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 249, 246, 0) 55%, rgba(255, 249, 246, 0.18) 100%), rgba(255, 116, 72, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(15, 21, 29, 0.06);
+}
+.equipment-card .thumb .avail { z-index: 1; }
+.equipment-card:hover .thumb .item-photo { transform: scale(1.04); }
+.equipment-card .thumb .item-photo { transition: transform 0.3s ease; }
+.mini-thumbs > span .item-photo, .rental-thumb .item-photo { border-radius: inherit; }

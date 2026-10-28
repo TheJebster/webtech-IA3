@@ -14,6 +14,7 @@ import EmptyState from '../../components/EmptyState';
 import ItemVisual from '../../components/store/ItemVisual';
 import RentalStatusBadge, { STATUS_META } from '../../components/rentals/RentalStatusBadge';
 import { KpiCard, RevenueChart, StatusDonut, UtilizationRing } from '../../components/dashboard/DashboardWidgets';
+import EquipmentImage from '../../components/EquipmentImage';
 
 const QUICK_ACTIONS = [
   { to: '/admin/operations?tab=rentals', icon: IconClipboardCheck, title: 'Review requests', text: 'Approve, reject or close bookings.' },
@@ -127,7 +128,7 @@ export default function AdminHome() {
                         <div className="small text-muted text-truncate">{formatDayRange(r.startDate, r.endDate)} · {r.customerName} · {r.venue}</div>
                         <div className="d-flex justify-content-between align-items-center mt-2">
                           <div className="mini-thumbs" aria-hidden="true">
-                            {r.items.slice(0, 5).map((i) => <span key={i.equipment}><ItemVisual item={i} size="thumb" /></span>)}
+                            {r.items.slice(0, 5).map((i) => <span key={i.equipment}><EquipmentImage item={i} size="thumb" /></span>)}
                             {r.items.length > 5 && <em>+{r.items.length - 5}</em>}
                           </div>
                           <span className="fw-bold" style={{ color: 'var(--ink)' }}>{formatCurrency(r.totalCost)}</span>
@@ -176,7 +177,7 @@ export default function AdminHome() {
                 {data.topEquipment.map((t, i) => (
                   <li key={String(t.equipment)}>
                     <span className="rank">{i + 1}</span>
-                    <span className="top-thumb"><ItemVisual item={t} size="thumb" /></span>
+                    <span className="top-thumb"><EquipmentImage item={t} size="thumb" /></span>
                     <div className="flex-grow-1 min-w-0">
                       <div className="d-flex justify-content-between gap-2">
                         <span className="fw-semibold text-truncate" style={{ color: 'var(--ink)' }}>{t.name}</span>

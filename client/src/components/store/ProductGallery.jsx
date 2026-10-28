@@ -53,11 +53,6 @@ export default function ProductGallery({ item }) {
           ))}
         </div>
       )}
-      {current.source && (
-        <p className="gallery-credit">
-          Photo: <a href={current.source} target="_blank" rel="noreferrer">Unsplash</a> · representative image
-        </p>
-      )}
     </div>
   );
 }

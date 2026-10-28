@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useAuth } from './AuthContext';
+import { primaryPhoto } from '../utils/photo';
 
 // The customer's in-progress rental request ("cart"), saved per user in localStorage
 const CartContext = createContext(null);
@@ -64,8 +65,8 @@ export function CartProvider({ children }) {
         if (existing) {
           return prev.map((i) => (i.equipment._id === equipment._id ? { ...i, quantity: i.quantity + quantity } : i));
         }
-        const { _id, name, category, dailyRate, imageUrl, quantityTotal } = equipment;
-        return [...prev, { equipment: { _id, name, category, dailyRate, imageUrl, quantityTotal }, quantity }];
+        const { _id, name, category, dailyRate, quantityTotal } = equipment;
+        return [...prev, { equipment: { _id, name, category, dailyRate, imageUrl: primaryPhoto(equipment), quantityTotal }, quantity }];
       }),
     [persist]
   );

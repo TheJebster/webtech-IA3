@@ -13,7 +13,7 @@ import useAddToRequest from '../hooks/useAddToRequest';
 import { categoryStyle, PACKAGES } from '../data/storefront';
 import { formatCurrency, todayInput } from '../utils/format';
 import ProductCard from '../components/store/ProductCard';
-import ItemVisual from '../components/store/ItemVisual';
+import EquipmentImage from '../components/EquipmentImage';
 
 const SMALL_FEATURES = [
   { icon: IconShieldCheck, title: 'Tested before every event', text: 'Every item is checked before dispatch.' },
@@ -134,7 +134,7 @@ export default function Landing() {
           <div className="float-row">
             {popular.slice(0, 6).map((item) => (
               <div key={item._id} className="float-card">
-                <div className="visual"><ItemVisual item={item} /></div>
+                <div className="visual"><EquipmentImage item={item} /></div>
                 <div className="meta text-start">
                   <div className="fw-semibold text-truncate" style={{ color: 'var(--ink)' }}>{item.name}</div>
                   <div className="text-muted">{formatCurrency(item.dailyRate)} / day</div>
@@ -173,7 +173,7 @@ export default function Landing() {
                   <div className="d-grid gap-2 mt-3">
                     {popular.slice(0, 3).map((item, i) => (
                       <div key={item._id} className="d-flex align-items-center gap-3 p-2 pe-3 rounded-4" style={{ background: '#fff' }}>
-                        <span className="top-thumb"><ItemVisual item={item} size="thumb" /></span>
+                        <span className="top-thumb"><EquipmentImage item={item} size="thumb" /></span>
                         <span className="flex-grow-1 text-truncate fw-semibold" style={{ color: 'var(--ink)' }}>{item.name}</span>
                         <span className={`avail ${i === 2 ? 'avail-low' : 'avail-ok'}`}>{i === 2 ? 'Only 4 left' : 'Available'}</span>
                       </div>

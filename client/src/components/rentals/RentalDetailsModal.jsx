@@ -1,7 +1,7 @@
 import { Button, Col, Modal, Row, Table } from 'react-bootstrap';
 import { formatCurrency, formatDateTime, formatDayRange } from '../../utils/format';
 import RentalStatusBadge from './RentalStatusBadge';
-import ItemVisual from '../store/ItemVisual';
+import EquipmentImage from '../EquipmentImage';
 
 // Read-only rental summary shared by the customer and admin views
 export default function RentalDetailsModal({ rental, show, onClose, showCustomer = false, footer }) {
@@ -62,7 +62,7 @@ export default function RentalDetailsModal({ rental, show, onClose, showCustomer
               <tr key={item.equipment}>
                 <td>
                   <div className="d-flex align-items-center gap-2">
-                    <span className="ops-thumb"><ItemVisual item={item} size="thumb" /></span>
+                    <span className="ops-thumb"><EquipmentImage item={item} size="thumb" /></span>
                     <div>{item.name}<div className="small text-muted">{item.category}</div></div>
                   </div>
                 </td>

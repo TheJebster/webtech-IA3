@@ -51,6 +51,7 @@ export async function adminDashboard(req, res) {
           _id: '$items.equipment',
           name: { $last: '$items.name' },
           category: { $last: '$items.category' },
+          imageUrl: { $last: '$items.imageUrl' },
           units: { $sum: '$items.quantity' },
           revenue: { $sum: '$items.subtotal' },
         },

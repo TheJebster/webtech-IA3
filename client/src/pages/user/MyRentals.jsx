@@ -10,8 +10,8 @@ import EmptyState from '../../components/EmptyState';
 import ConfirmModal from '../../components/ConfirmModal';
 import RentalStatusBadge from '../../components/rentals/RentalStatusBadge';
 import RentalDetailsModal from '../../components/rentals/RentalDetailsModal';
-import ItemVisual from '../../components/store/ItemVisual';
 import usePageTitle from '../../hooks/usePageTitle';
+import EquipmentImage from '../../components/EquipmentImage';
 
 const TABS = [
   { key: 'all', label: 'All' },
@@ -103,7 +103,7 @@ export default function MyRentals() {
                     <span>{r.venue}</span>
                   </div>
                   <div className="rental-thumbs" aria-hidden="true">
-                    {r.items.slice(0, 4).map((i) => <span key={i.equipment} className="rental-thumb"><ItemVisual item={i} size="thumb" /></span>)}
+                    {r.items.slice(0, 4).map((i) => <span key={i.equipment} className="rental-thumb"><EquipmentImage item={i} size="thumb" /></span>)}
                     {r.items.length > 4 && <span className="more">+{r.items.length - 4}</span>}
                   </div>
                   <div className="small mb-3">
